@@ -7,6 +7,8 @@ description: "Weekly tracking-QA loop: verify Manafa's key events fire, UTMs fol
 
 Keep the measurement layer trustworthy. Read `CLAUDE.md` and `context/` first; state lives in `state/tracking-qa.json` + `.log`.
 
+> **Interim data (until BigQuery):** all checks read CSVs — GA4 (`data/exports/ga4/`, the interim ledger), Singular, Google Ads. "Backend counts" below means the GA4 key-event counts. The backend-vs-GA4 receipt check is suspended (GA4 can't audit itself); the receipt checks that remain are **GA4 vs Singular** and **GA4 vs Google Ads claims**. Checks whose columns aren't in the dropped CSVs are reported "not covered", never guessed.
+
 | Part | Spec |
 |---|---|
 | **Check cadence** | Weekly (Monday, before the weekly review), and on deploy / campaign launch |
@@ -17,7 +19,7 @@ Keep the measurement layer trustworthy. Read `CLAUDE.md` and `context/` first; s
 
 ## Loop body
 
-1. **Backend events heartbeat.** Pull daily counts of `registration_completed`, `deposit_success`, `investment_completed` for the last 14 days (excluding trailing 72h). Flag: any day at exactly zero, or a day outside ±3σ of the same weekday's trailing 8-week values. Zero on a revenue event = escalate now.
+1. **Backend events heartbeat.** Pull daily counts of `registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed` for the last 14 days (excluding trailing 72h). Flag: any day at exactly zero, or a day outside ±3σ of the same weekday's trailing 8-week values. Zero on a revenue event = escalate now.
 2. **Platform receipt check.** Compare last closed week's backend counts against what GA4 key events and each fresh ad-platform export report for the same window. Apply the verdict rules in `CLAUDE.md`: 10–30% gap normal; >40%, zero, direction flip, or a stable gap suddenly changing = INVESTIGATE. A tag firing is not a conversion arriving — check the destination's number, not the send.
 3. **UTM audit.** Pull last week's GA4 sessions by source/medium/campaign. Flag: values not in `context/utm-convention.md` (case variants, separators, duplicate spellings), anything in **Unassigned** above 5% of sessions (name the top offending source/mediums), and any UTM value containing `@`, digits-only strings 9+ long, or anything PII-shaped — escalate PII in UTMs immediately.
 4. **Channel-group check.** Verify `creator`, `newsletter`, `podcast`, `community` mediums land in their custom channels, not Unassigned; verify Snapchat traffic is arriving tagged.

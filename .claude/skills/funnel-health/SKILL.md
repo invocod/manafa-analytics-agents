@@ -7,6 +7,8 @@ description: "Weekly funnel loop combining signup-funnel-leak and onboarding dro
 
 Find the biggest leak between first visit and first investment, every week. Read `CLAUDE.md` and `context/` first; state in `state/funnel-health.json` + `.log`.
 
+> **Interim data (until BigQuery):** funnel steps come from the GA4 CSV (sessions + `registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed` counts — the interim ledger) and Singular for the app-install step. Without user-level cohorts, step rates are period-over-period count ratios, not true cohort rates — label them as such; true cohorting starts with BigQuery.
+
 | Part | Spec |
 |---|---|
 | **Check cadence** | Weekly (Tuesday — after Monday's tracking-QA confirms the data is trustworthy) |

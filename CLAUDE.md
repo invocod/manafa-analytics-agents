@@ -12,7 +12,9 @@ Manafa is a Saudi investment/crowdfunding platform (CMA-regulated). The marketin
 - `deposit_success` — a user funded their wallet (backend-confirmed)
 - `investment_completed` — a user completed an investment (backend-confirmed)
 
-These three events were deliberately moved server-side ("fire on confirmed success, not the submit click"). Platform-side numbers (GA4, Google Ads, Meta, TikTok, Snapchat, Singular) are *explanations of where those conversions came from* — they never redefine how many there were.
+These events were deliberately moved server-side ("fire on confirmed success, not the submit click"). Platform-side numbers (GA4, Google Ads, Meta, TikTok, Snapchat, Singular) are *explanations of where those conversions came from* — they never redefine how many there were.
+
+**Interim ledger (until BigQuery lands):** direct backend access doesn't exist yet. The working ledger is the **GA4 key events** — server-fired from Laravel, so the closest proxy to backend truth — read from CSV exports in `data/exports/ga4/`. Active sources today: GA4, Singular, Google Ads (all CSV; details and hierarchy in `context/data-sources.md`). Every report that says "backend" means this interim ledger until BigQuery replaces it, and says so in a footnote.
 
 ## Operating rules (apply to every loop)
 

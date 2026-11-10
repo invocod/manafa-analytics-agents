@@ -1,60 +1,48 @@
 # Data Sources & Access
 
-How each loop gets its numbers. **Hierarchy: backend > Singular/GA4 > ad platforms.** The backend defines how many; everything else explains where from.
+**Current reality (updated 2026-11-11): three sources — GA4, Google Ads, Singular — all via CSV exports dropped into `data/exports/`. BigQuery integration is planned and will become the backend source of truth when it lands.**
+
+## Interim ledger rule
+
+The north star stays: backend events (`registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed`) define conversion counts. Until BigQuery exposes them directly, the **interim ledger is the GA4 key events** — they are server-fired from Laravel (the "P5" move), so GA4's copy is the closest available proxy for backend truth. ⚠️ Assumption to confirm: the Laravel-fired events land in GA4 via Measurement Protocol; if they also land somewhere closer to the backend, prefer that.
+
+Hierarchy until BigQuery: **GA4 key events (interim ledger) > Singular (app-side explanation) > Google Ads (claims)**. Google Ads never redefines counts; Singular vs GA4 disagreements get explained, not averaged.
 
 ## Sources
 
-### 1. Backend events (source of truth)
-- Events: `registration_completed`, `deposit_success`, `investment_completed` (server-fired from Laravel).
-- Events include `kyc_completed` between registration and deposit.
-- Access — **CSV now, API later** (decided 2026-11-11):
-  - [x] **Current**: daily aggregate CSV exported to `data/exports/backend/` (see format below).
-  - [ ] **Planned upgrade**: read-only reporting API endpoint: `BACKEND_REPORT_URL` + `BACKEND_REPORT_TOKEN` env vars — returns **daily aggregate counts only** (date, event, count, first-touch source if available). No row-level/user-level data. Needs a backend ticket.
-- PDPL rule: the agent only ever receives aggregates. Never expose a row-level endpoint to it.
+### 1. GA4 — CSV export (interim ledger + web analytics)
+- Drop into: **`data/exports/ga4/`** — e.g. `ga4-2026-11-11.csv`
+- Useful exports (any subset; loops adapt to the columns present and say what they couldn't check):
+  - Daily key-event counts by event name (the ledger — most important)
+  - Sessions by session source/medium/campaign (UTM audit + channel checks)
+  - Sessions/key events by default channel group (Unassigned share)
+- Include as much history as convenient (8+ weeks makes the weekday bands real). Date, dimension columns, metric columns — the loop reads whatever shape GA4's export produces; keep the header row.
+- Later: GA4 Data API (`GA4_SERVICE_ACCOUNT_JSON` + `GA4_PROPERTY_ID`) or the GA4→BigQuery export replaces the manual drop.
 
-### 2. GA4 (Data API)
-- Auth: service account JSON in env var `GA4_SERVICE_ACCOUNT_JSON` (grant the service account Viewer on the property). Property ID in `GA4_PROPERTY_ID`.
-- Query via the Data API (`runReport`) with curl + a JWT-signed token, or the `google-analytics-data` Python package if available.
-- Used for: sessions by channel, key-event counts, funnel steps, channel-group QA ("Unassigned" share).
+### 2. Singular — CSV export (app installs + in-app conversions by source)
+- Drop into: **`data/exports/singular/`** — e.g. `singular-2026-11-11.csv`
+- Useful columns: date, source/network, campaign, installs, conversion events (names + counts), spend if present.
+- Later: Singular Reporting API (`SINGULAR_API_KEY`).
 
-### 3. Singular (Reporting API)
-- Auth: API key in env var `SINGULAR_API_KEY`.
-- Endpoint: `https://api.singular.net/api/v2.0/reporting` (async: create report, poll, download).
-- Used for: installs + in-app conversion events by source/campaign; the app-side of attribution reconciliation.
+### 3. Google Ads — CSV export (claims + spend)
+- Drop into: **`data/exports/google-ads/`** — e.g. `google-ads-2026-11-11.csv`
+- Useful columns: date, campaign, cost, impressions, clicks, conversions, conversion action.
 
-### 4. Ad platforms (Google Ads, Meta, TikTok, Snapchat) — manual CSV exports
-- No direct API access. Someone exports platform reports as CSV into `data/exports/<platform>/`.
-- Required columns (weekly, by campaign): date range, campaign, spend, impressions, clicks, platform-reported conversions (name the conversion action), platform currency.
-- Filename convention: `{platform}-{yyyy-mm-dd}.csv` (the date the export was pulled).
-- Loops treat a platform with no export fresher than 8 days as **stale** and say so — they never fill the gap from memory.
+### 4. BigQuery (planned — becomes the source of truth)
+- When integrated, backend events are queried directly (aggregates only) and replace the GA4 interim ledger. The loops' "backend" references then point here. Access via the BigQuery connector / service account; update this file and `CLAUDE.md`'s interim note when it lands.
+
+### Not active (no data yet)
+Meta / TikTok / Snapchat exports (`data/exports/meta|tiktok|snapchat/`) and direct backend CSVs (`data/exports/backend/`) — folders exist; loops treat them as **not configured** (skipped and named in "not covered"), distinct from a configured source gone **stale**.
+
+## Freshness
+
+A source with no file newer than 8 days is **stale**: loops say so and never fill the gap from memory. Export → save into the folder → (once on GitHub: commit + push).
 
 ## Slack delivery
 
 - Channel: `#marketing-loops` — dedicated channel for loop output (create it in Slack if it doesn't exist yet; invite the marketing team).
 - Posted via the Slack connector attached to each scheduled routine. Message = the report's verdict + top findings; full report is committed under `reports/`.
 
-## Export CSV formats
+## PDPL rule
 
-### `data/exports/backend/backend-{yyyy-mm-dd}.csv` (current method)
-```
-date,event,count,utm_source,utm_medium,utm_campaign
-2026-11-09,registration_completed,142,google,cpc,registrations-investors-2026-11
-2026-11-09,kyc_completed,98,,,
-```
-(source/medium/campaign columns optional; aggregate counts only, no user-level rows)
-
-### `data/exports/google-ads/google-ads-{yyyy-mm-dd}.csv`
-```
-date,campaign,spend_sar,impressions,clicks,conversions,conversion_action
-```
-Same shape for `meta/`, `tiktok/`, `snapchat/` (spend in SAR or note currency).
-
-## Credential checklist (cloud environment)
-
-Set these as environment secrets on the Claude cloud environment that runs the routines (claude.ai → Code → environment settings):
-
-- [ ] `GA4_SERVICE_ACCOUNT_JSON`, `GA4_PROPERTY_ID`
-- [ ] `SINGULAR_API_KEY`
-- [ ] `BACKEND_REPORT_URL`, `BACKEND_REPORT_TOKEN` (if using the API option)
-
-A loop that finds a credential missing reports "stale data — <source> unreachable" and halts; it never guesses.
+Exports contain **aggregate rows only** — by date/campaign/source, never by user. If an export arrives with user-level rows or any PII column, the loop must refuse to process it, flag it in the report, and the file gets deleted — not committed.

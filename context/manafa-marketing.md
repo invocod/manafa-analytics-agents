@@ -17,6 +17,8 @@ Manafa is a Saudi CMA-regulated investment platform. Users register, complete KY
 | Wallet funded | `deposit_success` | Backend |
 | Invested | `investment_completed` | Backend |
 
+> **Interim (until BigQuery):** "Backend" rows are read from the GA4 key-event export — the events are server-fired from Laravel into GA4, making it the closest available proxy. BigQuery integration restores direct backend truth. Active sources today: GA4, Singular, Google Ads (CSV drops — see `data-sources.md`).
+
 - Primary conversion for ad platforms: **registration** — all platforms currently optimize on `registration_completed`.
 - Typical lag between registration and first deposit/investment: **unmeasured**. The funnel-health loop's first run computes the actual p75 lag from historical cohorts and proposes the observation window; until then it uses a conservative 30 days and labels in-window cohorts *pending*.
 
@@ -25,7 +27,7 @@ Manafa is a Saudi CMA-regulated investment platform. Users register, complete KY
 | Channel | Platform | Notes |
 |---|---|---|
 | Paid search | Google Ads | |
-| Paid social | Meta, TikTok, Snapchat | Snapchat traffic historically lands in GA4 "Unassigned" — custom channel group rule required (see `utm-convention.md`) |
+| Paid social | Meta, TikTok, Snapchat | **No data feed yet** (not configured in loops). Snapchat traffic historically lands in GA4 "Unassigned" — custom channel group rule required (see `utm-convention.md`) |
 | Influencers / creators | various | `utm_medium=creator`; own GA4 channel |
 | MMP | Singular | app install + in-app attribution |
 | Web analytics | GA4 | |

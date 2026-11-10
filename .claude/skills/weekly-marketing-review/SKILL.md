@@ -17,7 +17,7 @@ The standing full-funnel pulse — nothing drifts unnoticed. This loop is the **
 
 ## Loop body
 
-1. **Pull top-line funnel metrics** for last closed week vs the week before and vs plan (`context/manafa-marketing.md` targets): sessions, registrations, deposits, investments (backend numbers), blended CAC if spend exports are fresh.
+1. **Pull top-line funnel metrics** for last closed week vs the week before and vs plan (`context/manafa-marketing.md` targets): sessions, registrations, deposits, investments (interim ledger = GA4 key events until BigQuery; see `CLAUDE.md`), blended CAC if the Google Ads export is fresh.
 2. **Fold in today's loop outputs** (read their state files and this week's reports): tracking-QA verdict, attribution readout headline, ads-check calls. If tracking-QA escalated, the review leads with that — every other number gets a "measurement suspect" badge.
 3. **Flag the biggest mover per stage** — best and worst — with the trend-vs-noise check: a mover is a flag only if it's outside normal weekly variance (same computation discipline as the anomaly loop) or part of a 3-week run.
 4. **Tie every flag to an owner or loop**: tracking → tracking-qa issue id; funnel step → funnel-health; paid → the ads-check call; demand/brand → human owner.

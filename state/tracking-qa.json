@@ -8,12 +8,12 @@
     "backend_weekday_bands": null
   },
   "source_status_last_run": {
-    "backend_csv": "unreachable — no files in data/exports/backend/",
-    "ga4": "unverified — GA4_SERVICE_ACCOUNT_JSON / GA4_PROPERTY_ID not configured",
-    "singular": "unverified — SINGULAR_API_KEY not configured",
-    "google-ads": "stale — no export",
-    "meta": "stale — no export",
-    "tiktok": "stale — no export",
-    "snapchat": "stale — no export"
+    "ga4_csv": "awaiting first drop in data/exports/ga4/ (interim ledger)",
+    "singular_csv": "awaiting first drop in data/exports/singular/",
+    "google_ads_csv": "awaiting first drop in data/exports/google-ads/",
+    "meta": "not configured",
+    "tiktok": "not configured",
+    "snapchat": "not configured",
+    "backend_bigquery": "planned — not integrated yet"
   }
 }

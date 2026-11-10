@@ -7,6 +7,8 @@ description: "Daily anomaly watch on Manafa's key metrics (sessions, registratio
 
 Catch anything breaking — good or bad — before it runs for days. Read `CLAUDE.md` and `context/` first; state in `state/analytics-anomaly.json` + `.log`.
 
+> **Interim data (until BigQuery):** daily metrics come from the GA4 CSV (`data/exports/ga4/` — sessions + key events, the interim ledger) and Singular CSV (installs); spend only from a fresh Google Ads CSV. Daily cadence only makes sense once exports arrive daily or via API/BigQuery — on weekly drops, this loop runs weekly on the freshest data and says which days it covered.
+
 | Part | Spec |
 |---|---|
 | **Check cadence** | Daily (morning, Riyadh time) |

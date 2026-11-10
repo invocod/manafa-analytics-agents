@@ -7,6 +7,8 @@ description: "Weekly paid-media review across Google Ads, Meta, TikTok, Snapchat
 
 Make the weekly account review end in one decision per account. Read `CLAUDE.md`, `context/manafa-marketing.md` (targets, floors, spend cap) first; state in `state/weekly-ads-check.json` + `.log`.
 
+> **Interim data (until BigQuery):** the only active account is **Google Ads** (`data/exports/google-ads/`); "backend-verified conversions" means the GA4 interim ledger (`data/exports/ga4/`). Meta/TikTok/Snapchat appear in the report only as "not configured". Landing-page and creative checks run only on what the CSV columns support.
+
 | Part | Spec |
 |---|---|
 | **Check cadence** | Weekly (Monday) |
