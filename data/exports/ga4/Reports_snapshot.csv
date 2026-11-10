@@ -1,0 +1,2564 @@
+# ----------------------------------------
+# Reports snapshot
+# Account: ManafaFinancing
+# Property: Manafa Mobile & Web Apps
+# ----------------------------------------
+#  
+# Start date: 20261020
+# End date: 20261110
+Active users,New users,Average engagement time per active user,Event count
+49359,20890,174.53143297068416,1885966
+
+#  
+# Start date: 20261020
+# End date: 20261110
+Page title and screen class,Views,Active users,Event count,Bounce rate
+FlutterViewController,357999,24854,1086319,0.5887029098909075
+MainActivity,105500,7752,249530,0.5813632441760138
+منافع - تسجيل الدخول - منافع للتمويل,17982,2764,54640,0.061175910497500596
+منافع,15340,2759,29680,0.023255813953488372
+منصة الدين,15014,1375,19115,0.03789042498719918
+منافع - حلول وخدمات التمويل الجماعي بالدين,13512,3574,30431,0.06319962686567164
+منصة الدين - الرئيسة,9208,1057,11580,0.0643491124260355
+PermissionsActivity,7528,2380,8287,0.4503216583273767
+UIAlertController,7384,2234,15383,0.3220640569395018
+منصة الدين - الاستثمارات,6710,797,9364,0.05410628019323672
+منصة الدين - الصفحة الرئيسية,6246,525,6866,0.01749271137026239
+منافع - تسجيل حساب طالب التمويل - منافع للتمويل,5637,1198,21214,0.030232558139534883
+منافع - شريكك للنمو,5352,1791,12476,0.05894519131334023
+المحفظة,3255,518,3852,0.03523489932885906
+منصة الدين - طلبات التمويل,3070,182,3146,0.011869436201780416
+ManafaFlowSheetViewController,2815,1104,8269,0.29835265405735206
+منافع - تسجيل حساب طالب - منافع للتمويل,2630,594,10360,0.0180623973727422
+منصة الدين - ملف المنشأة,2577,283,2689,0.0024271844660194173
+ICMRootViewController,2299,1113,2639,0.21944632005401757
+منافع - أكمل عملية الدفع,2122,998,4731,0.111328125
+HelpCenterContainerViewController,2007,635,3961,0.2866666666666667
+منصة الدين - العمليات,2000,177,2079,0.014970059880239521
+HomescreenViewController,1920,742,3813,0.15761448349307774
+NotificationOpenedActivity,1807,943,1818,0.4731051344743276
+منافع - تغيير كلمة المرور - منافع للتمويل,1722,459,5367,0.016736401673640166
+منافع - تواصل معنا - منافع للتمويل,1665,617,2699,0.0392156862745098
+منافع - شروط الاستخدام - منافع للتمويل,1595,221,2192,0.07423580786026202
+ConversationViewController,1541,488,3785,0.2276330690826727
+IntercomRootActivity,1522,431,1784,0.34234234234234234
+الأداء,1493,353,1591,0.028277634961439587
+منافع - الموردين,1223,376,2957,0.03970223325062035
+منافع - إعادة تعيين كلمة المرور - منافع للتمويل,1220,671,4029,0.010159651669085631
+منصة الدين - الإعدادات,1200,137,1271,0.013605442176870748
+HelpCenterArticleContainerViewController,1190,402,2396,0.2702702702702703
+Debt Platform,1151,111,1275,0.01639344262295082
+منافع - الوظائف,1142,347,1834,0.03664921465968586
+Manafa,1063,176,1939,0.024054982817869417
+الإعدادات,1039,238,1159,0.044534412955465584
+منافع - منصة تقنية مالية للتمويل الجماعي بالدين,989,302,1367,0.045845272206303724
+"منافع - فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",924,267,1845,0.054982817869415807
+Debt platform – Home,908,90,1106,0.04854368932038835
+منصة الدين - التمويلات,870,173,897,0.00909090909090909
+منافع - سياسة الخصوصية,868,374,1811,0.033766233766233764
+UIActivityViewController,814,313,1447,0.2883116883116883
+منافع - أسئلة شائعة عن التمويل الجماعي بالدين للشركات,803,247,1091,0.034722222222222224
+اكتشف,795,269,935,0.03225806451612903
+SFSafariViewController,760,474,1706,0.33574007220216606
+منافع - المدونة - منافع للتمويل,750,86,946,0.0380952380952381
+منافع - الرواتب,729,241,1428,0.051587301587301584
+منافع - مقترض,717,183,1096,0.014778325123152709
+Manafa - Login - Manafa Financing,701,103,2338,0.03508771929824561
+Debt Platform - Homepage,624,138,832,0.04285714285714286
+منافع - تمويل فواتير للشركات يصل إلى 7.5 مليون ريال,564,161,915,0.027472527472527472
+Debt platform – Investments,545,54,754,0.0625
+منافع - حاسبة التمويل,544,179,1010,0.02717391304347826
+منافع - سلاسل الإمداد,541,160,904,0.03508771929824561
+Debt platform,485,55,892,0
+Manafa | Login - Manafa Financing,475,116,1407,0.010256410256410256
+Manafa | Crowdfunding Solutions and Services for Debt,439,235,1092,0.02768166089965398
+منافع - الجهات التمويلية,434,130,521,0.04195804195804196
+منافع - منافع في أرقام,433,102,577,0.03676470588235294
+منافع - أمر الشراء,432,132,892,0.02158273381294964
+التقارير,422,12,516,0
+منافع - للتمويل,412,79,888,0.06140350877192982
+ManafaFlowSheetActivity,411,175,627,0.5190476190476191
+منافع - بنك المنشآت الصغيرة والمتوسطة,410,133,1004,0.028985507246376812
+منصة الدين - شركة شبكات المستقبل للاتصالات,409,71,544,0.09722222222222222
+منصة الدين - الخدمات,406,85,410,0.009009009009009009
+InboxViewController,380,164,732,0.1746031746031746
+Debt Platform - Financing requests,373,41,387,0
+IntercomArticleActivity,369,125,387,0.4382716049382716
+Manafa - Crowdfunding Solutions and Services for Debt,364,63,558,0.013157894736842105
+منصة الدين - الصفحة الشخصية,349,120,391,0.022900763358778626
+منافع - التمويل العقاري,346,93,576,0.04716981132075472
+منافع - تمويل رأس المال العامل,334,88,505,0.029411764705882353
+منافع - بنك المنشأت الصغيرة والمتوسطة,325,106,773,0.009345794392523364
+منافع - الاستثمار الآلي,296,91,454,0.018867924528301886
+منافع | تسجيل الدخول - منافع للتمويل,287,94,714,0.020833333333333332
+منافع - حلول تمويلية تتوافق مع أسس الشريعة الإسلامية,286,91,524,0.020202020202020204
+Manafa | Register Borrower Account - Manafa Financing,260,92,779,0.02040816326530612
+Debt Platform - Entity Profile,241,44,256,0.016129032258064516
+Wallet,238,39,286,0.022727272727272728
+منافع - تمويل خطابات الضمان للشركات والمشاريع والمنافسات,236,71,456,0.05263157894736842
+منافع | حلول وخدمات التمويل الجماعي بالدين,219,125,567,0.022388059701492536
+UIDocumentPickerViewController,217,95,456,0.2564102564102564
+منصة الدين - طلب جديد,216,63,228,0
+منافع - أرامكو تليد,213,64,315,0.08333333333333333
+منافع - الأسعار,208,68,314,0.05555555555555555
+SLComposeViewController,205,128,407,0.26174496644295303
+منصة الدين - حساب جديد,205,59,226,0.03125
+منافع - المشترين,204,53,260,0.058823529411764705
+Performance,198,29,221,0.058823529411764705
+منصة الدين - شركة تكوين المتطورة للصناعات مساهمة عامة,190,30,263,0.1
+منافع | تسجيل حساب طالب التمويل - منافع للتمويل,173,48,676,0
+منصة الدين - شركة واعدة للاستثمار,173,30,239,0.06666666666666667
+منصة الدين - المساعدة,169,30,176,0
+منصة الدين - الاستثمار الآلي,166,45,296,0.1111111111111111
+منافع - فرص استثمارية بتصنيف ائتماني دقيق,161,40,252,0.022727272727272728
+منافع - تسجيل حساب شخصية اعتبارية - منافع للتمويل,153,37,390,0.075
+Manafa | تواصل معنا - منافع للتمويل,152,63,268,0.057971014492753624
+منافع - النفقات الرأسمالية,138,40,194,0.021739130434782608
+منصة الدين - شركة فوكال للاتصالات و تقنية المعلومات,131,22,183,0.045454545454545456
+PHPickerViewController,128,68,251,0.2
+Debt Platform - Processes,126,23,137,0
+منافع - الأداء,125,43,168,0.0625
+Manafa | A Fintech Platform for Debt Crowdfunding,117,38,150,0.06382978723404255
+Debt Platform - Financing,116,26,119,0
+UISearchController,115,47,199,0.32
+Discover,110,14,142,0
+منافع - دعوة صديق,110,35,229,0.05
+منافع - الأهداف الذكية,101,25,123,0.06896551724137931
+منافع | تغيير كلمة المرور - منافع للتمويل,100,30,311,0.03333333333333333
+منافع | تسجيل حساب طالب - منافع للتمويل,97,32,350,0
+"Manafa | فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",95,26,153,0
+Manafa | Supply Chain,93,39,151,0.024390243902439025
+منصة الدين - شركة عبدالمحسن التميمي للمقاولات,93,11,111,0.09090909090909091
+Settings,92,24,106,0
+إنشاء حساب جديد,89,50,143,0.04
+Manafa | FAQs on Debt Crowdfunding for Companies,88,18,142,0.047619047619047616
+Manafa | Register Finaning Student Account - Manafa Financing,88,26,312,0
+Manafa | Privacy policy,85,46,156,0.09615384615384616
+منافع | إعادة تعيين كلمة المرور - منافع للتمويل,85,47,250,0.0425531914893617
+ErrorViewController,84,70,172,0.08333333333333333
+Manafa - Blog - Manafa Financing,83,5,86,0
+منصة الدين - قائمة التواصل,75,31,81,0.03125
+SheetConversationHeaderViewController,72,38,145,0.23076923076923078
+Manafa | Blog - Manafa Financing,70,5,85,0
+منصة الدين - شركة مزن إيه آي,69,13,89,0
+PlayCoreDialogWrapperActivity,68,68,68,0.6176470588235294
+منصة الدين - مؤسسة وادي فاطمة لتجارة الأغذية,68,15,91,0.0625
+منافع - برنامج الولاء,65,19,88,0.045454545454545456
+منافع - منتجات الدين - منافع للتمويل,65,21,103,0
+منافع - مركز المساعدة,64,16,72,0.0625
+Debt platform – Settings,62,8,67,0
+Manafa | Funders,62,18,72,0.05
+منصة الدين - شركة الحلول السعودية الذكيه,62,8,85,0.1
+منصة الدين - شركة فريق الخبراء وشريكهم للاستشارات المهنية,60,8,83,0
+TOCropViewController,59,36,116,0.23255813953488372
+منافع - منافع وأرامكو تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,58,18,71,0
+Manafa - Register Borrower Account - Manafa Financing,57,7,240,0
+منصة الدين - شركة فولت للنقل والتخزين,57,7,82,0
+منافع | المدونة - منافع للتمويل,56,5,57,0
+منافع - منافع وأرامكو تليد وبنك المنشآت الصغيرة والمتوسطة يطلقون حلولاً تمويلية رقمية,53,17,66,0
+Manafa | Suppliers,52,22,101,0
+Manafa | Change Password - Manafa Financing,51,15,142,0
+منافع - دليلك إلى التصنيف الائتماني,48,16,69,0.0625
+Manafa | Invoice Financing for Companies Up to 7.5 Million SAR,44,15,61,0
+Manafa | Careers,43,19,67,0.05
+MediaPreviewerViewController,43,21,46,0.10526315789473684
+منافع - خصّص تجربتك مع منافع,43,14,108,0
+منافع - منافع و«الشركة السعودية للكهرباء» تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,43,14,52,0
+منصة الدين - شركة نوكس المحدودة,41,6,44,0.16666666666666666
+QLItemPresenterViewController,40,20,79,0.1111111111111111
+منصة الدين - شركة روبيكس,40,12,50,0
+Manafa - Terms of Use - Manafa Financing,39,5,40,0
+Manafa | Buyers,39,14,51,0
+Manafa - Manafa in Numbers,36,4,44,0
+Manafa - تواصل معنا - منافع للتمويل,36,9,46,0
+منافع - نقترح لك هذي الاستراتيجة بناء على إجابتك,36,10,65,0
+IntercomPreviewActivity,35,19,49,0.2727272727272727
+LicenseActivity,35,14,42,0.7142857142857143
+منافع - تجهيز النتيجة,35,8,48,0
+منافع | الموردين,35,19,95,0
+منصة الدين - شركة لدائن الرياض للبلاستيك,35,6,40,0
+Manafa | Terms of Use - Manafa Financing,33,10,48,0.09090909090909091
+منافع - سجل رقم جوالك عشان نحفظ استراتجيتك,33,6,70,0
+Manafa | borrower,31,9,48,0
+Manafa - Complete your payment,30,16,70,0.125
+Manafa | For Financing,30,8,111,0
+منافع | منصة تقنية مالية للتمويل الجماعي بالدين,30,10,35,0
+Manafa - Your Growth Partner,29,22,73,0.08
+منافع | شروط الاستخدام - منافع للتمويل,29,10,96,0
+منصة الدين - شركة مدارات الوسط للمقاولات,29,8,39,0
+منصة الدين - شركة مسكن صرح,29,8,41,0.125
+منافع - ما هو التمويل الجماعي بالدين؟ ولماذا منافع؟,28,9,47,0
+منصة الدين - شركة اماز للخدمات التسويقية,28,6,36,0
+Debt Platform - Personal Page,27,13,33,0
+Manafa | Manafa in Numbers,27,12,41,0
+منافع - تمويل الضمان الإيجاري,27,7,41,0
+منافع | للتمويل,27,9,54,0.1
+منصة الدين - شركة أمن ووفاء للحماية,27,8,35,0
+منافع - مدة الاستثمار,26,9,55,0
+GIFPickerViewController,25,14,50,0.15384615384615385
+UCropActivity,25,20,25,0.5217391304347826
+منافع - أدخل رمز التحقق,25,4,74,0
+منافع | أسئلة شائعة عن التمويل الجماعي بالدين للشركات,25,8,27,0
+منصة الدين - شركة الهيثم للتعدين,25,5,33,0.2
+منافع - دور منافع في القطاع العقاري,24,10,37,0
+منصة الدين - شركة الاسس الاولى للمقاولات,24,7,30,0.25
+منافع - أي عبارة تعكس شخصيتك؟,23,9,45,0
+منافع | الجهات التمويلية,23,9,37,0.1111111111111111
+منافع | مقترض,23,9,38,0
+منصة الدين - شركة مرامر للمقاولات شركة مساهمة سعودية مقفلة,23,5,25,0.16666666666666666
+منافع - سجل رقم جوالك عشان نحفظ مكافآتك,22,4,63,0
+منصة الدين - شركة افلاك الحلول للاتصالات وتقنية المعلومات,22,4,32,0
+Manafa - Change Password - Manafa Financing,21,6,80,0.16666666666666666
+منافع - وسع محفظتك الاستثمارية مع منافع,21,5,37,0
+منصة الدين - تعديل التذكرة,21,10,23,0.1
+Manafa | Salaries,20,5,32,0
+منصة الدين - شركة عبدالعزيز احمد بن حميد للتطوير والاستثمار العقاري,20,4,21,0.25
+IntercomArticleSearchActivity,19,15,21,0.375
+Manafa - Buyers,19,6,24,0
+Manafa | Funding Calculator,19,6,23,0
+منصة الدين - شركة الاعمال التطويريه المحدودة,19,5,22,0
+Debt Platform - Explore,18,7,18,0
+Debt platform – شركة واعدة للاستثمار,18,4,28,0
+SHSheetRemoteCustomViewController,18,11,36,0.25
+منافع - الاستثمار في منافع لايتطلب خبرة,18,6,30,0
+منافع - مين منافع؟,18,6,30,0
+منافع | تواصل معنا - منافع للتمويل,18,10,24,0.1
+منصة الدين - شركة السدرة العقارية,18,2,26,0
+Manafa - A Fintech Platform for Debt Crowdfunding,17,7,18,0
+منافع - نصيحة من خبراء الاستثمار,17,5,33,0
+منافع | الرواتب,17,8,29,0
+منافع | الوظائف,17,10,31,0
+منصة الدين - شركة ايدي ورك المحدودة,17,5,21,0
+Manafa | Auto Invest,16,7,24,0
+financingTitle - checkoutPayment.title,16,7,34,0.14285714285714285
+منافع - قاعدة 50/30/20,16,6,25,0
+منافع - كم دخلك الشهري؟,16,6,33,0
+منصة الدين - مؤسسة نواهض الانشاءات للمقاولات,16,4,22,0
+Debt platform – مؤسسة نواهض الانشاءات للمقاولات,15,4,21,0
+Manafa | Prices,15,6,18,0
+"منافع | فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",15,7,33,0
+Manafa - Funders,14,6,17,0
+Manafa - Supply Chain,14,5,17,0
+"Manafa - فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",14,4,20,0
+Manafa | Purchase Order,14,6,25,0
+منافع - إيضاحات القوائم المالية,14,7,39,0
+Manafa - Auto Invest,13,1,17,0
+Manafa | Analytics,13,5,15,0
+منافع - تحديث المنتجات • الربع الثالث 2026,13,5,25,0
+منافع - فرص استثمارية بمدة تتراوح من 3 إلى 12 شهر,13,5,27,0
+منافع - كم تستثمر شهرياً؟,13,5,29,0
+منافع - ماهو منتج تمويل أوامر الشراء؟,13,5,19,0
+منافع | تمويل رأس المال العامل,13,3,18,0
+Manafa - FAQs on Debt Crowdfunding for Companies,12,4,12,0
+Manafa - Reset Password - Manafa Financing,12,6,36,0
+Manafa | Real estate Financing,12,5,13,0
+Manafa | Reset Password - Manafa Financing,12,7,34,0
+financingTitle,12,11,29,0
+منافع | التمويل العقاري,12,4,25,0
+منافع | تمويل فواتير للشركات يصل إلى 7.5 مليون ريال,12,4,26,0
+منافع | حلول تمويلية تتوافق مع أسس الشريعة الإسلامية,12,3,21,0
+Manafa - Invoice Financing for Companies Up to 7.5 Million SAR,11,4,19,0
+Manafa - Purchase Order,11,2,11,0
+Manafa - Salaries,11,1,16,0
+Manafa | Capex,11,5,13,0
+منافع | سياسة الخصوصية,11,10,21,0.2
+منصة الدين - شركة ساتيك,11,4,16,0
+Manafa | تمويل خطابات الضمان للشركات والمشاريع والمنافسات,10,5,13,0
+PUPickerUnavailableViewController,10,8,10,0
+financingTitle - indexPageTitle,10,6,14,0.5714285714285714
+منافع - رأي المراجع الخارجي,10,5,22,0
+منافع | أرامكو تليد,10,4,11,0
+منافع | الاستثمار الآلي,10,7,18,0
+منافع | حاسبة التمويل,10,3,10,0
+CAMImagePickerCameraViewController,9,7,17,0.16666666666666666
+Manafa - Careers,9,5,15,0
+Manafa - Register Finaning Student Account - Manafa Financing,9,2,33,0
+منافع - القوائم المالية، لغة المنشآت الموحدة!,9,4,15,0
+منافع | المشترين,9,3,9,0
+منصة الدين - شركة القمه الفضائية المحدودة,9,2,14,0
+منصة الدين - شركة تنمية الإعمار التجارية,9,2,12,0
+AFUIAppCreditCardViewController,8,1,12,0.5
+Manafa | Smart Goals,8,3,10,0.25
+منافع - تقرير حول قطاع الرعاية الصحية,8,2,15,0
+منافع | شريكك للنمو,8,2,8,0
+منافع | منتجات الدين - منافع للتمويل,8,2,8,0
+منصة الدين - شركة اتحاد المستشارين للهندسة والبيئة,8,4,10,0
+منصة الدين - شركة الساهر الامني للحراسات الامنية شركة شخص واحد,8,2,10,0
+Debt Platform - New request,7,4,8,0
+Debt platform – شركة قسمة السعودية للصيانة شركة شخص واحد,7,2,9,0
+Manafa | Manafa and Aramco Announce Collaboration to Launch Supply Chain Finance Program,7,3,7,0
+Manafa | Working Capital Financing,7,3,7,0
+منافع | سلاسل الإمداد,7,2,7,0
+منصة الدين - شركة اسمنت الجوف,7,2,11,0
+Create a new account,6,3,9,0
+Debt Platform - New account,6,3,7,0.3333333333333333
+Debt platform – شركة الاسس الاولى للمقاولات,6,2,8,0
+Debt platform – شركة روبيكس,6,1,6,0
+Manafa - Analytics,6,2,6,0
+Manafa - Aramco Taleed,6,3,8,0
+Manafa | Manafa and Saudi Electricity Company Announce Collaboration to Launch Supply Chain Finance Program,6,2,6,0
+"Manafa | Manafa, Aramco Taleed, and SME Bank launch Digital Funding Solutions",6,2,6,0
+Manafa | SME Bank,6,2,6,0
+UIActivityContentViewController,6,4,10,0.5
+منافع - ما هي قائمة المركز المالي؟,6,3,15,0
+منافع | الأداء,6,2,6,0
+منافع | النفقات الرأسمالية,6,2,6,0
+منافع | منافع وأرامكو تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,6,1,6,0
+منصة الدين - شركة الشرهان للاستثمار,6,2,7,0
+منصة الدين - شركة حلول تلاد المتكاملة,6,1,6,0
+منصة الدين - شركة ضيف الله العتيبى للمقاولات,6,2,8,0
+منصة الدين - شركة عبدالله سعود محمد الجبر للاستشارات المهنية,6,2,10,0
+منصة الدين - شركة فيدزبوكس الغذائية,6,2,9,0
+منصة الدين - مدارس مواهب الوطن الأهلية,6,2,8,0
+منصة الديون – الاستثمارات,6,3,7,0
+ChromeCustomTabsActivity,5,5,9,0.3333333333333333
+ChromeCustomTabsActivitySingleInstance,5,5,8,0.3333333333333333
+Debt platform – Contact list,5,2,6,0
+IntercomNoteActivity,5,5,12,0.2857142857142857
+IntercomPostActivity,5,5,10,0.16666666666666666
+IntercomSurveyActivity,5,5,11,0.3333333333333333
+LightBoxActivity,5,5,10,0.3333333333333333
+Manafa - Funding Calculator,5,2,7,0
+Manafa - Investment Opportunities with Accurate Credit Ratings,5,2,5,0
+Manafa - Prices,5,2,13,0
+TrustedWebActivity,5,5,8,0.3333333333333333
+TrustedWebActivitySingleInstance,5,5,11,0.3333333333333333
+UIViewController,5,5,5,0.25
+WebViewActivity,5,5,10,0.3333333333333333
+إجمالي الاستثمارات,5,1,5,0
+منافع | منافع في أرقام,5,5,15,0
+منافع | منافع و«الشركة السعودية للكهرباء» تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,5,2,5,0
+منصة الدين - شركة مساندة الإمداد المحدودة شركة شخص واحد,5,2,7,0
+Debt platform – شركة الساهر الامني للحراسات الامنية شركة شخص واحد,4,1,4,0
+Debt platform – شركة مدارات الوسط للمقاولات,4,1,4,0
+ICMContentModalViewController,4,4,8,0.25
+InAppBrowserActivity,4,4,6,0.4
+IntercomBubbleActivity,4,4,6,0.25
+Manafa - Smart Goals,4,1,6,0
+Manafa | Aramco Taleed,4,4,7,0.25
+Manafa | Investment Opportunities with Accurate Credit Ratings,4,2,5,0
+financingTitle - benefitsOfFinancing,4,1,6,0
+محفظة,4,3,5,0
+منافع - كيف أحدد الفرصة الاستثمارية المناسبة لي؟,4,2,5,0
+منافع | تحديث المنتجات • الربع الثالث 2026,4,2,11,0.5
+منصة الدين - شركة عبدالرحمن علي عبدالرحمن التركي للتجارة والمقاولات,4,2,5,0.5
+منصة الدين - شركة كوامل للتطوير العقاري,4,2,5,0
+منصة الديون – الصفحة الرئيسية,4,4,7,0
+CKSMSComposeController,3,3,6,1
+Manafa - borrower,3,1,7,0
+PlatformAlertController,3,2,6,0.5
+financingTitle - loginPageTitle,3,1,11,0
+بيب,3,1,3,0
+منافع - Personalise your Manafa experience,3,1,5,0
+منافع - دور منافع في دعم قطاع الإعلام,3,1,4,0
+منافع - مستخدم,3,1,6,0
+منافع - هديتك جاهزة,3,1,4,0
+منافع | الأهداف الذكية,3,1,3,0
+منافع | بنك المنشآت الصغيرة والمتوسطة,3,1,10,0
+منافع | بنك المنشأت الصغيرة والمتوسطة,3,1,3,0
+منصة الديون,3,1,3,0
+منصة الديون – الإعدادات,3,2,4,0
+Al-Din Platform - Settings,2,1,3,0
+Benefits,2,1,5,0
+Benefits - Login - Benefits for Finance,2,2,6,0
+Debt Platform - Help,2,1,2,0
+Debt platform – Edit ticket,2,1,2,0
+Debt platform – شركة شبكات المستقبل للاتصالات,2,1,2,0
+ImagePreviewerViewController,2,1,4,0
+Manafa - Capex,2,1,3,0
+Manafa - Help Center,2,1,2,0
+Manafa - Manafa and Saudi Electricity Company Announce Collaboration to Launch Supply Chain Finance Program,2,1,3,0
+Manafa - Rental Guarantee Financing,2,1,2,0
+Manafa | Help Center,2,1,3,0
+Manafa | Invite Friends,2,1,2,0
+Manafa | Loyalty Program,2,1,4,0
+Manafa | SMEs,2,2,8,0
+Total investments,2,1,3,0
+UIReferenceLibraryViewController,2,2,4,0
+financing,2,2,4,0
+أداء,2,1,3,0
+منافع - الإستثمـــارات في قطـــاع الصنـــاعة,2,1,3,0
+منافع - تمويل خطابات الضمان,2,2,4,0.5
+منافع - كيفية تعليق حسابك في منافع,2,1,3,0
+منافع - هل تمتلك الشركات كامل نقدها؟ | قائمة التدفقات النقدية,2,1,3,0
+منافع | أمر الشراء,2,3,3,0
+AddressEditActivity,1,1,2,1
+Benefits - Password Reset - Benefits for Finance,1,1,7,0
+ICMRecentConversationsViewController,1,1,1,0
+IntercomSheetActivity,1,1,1,0
+LTUITranslationViewController,1,1,3,0
+Manafa - Privacy policy,1,1,3,1
+Manafa - Suppliers,1,1,1,0
+Manafa | Debt Products - Manafa Financing,1,1,1,0
+WTMainPopoverViewController,1,1,2,0
+financingTitle - privacyPolicyText,1,1,3,1
+financingTitle | privacyPolicyText,1,1,1,0
+financingTitle | تواصل معنا - منافع للتمويل,1,1,1,1
+lames يقول …,1,1,3,0
+جحيم,1,1,1,0
+ديل,1,1,1,0
+منافع - تحديث المنتجات • الربع الثاني 2026,1,1,1,0
+منافع | الأسعار,1,1,1,0
+منافع | مركز المساعدة,1,2,3,0
+Benefits - Debt Crowdfunding Solutions and Services,0,1,1,0
+Debt Platform - الصفحة الرئيسية,0,1,1,0
+Manafa - Personalise your Manafa experience,0,1,2,0
+Manafa | Shariah-Compliant Financing Solutions,0,1,1,0
+Manafa | Your Growth Partner,0,1,1,0
+financingTitle | forgotPasswordPageTitle,0,1,1,0
+financingTitle | indexPageTitle,0,3,3,0
+financingTitle | loginPageTitle,0,30,30,0
+financingTitle | registerEntrepreneurPageTitle,0,19,19,0
+إعدادات,0,1,1,0
+منافع | Crowdfunding Solutions and Services for Debt,0,1,1,0
+منافع يقول …,0,1,1,0
+💤 منصة الدين - الصفحة الرئيسية,0,1,2,0
+
+#  
+# Start date: 20261020
+# End date: 20261110
+First user source / medium,Active users
+(direct) / (none),35995
+google / cpc,4207
+google-play / organic,3511
+google / organic,2971
+LinkedIn / Social,220
+chatgpt.com / ai-assistant,174
+bing / organic,155
+jbyyfg / (not set),146
+linkedin / paid_social,71
+sama.gov.sa / referral,69
+article / referral,57
+twitter / paid_social,53
+send_message_to_scf_borrower / (not set),48
+(data not available),46
+tdf_program / referral,45
+x / (not set),33
+Apple / search,31
+manafacapital.sa / referral,27
+article / (not set),25
+manafaco.zoom.us / referral,21
+email / email,20
+linkedin.com / referral,15
+t.co / referral,11
+documents / (not set),10
+facebook.com / referral,8
+mail.google.com / referral,8
+yahoo / organic,8
+app.zoom.us / referral,7
+article / organic,7
+l.wl.co / referral,6
+mail.yahoo.com / referral,6
+snapchat / paid_social,6
+127.0.0.1:8684 / referral,5
+Twitter / cpc,5
+lm.facebook.com / referral,5
+127.0.0.1:8232 / referral,4
+127.0.0.1:8275 / referral,4
+127.0.0.1:8427 / referral,4
+127.0.0.1:8528 / referral,4
+127.0.0.1:8615 / referral,4
+127.0.0.1:8734 / referral,4
+127.0.0.1:8895 / referral,4
+outlook.live.com / referral,4
+teams.public.onecdn.static.microsoft / referral,4
+waed.com / referral,4
+127.0.0.1:8015 / referral,3
+127.0.0.1:8052 / referral,3
+127.0.0.1:8068 / referral,3
+127.0.0.1:8094 / referral,3
+127.0.0.1:8108 / referral,3
+127.0.0.1:8133 / referral,3
+127.0.0.1:8153 / referral,3
+127.0.0.1:8176 / referral,3
+127.0.0.1:8191 / referral,3
+127.0.0.1:8215 / referral,3
+127.0.0.1:8219 / referral,3
+127.0.0.1:8241 / referral,3
+127.0.0.1:8257 / referral,3
+127.0.0.1:8290 / referral,3
+127.0.0.1:8297 / referral,3
+127.0.0.1:8301 / referral,3
+127.0.0.1:8339 / referral,3
+127.0.0.1:8387 / referral,3
+127.0.0.1:8402 / referral,3
+127.0.0.1:8443 / referral,3
+127.0.0.1:8453 / referral,3
+127.0.0.1:8500 / referral,3
+127.0.0.1:8517 / referral,3
+127.0.0.1:8526 / referral,3
+127.0.0.1:8531 / referral,3
+127.0.0.1:8611 / referral,3
+127.0.0.1:8628 / referral,3
+127.0.0.1:8645 / referral,3
+127.0.0.1:8663 / referral,3
+127.0.0.1:8669 / referral,3
+127.0.0.1:8701 / referral,3
+127.0.0.1:8719 / referral,3
+127.0.0.1:8726 / referral,3
+127.0.0.1:8763 / referral,3
+127.0.0.1:8778 / referral,3
+127.0.0.1:8787 / referral,3
+127.0.0.1:8789 / referral,3
+127.0.0.1:8790 / referral,3
+127.0.0.1:8806 / referral,3
+127.0.0.1:8824 / referral,3
+127.0.0.1:8839 / referral,3
+127.0.0.1:8862 / referral,3
+127.0.0.1:8877 / referral,3
+127.0.0.1:8878 / referral,3
+127.0.0.1:8880 / referral,3
+127.0.0.1:8916 / referral,3
+127.0.0.1:8930 / referral,3
+127.0.0.1:8939 / referral,3
+127.0.0.1:8964 / referral,3
+127.0.0.1:8972 / referral,3
+begvdyf / (not set),3
+gemini.google.com / ai-assistant,3
+manafa.co / referral,3
+stv.vc / referral,3
+wallet / (not set),3
+127.0.0.1:54880 / referral,2
+127.0.0.1:58405 / referral,2
+127.0.0.1:8000 / referral,2
+127.0.0.1:8003 / referral,2
+127.0.0.1:8005 / referral,2
+127.0.0.1:8011 / referral,2
+127.0.0.1:8012 / referral,2
+127.0.0.1:8017 / referral,2
+127.0.0.1:8028 / referral,2
+127.0.0.1:8033 / referral,2
+127.0.0.1:8045 / referral,2
+127.0.0.1:8047 / referral,2
+127.0.0.1:8048 / referral,2
+127.0.0.1:8053 / referral,2
+127.0.0.1:8055 / referral,2
+127.0.0.1:8059 / referral,2
+127.0.0.1:8072 / referral,2
+127.0.0.1:8085 / referral,2
+127.0.0.1:8087 / referral,2
+127.0.0.1:8096 / referral,2
+127.0.0.1:8098 / referral,2
+127.0.0.1:8122 / referral,2
+127.0.0.1:8125 / referral,2
+127.0.0.1:8139 / referral,2
+127.0.0.1:8143 / referral,2
+127.0.0.1:8147 / referral,2
+127.0.0.1:8165 / referral,2
+127.0.0.1:8167 / referral,2
+127.0.0.1:8170 / referral,2
+127.0.0.1:8174 / referral,2
+127.0.0.1:8180 / referral,2
+127.0.0.1:8187 / referral,2
+127.0.0.1:8195 / referral,2
+127.0.0.1:8196 / referral,2
+127.0.0.1:8198 / referral,2
+127.0.0.1:8210 / referral,2
+127.0.0.1:8212 / referral,2
+127.0.0.1:8221 / referral,2
+127.0.0.1:8237 / referral,2
+127.0.0.1:8245 / referral,2
+127.0.0.1:8253 / referral,2
+127.0.0.1:8254 / referral,2
+127.0.0.1:8265 / referral,2
+127.0.0.1:8276 / referral,2
+127.0.0.1:8279 / referral,2
+127.0.0.1:8283 / referral,2
+127.0.0.1:8286 / referral,2
+127.0.0.1:8288 / referral,2
+127.0.0.1:8293 / referral,2
+127.0.0.1:8299 / referral,2
+127.0.0.1:8305 / referral,2
+127.0.0.1:8328 / referral,2
+127.0.0.1:8331 / referral,2
+127.0.0.1:8340 / referral,2
+127.0.0.1:8341 / referral,2
+127.0.0.1:8363 / referral,2
+127.0.0.1:8366 / referral,2
+127.0.0.1:8374 / referral,2
+127.0.0.1:8381 / referral,2
+127.0.0.1:8384 / referral,2
+127.0.0.1:8388 / referral,2
+127.0.0.1:8390 / referral,2
+127.0.0.1:8397 / referral,2
+127.0.0.1:8405 / referral,2
+127.0.0.1:8422 / referral,2
+127.0.0.1:8432 / referral,2
+127.0.0.1:8441 / referral,2
+127.0.0.1:8450 / referral,2
+127.0.0.1:8465 / referral,2
+127.0.0.1:8466 / referral,2
+127.0.0.1:8472 / referral,2
+127.0.0.1:8473 / referral,2
+127.0.0.1:8477 / referral,2
+127.0.0.1:8479 / referral,2
+127.0.0.1:8484 / referral,2
+127.0.0.1:8486 / referral,2
+127.0.0.1:8496 / referral,2
+127.0.0.1:8506 / referral,2
+127.0.0.1:8521 / referral,2
+127.0.0.1:8534 / referral,2
+127.0.0.1:8535 / referral,2
+127.0.0.1:8536 / referral,2
+127.0.0.1:8549 / referral,2
+127.0.0.1:8550 / referral,2
+127.0.0.1:8552 / referral,2
+127.0.0.1:8554 / referral,2
+127.0.0.1:8557 / referral,2
+127.0.0.1:8571 / referral,2
+127.0.0.1:8573 / referral,2
+127.0.0.1:8576 / referral,2
+127.0.0.1:8579 / referral,2
+127.0.0.1:8580 / referral,2
+127.0.0.1:8585 / referral,2
+127.0.0.1:8591 / referral,2
+127.0.0.1:8596 / referral,2
+127.0.0.1:8599 / referral,2
+127.0.0.1:8605 / referral,2
+127.0.0.1:8608 / referral,2
+127.0.0.1:8622 / referral,2
+127.0.0.1:8624 / referral,2
+127.0.0.1:8629 / referral,2
+127.0.0.1:8636 / referral,2
+127.0.0.1:8642 / referral,2
+127.0.0.1:8646 / referral,2
+127.0.0.1:8650 / referral,2
+127.0.0.1:8658 / referral,2
+127.0.0.1:8660 / referral,2
+127.0.0.1:8673 / referral,2
+127.0.0.1:8674 / referral,2
+127.0.0.1:8675 / referral,2
+127.0.0.1:8676 / referral,2
+127.0.0.1:8681 / referral,2
+127.0.0.1:8683 / referral,2
+127.0.0.1:8689 / referral,2
+127.0.0.1:8692 / referral,2
+127.0.0.1:8697 / referral,2
+127.0.0.1:8704 / referral,2
+127.0.0.1:8711 / referral,2
+127.0.0.1:8737 / referral,2
+127.0.0.1:8739 / referral,2
+127.0.0.1:8744 / referral,2
+127.0.0.1:8750 / referral,2
+127.0.0.1:8760 / referral,2
+127.0.0.1:8775 / referral,2
+127.0.0.1:8781 / referral,2
+127.0.0.1:8783 / referral,2
+127.0.0.1:8788 / referral,2
+127.0.0.1:8792 / referral,2
+127.0.0.1:8794 / referral,2
+127.0.0.1:8799 / referral,2
+127.0.0.1:8803 / referral,2
+127.0.0.1:8810 / referral,2
+127.0.0.1:8826 / referral,2
+127.0.0.1:8833 / referral,2
+127.0.0.1:8837 / referral,2
+127.0.0.1:8843 / referral,2
+127.0.0.1:8844 / referral,2
+127.0.0.1:8851 / referral,2
+127.0.0.1:8868 / referral,2
+127.0.0.1:8869 / referral,2
+127.0.0.1:8871 / referral,2
+127.0.0.1:8879 / referral,2
+127.0.0.1:8890 / referral,2
+127.0.0.1:8893 / referral,2
+127.0.0.1:8897 / referral,2
+127.0.0.1:8899 / referral,2
+127.0.0.1:8900 / referral,2
+127.0.0.1:8901 / referral,2
+127.0.0.1:8904 / referral,2
+127.0.0.1:8907 / referral,2
+127.0.0.1:8908 / referral,2
+127.0.0.1:8909 / referral,2
+127.0.0.1:8910 / referral,2
+127.0.0.1:8914 / referral,2
+127.0.0.1:8915 / referral,2
+127.0.0.1:8917 / referral,2
+127.0.0.1:8919 / referral,2
+127.0.0.1:8924 / referral,2
+127.0.0.1:8927 / referral,2
+127.0.0.1:8931 / referral,2
+127.0.0.1:8932 / referral,2
+127.0.0.1:8936 / referral,2
+127.0.0.1:8940 / referral,2
+127.0.0.1:8944 / referral,2
+127.0.0.1:8947 / referral,2
+127.0.0.1:8948 / referral,2
+127.0.0.1:8951 / referral,2
+127.0.0.1:8954 / referral,2
+127.0.0.1:8966 / referral,2
+127.0.0.1:8970 / referral,2
+127.0.0.1:8971 / referral,2
+127.0.0.1:8975 / referral,2
+127.0.0.1:8980 / referral,2
+127.0.0.1:8985 / referral,2
+127.0.0.1:8996 / referral,2
+Google ads / CPA,2
+SnapChat / Content,2
+TikTok / CPC,2
+Twitter / CPC,2
+altxsaudi.sa / referral,2
+claude.ai / ai-assistant,2
+ecosia.org / organic,2
+email.bt.com / referral,2
+firebase / dynamic_link,2
+google_ads / paid_social,2
+mail.aol.com / referral,2
+openai / paid,2
+outlook.cloud.microsoft / referral,2
+send_message_to_scf_borrower / (not set),2
+x / (not set),2
+114.114.114.114:9421 / referral,1
+127.0.0.1:50264 / referral,1
+127.0.0.1:50794 / referral,1
+127.0.0.1:50812 / referral,1
+127.0.0.1:51149 / referral,1
+127.0.0.1:51152 / referral,1
+127.0.0.1:51156 / referral,1
+127.0.0.1:51283 / referral,1
+127.0.0.1:51309 / referral,1
+127.0.0.1:51346 / referral,1
+127.0.0.1:51394 / referral,1
+127.0.0.1:51499 / referral,1
+127.0.0.1:51866 / referral,1
+127.0.0.1:51958 / referral,1
+127.0.0.1:51993 / referral,1
+127.0.0.1:52129 / referral,1
+127.0.0.1:52151 / referral,1
+127.0.0.1:52192 / referral,1
+127.0.0.1:52223 / referral,1
+127.0.0.1:52232 / referral,1
+127.0.0.1:52275 / referral,1
+127.0.0.1:52472 / referral,1
+127.0.0.1:52500 / referral,1
+127.0.0.1:52538 / referral,1
+127.0.0.1:52644 / referral,1
+127.0.0.1:52809 / referral,1
+127.0.0.1:53161 / referral,1
+127.0.0.1:53175 / referral,1
+127.0.0.1:53217 / referral,1
+127.0.0.1:53359 / referral,1
+127.0.0.1:53737 / referral,1
+127.0.0.1:53821 / referral,1
+127.0.0.1:53929 / referral,1
+127.0.0.1:54029 / referral,1
+127.0.0.1:54232 / referral,1
+127.0.0.1:54335 / referral,1
+127.0.0.1:54419 / referral,1
+127.0.0.1:54709 / referral,1
+127.0.0.1:54881 / referral,1
+127.0.0.1:54914 / referral,1
+127.0.0.1:55133 / referral,1
+127.0.0.1:55136 / referral,1
+127.0.0.1:55201 / referral,1
+127.0.0.1:55295 / referral,1
+127.0.0.1:55643 / referral,1
+127.0.0.1:55650 / referral,1
+127.0.0.1:55673 / referral,1
+127.0.0.1:55868 / referral,1
+127.0.0.1:56003 / referral,1
+127.0.0.1:56088 / referral,1
+127.0.0.1:56441 / referral,1
+127.0.0.1:56513 / referral,1
+127.0.0.1:56544 / referral,1
+127.0.0.1:56551 / referral,1
+127.0.0.1:56703 / referral,1
+127.0.0.1:56724 / referral,1
+127.0.0.1:56799 / referral,1
+127.0.0.1:56928 / referral,1
+127.0.0.1:56977 / referral,1
+127.0.0.1:57019 / referral,1
+127.0.0.1:57206 / referral,1
+127.0.0.1:57250 / referral,1
+127.0.0.1:57261 / referral,1
+127.0.0.1:57347 / referral,1
+127.0.0.1:57412 / referral,1
+127.0.0.1:57455 / referral,1
+127.0.0.1:57606 / referral,1
+127.0.0.1:57883 / referral,1
+127.0.0.1:58135 / referral,1
+127.0.0.1:58213 / referral,1
+127.0.0.1:58321 / referral,1
+127.0.0.1:58341 / referral,1
+127.0.0.1:58403 / referral,1
+127.0.0.1:58415 / referral,1
+127.0.0.1:58476 / referral,1
+127.0.0.1:58660 / referral,1
+127.0.0.1:58772 / referral,1
+127.0.0.1:58895 / referral,1
+127.0.0.1:58925 / referral,1
+127.0.0.1:58943 / referral,1
+127.0.0.1:59021 / referral,1
+127.0.0.1:59049 / referral,1
+127.0.0.1:59320 / referral,1
+127.0.0.1:59424 / referral,1
+127.0.0.1:59446 / referral,1
+127.0.0.1:59515 / referral,1
+127.0.0.1:59540 / referral,1
+127.0.0.1:59845 / referral,1
+127.0.0.1:59981 / referral,1
+127.0.0.1:8004 / referral,1
+127.0.0.1:8008 / referral,1
+127.0.0.1:8009 / referral,1
+127.0.0.1:8010 / referral,1
+127.0.0.1:8013 / referral,1
+127.0.0.1:8016 / referral,1
+127.0.0.1:8018 / referral,1
+127.0.0.1:8020 / referral,1
+127.0.0.1:8026 / referral,1
+127.0.0.1:8027 / referral,1
+127.0.0.1:8030 / referral,1
+127.0.0.1:8031 / referral,1
+127.0.0.1:8035 / referral,1
+127.0.0.1:8036 / referral,1
+127.0.0.1:8037 / referral,1
+127.0.0.1:8039 / referral,1
+127.0.0.1:8041 / referral,1
+127.0.0.1:8042 / referral,1
+127.0.0.1:8044 / referral,1
+127.0.0.1:8046 / referral,1
+127.0.0.1:8049 / referral,1
+127.0.0.1:8050 / referral,1
+127.0.0.1:8057 / referral,1
+127.0.0.1:8065 / referral,1
+127.0.0.1:8066 / referral,1
+127.0.0.1:8067 / referral,1
+127.0.0.1:8071 / referral,1
+127.0.0.1:8074 / referral,1
+127.0.0.1:8076 / referral,1
+127.0.0.1:8080 / referral,1
+127.0.0.1:8081 / referral,1
+127.0.0.1:8083 / referral,1
+127.0.0.1:8088 / referral,1
+127.0.0.1:8089 / referral,1
+127.0.0.1:8090 / referral,1
+127.0.0.1:8091 / referral,1
+127.0.0.1:8092 / referral,1
+127.0.0.1:8093 / referral,1
+127.0.0.1:8099 / referral,1
+127.0.0.1:8101 / referral,1
+127.0.0.1:8104 / referral,1
+127.0.0.1:8109 / referral,1
+127.0.0.1:8112 / referral,1
+127.0.0.1:8113 / referral,1
+127.0.0.1:8116 / referral,1
+127.0.0.1:8117 / referral,1
+127.0.0.1:8119 / referral,1
+127.0.0.1:8120 / referral,1
+127.0.0.1:8121 / referral,1
+127.0.0.1:8123 / referral,1
+127.0.0.1:8128 / referral,1
+127.0.0.1:8129 / referral,1
+127.0.0.1:8130 / referral,1
+127.0.0.1:8134 / referral,1
+127.0.0.1:8136 / referral,1
+127.0.0.1:8141 / referral,1
+127.0.0.1:8144 / referral,1
+127.0.0.1:8151 / referral,1
+127.0.0.1:8152 / referral,1
+127.0.0.1:8154 / referral,1
+127.0.0.1:8155 / referral,1
+127.0.0.1:8156 / referral,1
+127.0.0.1:8157 / referral,1
+127.0.0.1:8159 / referral,1
+127.0.0.1:8160 / referral,1
+127.0.0.1:8162 / referral,1
+127.0.0.1:8163 / referral,1
+127.0.0.1:8169 / referral,1
+127.0.0.1:8177 / referral,1
+127.0.0.1:8182 / referral,1
+127.0.0.1:8183 / referral,1
+127.0.0.1:8185 / referral,1
+127.0.0.1:8186 / referral,1
+127.0.0.1:8193 / referral,1
+127.0.0.1:8202 / referral,1
+127.0.0.1:8204 / referral,1
+127.0.0.1:8205 / referral,1
+127.0.0.1:8206 / referral,1
+127.0.0.1:8213 / referral,1
+127.0.0.1:8214 / referral,1
+127.0.0.1:8216 / referral,1
+127.0.0.1:8218 / referral,1
+127.0.0.1:8222 / referral,1
+127.0.0.1:8223 / referral,1
+127.0.0.1:8225 / referral,1
+127.0.0.1:8227 / referral,1
+127.0.0.1:8229 / referral,1
+127.0.0.1:8230 / referral,1
+127.0.0.1:8236 / referral,1
+127.0.0.1:8238 / referral,1
+127.0.0.1:8239 / referral,1
+127.0.0.1:8244 / referral,1
+127.0.0.1:8246 / referral,1
+127.0.0.1:8248 / referral,1
+127.0.0.1:8252 / referral,1
+127.0.0.1:8255 / referral,1
+127.0.0.1:8258 / referral,1
+127.0.0.1:8263 / referral,1
+127.0.0.1:8264 / referral,1
+127.0.0.1:8266 / referral,1
+127.0.0.1:8267 / referral,1
+127.0.0.1:8269 / referral,1
+127.0.0.1:8271 / referral,1
+127.0.0.1:8272 / referral,1
+127.0.0.1:8274 / referral,1
+127.0.0.1:8277 / referral,1
+127.0.0.1:8280 / referral,1
+127.0.0.1:8281 / referral,1
+127.0.0.1:8285 / referral,1
+127.0.0.1:8287 / referral,1
+127.0.0.1:8296 / referral,1
+127.0.0.1:8298 / referral,1
+127.0.0.1:8300 / referral,1
+127.0.0.1:8302 / referral,1
+127.0.0.1:8307 / referral,1
+127.0.0.1:8308 / referral,1
+127.0.0.1:8309 / referral,1
+127.0.0.1:8310 / referral,1
+127.0.0.1:8311 / referral,1
+127.0.0.1:8316 / referral,1
+127.0.0.1:8317 / referral,1
+127.0.0.1:8321 / referral,1
+127.0.0.1:8323 / referral,1
+127.0.0.1:8330 / referral,1
+127.0.0.1:8333 / referral,1
+127.0.0.1:8335 / referral,1
+127.0.0.1:8336 / referral,1
+127.0.0.1:8342 / referral,1
+127.0.0.1:8345 / referral,1
+127.0.0.1:8347 / referral,1
+127.0.0.1:8348 / referral,1
+127.0.0.1:8353 / referral,1
+127.0.0.1:8355 / referral,1
+127.0.0.1:8356 / referral,1
+127.0.0.1:8357 / referral,1
+127.0.0.1:8358 / referral,1
+127.0.0.1:8359 / referral,1
+127.0.0.1:8361 / referral,1
+127.0.0.1:8362 / referral,1
+127.0.0.1:8369 / referral,1
+127.0.0.1:8370 / referral,1
+127.0.0.1:8378 / referral,1
+127.0.0.1:8379 / referral,1
+127.0.0.1:8385 / referral,1
+127.0.0.1:8386 / referral,1
+127.0.0.1:8389 / referral,1
+127.0.0.1:8391 / referral,1
+127.0.0.1:8393 / referral,1
+127.0.0.1:8394 / referral,1
+127.0.0.1:8398 / referral,1
+127.0.0.1:8400 / referral,1
+127.0.0.1:8406 / referral,1
+127.0.0.1:8407 / referral,1
+127.0.0.1:8410 / referral,1
+127.0.0.1:8411 / referral,1
+127.0.0.1:8417 / referral,1
+127.0.0.1:8419 / referral,1
+127.0.0.1:8423 / referral,1
+127.0.0.1:8424 / referral,1
+127.0.0.1:8425 / referral,1
+127.0.0.1:8428 / referral,1
+127.0.0.1:8429 / referral,1
+127.0.0.1:8430 / referral,1
+127.0.0.1:8433 / referral,1
+127.0.0.1:8434 / referral,1
+127.0.0.1:8435 / referral,1
+127.0.0.1:8437 / referral,1
+127.0.0.1:8440 / referral,1
+127.0.0.1:8442 / referral,1
+127.0.0.1:8445 / referral,1
+127.0.0.1:8446 / referral,1
+127.0.0.1:8447 / referral,1
+127.0.0.1:8455 / referral,1
+127.0.0.1:8459 / referral,1
+127.0.0.1:8464 / referral,1
+127.0.0.1:8467 / referral,1
+127.0.0.1:8470 / referral,1
+127.0.0.1:8474 / referral,1
+127.0.0.1:8475 / referral,1
+127.0.0.1:8481 / referral,1
+127.0.0.1:8483 / referral,1
+127.0.0.1:8488 / referral,1
+127.0.0.1:8489 / referral,1
+127.0.0.1:8491 / referral,1
+127.0.0.1:8492 / referral,1
+127.0.0.1:8494 / referral,1
+127.0.0.1:8495 / referral,1
+127.0.0.1:8497 / referral,1
+127.0.0.1:8504 / referral,1
+127.0.0.1:8509 / referral,1
+127.0.0.1:8511 / referral,1
+127.0.0.1:8512 / referral,1
+127.0.0.1:8513 / referral,1
+127.0.0.1:8515 / referral,1
+127.0.0.1:8519 / referral,1
+127.0.0.1:8520 / referral,1
+127.0.0.1:8523 / referral,1
+127.0.0.1:8525 / referral,1
+127.0.0.1:8527 / referral,1
+127.0.0.1:8529 / referral,1
+127.0.0.1:8532 / referral,1
+127.0.0.1:8537 / referral,1
+127.0.0.1:8538 / referral,1
+127.0.0.1:8541 / referral,1
+127.0.0.1:8542 / referral,1
+127.0.0.1:8543 / referral,1
+127.0.0.1:8547 / referral,1
+127.0.0.1:8548 / referral,1
+127.0.0.1:8551 / referral,1
+127.0.0.1:8553 / referral,1
+127.0.0.1:8560 / referral,1
+127.0.0.1:8561 / referral,1
+127.0.0.1:8562 / referral,1
+127.0.0.1:8570 / referral,1
+127.0.0.1:8575 / referral,1
+127.0.0.1:8578 / referral,1
+127.0.0.1:8582 / referral,1
+127.0.0.1:8584 / referral,1
+127.0.0.1:8589 / referral,1
+127.0.0.1:8590 / referral,1
+127.0.0.1:8592 / referral,1
+127.0.0.1:8593 / referral,1
+127.0.0.1:8602 / referral,1
+127.0.0.1:8603 / referral,1
+127.0.0.1:8604 / referral,1
+127.0.0.1:8606 / referral,1
+127.0.0.1:8607 / referral,1
+127.0.0.1:8609 / referral,1
+127.0.0.1:8612 / referral,1
+127.0.0.1:8613 / referral,1
+127.0.0.1:8614 / referral,1
+127.0.0.1:8616 / referral,1
+127.0.0.1:8617 / referral,1
+127.0.0.1:8618 / referral,1
+127.0.0.1:8619 / referral,1
+127.0.0.1:8625 / referral,1
+127.0.0.1:8627 / referral,1
+127.0.0.1:8630 / referral,1
+127.0.0.1:8631 / referral,1
+127.0.0.1:8633 / referral,1
+127.0.0.1:8634 / referral,1
+127.0.0.1:8635 / referral,1
+127.0.0.1:8637 / referral,1
+127.0.0.1:8639 / referral,1
+127.0.0.1:8644 / referral,1
+127.0.0.1:8647 / referral,1
+127.0.0.1:8649 / referral,1
+127.0.0.1:8654 / referral,1
+127.0.0.1:8656 / referral,1
+127.0.0.1:8659 / referral,1
+127.0.0.1:8661 / referral,1
+127.0.0.1:8665 / referral,1
+127.0.0.1:8666 / referral,1
+127.0.0.1:8667 / referral,1
+127.0.0.1:8672 / referral,1
+127.0.0.1:8682 / referral,1
+127.0.0.1:8691 / referral,1
+127.0.0.1:8694 / referral,1
+127.0.0.1:8695 / referral,1
+127.0.0.1:8699 / referral,1
+127.0.0.1:8700 / referral,1
+127.0.0.1:8702 / referral,1
+127.0.0.1:8703 / referral,1
+127.0.0.1:8706 / referral,1
+127.0.0.1:8708 / referral,1
+127.0.0.1:8709 / referral,1
+127.0.0.1:8710 / referral,1
+127.0.0.1:8714 / referral,1
+127.0.0.1:8718 / referral,1
+127.0.0.1:8720 / referral,1
+127.0.0.1:8721 / referral,1
+127.0.0.1:8722 / referral,1
+127.0.0.1:8728 / referral,1
+127.0.0.1:8729 / referral,1
+127.0.0.1:8730 / referral,1
+127.0.0.1:8731 / referral,1
+127.0.0.1:8732 / referral,1
+127.0.0.1:8733 / referral,1
+127.0.0.1:8738 / referral,1
+127.0.0.1:8741 / referral,1
+127.0.0.1:8742 / referral,1
+127.0.0.1:8746 / referral,1
+127.0.0.1:8747 / referral,1
+127.0.0.1:8748 / referral,1
+127.0.0.1:8751 / referral,1
+127.0.0.1:8753 / referral,1
+127.0.0.1:8754 / referral,1
+127.0.0.1:8755 / referral,1
+127.0.0.1:8759 / referral,1
+127.0.0.1:8766 / referral,1
+127.0.0.1:8769 / referral,1
+127.0.0.1:8770 / referral,1
+127.0.0.1:8772 / referral,1
+127.0.0.1:8774 / referral,1
+127.0.0.1:8777 / referral,1
+127.0.0.1:8784 / referral,1
+127.0.0.1:8791 / referral,1
+127.0.0.1:8793 / referral,1
+127.0.0.1:8795 / referral,1
+127.0.0.1:8797 / referral,1
+127.0.0.1:8798 / referral,1
+127.0.0.1:8802 / referral,1
+127.0.0.1:8804 / referral,1
+127.0.0.1:8807 / referral,1
+127.0.0.1:8809 / referral,1
+127.0.0.1:8813 / referral,1
+127.0.0.1:8814 / referral,1
+127.0.0.1:8815 / referral,1
+127.0.0.1:8816 / referral,1
+127.0.0.1:8817 / referral,1
+127.0.0.1:8818 / referral,1
+127.0.0.1:8829 / referral,1
+127.0.0.1:8831 / referral,1
+127.0.0.1:8832 / referral,1
+127.0.0.1:8834 / referral,1
+127.0.0.1:8835 / referral,1
+127.0.0.1:8836 / referral,1
+127.0.0.1:8838 / referral,1
+127.0.0.1:8840 / referral,1
+127.0.0.1:8842 / referral,1
+127.0.0.1:8847 / referral,1
+127.0.0.1:8848 / referral,1
+127.0.0.1:8852 / referral,1
+127.0.0.1:8853 / referral,1
+127.0.0.1:8856 / referral,1
+127.0.0.1:8864 / referral,1
+127.0.0.1:8870 / referral,1
+127.0.0.1:8872 / referral,1
+127.0.0.1:8874 / referral,1
+127.0.0.1:8875 / referral,1
+127.0.0.1:8882 / referral,1
+127.0.0.1:8884 / referral,1
+127.0.0.1:8886 / referral,1
+127.0.0.1:8889 / referral,1
+127.0.0.1:8891 / referral,1
+127.0.0.1:8892 / referral,1
+127.0.0.1:8905 / referral,1
+127.0.0.1:8911 / referral,1
+127.0.0.1:8920 / referral,1
+127.0.0.1:8926 / referral,1
+127.0.0.1:8933 / referral,1
+127.0.0.1:8938 / referral,1
+127.0.0.1:8941 / referral,1
+127.0.0.1:8942 / referral,1
+127.0.0.1:8943 / referral,1
+127.0.0.1:8946 / referral,1
+127.0.0.1:8949 / referral,1
+127.0.0.1:8950 / referral,1
+127.0.0.1:8952 / referral,1
+127.0.0.1:8957 / referral,1
+127.0.0.1:8958 / referral,1
+127.0.0.1:8959 / referral,1
+127.0.0.1:8960 / referral,1
+127.0.0.1:8961 / referral,1
+127.0.0.1:8962 / referral,1
+127.0.0.1:8963 / referral,1
+127.0.0.1:8967 / referral,1
+127.0.0.1:8969 / referral,1
+127.0.0.1:8973 / referral,1
+127.0.0.1:8981 / referral,1
+127.0.0.1:8982 / referral,1
+127.0.0.1:8984 / referral,1
+127.0.0.1:8986 / referral,1
+127.0.0.1:8987 / referral,1
+127.0.0.1:8988 / referral,1
+127.0.0.1:8989 / referral,1
+127.0.0.1:8991 / referral,1
+127.0.0.1:8992 / referral,1
+127.0.0.1:8997 / referral,1
+127.0.0.1:8998 / referral,1
+127.0.0.1:8999 / referral,1
+SMS / SMSAd,1
+SendGrid / Content,1
+Snapchat / CPC,1
+Unifonic / SMS,1
+chatgpt / paid,1
+connect.xfinity.com / referral,1
+deel.lightning.force.com / referral,1
+deeplink / firbase,1
+deref-gmx.com / referral,1
+download_app_modal / (not set),1
+duckduckgo / organic,1
+equipmentshare.frontapp.com / referral,1
+eyeofriyadh.com / referral,1
+financing.manafa.co / referral,1
+gate.waed.com / referral,1
+gatekeeperapp.net / referral,1
+ixbrowser.biz.id / referral,1
+l.instagram.com / referral,1
+lendo.sa / referral,1
+linkedin / cpc,1
+links.uk.defend.egress.com / referral,1
+m.youtube.com / referral,1
+m365.eu.vadesecure.com / referral,1
+mail.ocn.jp / referral,1
+muqeem.sa / referral,1
+mustathmir.ai / referral,1
+nam04.safelinks.protection.outlook.com / referral,1
+resourceinn.com / referral,1
+rzm.com.sa / referral,1
+search-dra.dt.dbankcloud.com / referral,1
+secureurl.ukr.net / referral,1
+semrush.com / referral,1
+sig-synopsys.lightning.force.com / referral,1
+tagassistant.google.com / referral,1
+thecrowdspace.com / referral,1
+tiktok.com / referral,1
+trello.com / referral,1
+ui-deref.de / referral,1
+vision2030.ai / referral,1
+web.telegram.org / referral,1
+webmail.centurylink.net / referral,1
+webmail.strato.com / referral,1
+youtube.com / referral,1
+zmail.primericaonline.com / referral,1
+
+#  
+# Start date: 20261020
+# End date: 20261110
+Session source / medium,Sessions
+(direct) / (none),64890
+google / cpc,5690
+google / organic,4678
+google-play / organic,3764
+bing / organic,475
+LinkedIn / Social,238
+chatgpt.com / ai-assistant,196
+jbyyfg / (not set),146
+send_message_to_scf_borrower / (not set),139
+sama.gov.sa / referral,80
+linkedin / paid_social,78
+manafaco.zoom.us / referral,78
+manafacapital.sa / referral,74
+article / referral,58
+twitter / paid_social,53
+tdf_program / referral,52
+x / (not set),43
+(data not available),38
+article / (not set),34
+app.zoom.us / referral,23
+linkedin.com / referral,22
+127.0.0.1:8839 / referral,19
+manafa-3billion.netlify.app / referral,19
+yahoo / organic,19
+download_app_modal / (not set),18
+t.co / referral,18
+snapchat / paid_social,17
+ntp.msn.com / referral,14
+wallet / (not set),12
+documents / (not set),11
+semrush.com / referral,11
+manafa-help-center.netlify.app / referral,10
+facebook.com / referral,8
+mail.google.com / referral,8
+article / organic,7
+l.wl.co / referral,7
+mail.yahoo.com / referral,6
+127.0.0.1:8684 / referral,5
+127.0.0.1:8719 / referral,5
+google_ads / paid_social,5
+lm.facebook.com / referral,5
+send_message_to_scf_borrower / (none),5
+127.0.0.1:8015 / referral,4
+127.0.0.1:8133 / referral,4
+127.0.0.1:8174 / referral,4
+127.0.0.1:8427 / referral,4
+127.0.0.1:8528 / referral,4
+127.0.0.1:8615 / referral,4
+127.0.0.1:8628 / referral,4
+127.0.0.1:8734 / referral,4
+127.0.0.1:8895 / referral,4
+begvdyf / (not set),4
+outlook.live.com / referral,4
+tagassistant.google.com / referral,4
+teams.public.onecdn.static.microsoft / referral,4
+waed.com / referral,4
+x / (none),4
+127.0.0.1:8045 / referral,3
+127.0.0.1:8052 / referral,3
+127.0.0.1:8068 / referral,3
+127.0.0.1:8094 / referral,3
+127.0.0.1:8108 / referral,3
+127.0.0.1:8153 / referral,3
+127.0.0.1:8176 / referral,3
+127.0.0.1:8180 / referral,3
+127.0.0.1:8191 / referral,3
+127.0.0.1:8215 / referral,3
+127.0.0.1:8219 / referral,3
+127.0.0.1:8232 / referral,3
+127.0.0.1:8257 / referral,3
+127.0.0.1:8275 / referral,3
+127.0.0.1:8290 / referral,3
+127.0.0.1:8297 / referral,3
+127.0.0.1:8301 / referral,3
+127.0.0.1:8321 / referral,3
+127.0.0.1:8387 / referral,3
+127.0.0.1:8388 / referral,3
+127.0.0.1:8402 / referral,3
+127.0.0.1:8441 / referral,3
+127.0.0.1:8443 / referral,3
+127.0.0.1:8453 / referral,3
+127.0.0.1:8477 / referral,3
+127.0.0.1:8479 / referral,3
+127.0.0.1:8500 / referral,3
+127.0.0.1:8517 / referral,3
+127.0.0.1:8526 / referral,3
+127.0.0.1:8531 / referral,3
+127.0.0.1:8576 / referral,3
+127.0.0.1:8624 / referral,3
+127.0.0.1:8645 / referral,3
+127.0.0.1:8663 / referral,3
+127.0.0.1:8669 / referral,3
+127.0.0.1:8683 / referral,3
+127.0.0.1:8692 / referral,3
+127.0.0.1:8701 / referral,3
+127.0.0.1:8726 / referral,3
+127.0.0.1:8778 / referral,3
+127.0.0.1:8787 / referral,3
+127.0.0.1:8789 / referral,3
+127.0.0.1:8790 / referral,3
+127.0.0.1:8806 / referral,3
+127.0.0.1:8824 / referral,3
+127.0.0.1:8862 / referral,3
+127.0.0.1:8877 / referral,3
+127.0.0.1:8878 / referral,3
+127.0.0.1:8880 / referral,3
+127.0.0.1:8890 / referral,3
+127.0.0.1:8904 / referral,3
+127.0.0.1:8916 / referral,3
+127.0.0.1:8930 / referral,3
+127.0.0.1:8939 / referral,3
+127.0.0.1:8947 / referral,3
+127.0.0.1:8972 / referral,3
+chatgpt / paid,3
+gemini.google.com / ai-assistant,3
+hero / (not set),3
+manafa.co / referral,3
+manafaco.atlassian.net / referral,3
+send_message_to_scf_borrower / (not set),3
+stv.vc / referral,3
+114.114.114.114:9421 / referral,2
+127.0.0.1:51394 / referral,2
+127.0.0.1:54880 / referral,2
+127.0.0.1:58405 / referral,2
+127.0.0.1:8003 / referral,2
+127.0.0.1:8011 / referral,2
+127.0.0.1:8012 / referral,2
+127.0.0.1:8017 / referral,2
+127.0.0.1:8028 / referral,2
+127.0.0.1:8033 / referral,2
+127.0.0.1:8047 / referral,2
+127.0.0.1:8048 / referral,2
+127.0.0.1:8053 / referral,2
+127.0.0.1:8055 / referral,2
+127.0.0.1:8059 / referral,2
+127.0.0.1:8072 / referral,2
+127.0.0.1:8085 / referral,2
+127.0.0.1:8087 / referral,2
+127.0.0.1:8096 / referral,2
+127.0.0.1:8098 / referral,2
+127.0.0.1:8116 / referral,2
+127.0.0.1:8122 / referral,2
+127.0.0.1:8125 / referral,2
+127.0.0.1:8139 / referral,2
+127.0.0.1:8143 / referral,2
+127.0.0.1:8147 / referral,2
+127.0.0.1:8165 / referral,2
+127.0.0.1:8167 / referral,2
+127.0.0.1:8170 / referral,2
+127.0.0.1:8187 / referral,2
+127.0.0.1:8195 / referral,2
+127.0.0.1:8196 / referral,2
+127.0.0.1:8198 / referral,2
+127.0.0.1:8212 / referral,2
+127.0.0.1:8221 / referral,2
+127.0.0.1:8237 / referral,2
+127.0.0.1:8241 / referral,2
+127.0.0.1:8245 / referral,2
+127.0.0.1:8253 / referral,2
+127.0.0.1:8254 / referral,2
+127.0.0.1:8265 / referral,2
+127.0.0.1:8276 / referral,2
+127.0.0.1:8279 / referral,2
+127.0.0.1:8283 / referral,2
+127.0.0.1:8286 / referral,2
+127.0.0.1:8288 / referral,2
+127.0.0.1:8293 / referral,2
+127.0.0.1:8299 / referral,2
+127.0.0.1:8300 / referral,2
+127.0.0.1:8305 / referral,2
+127.0.0.1:8328 / referral,2
+127.0.0.1:8331 / referral,2
+127.0.0.1:8335 / referral,2
+127.0.0.1:8339 / referral,2
+127.0.0.1:8340 / referral,2
+127.0.0.1:8341 / referral,2
+127.0.0.1:8359 / referral,2
+127.0.0.1:8363 / referral,2
+127.0.0.1:8366 / referral,2
+127.0.0.1:8374 / referral,2
+127.0.0.1:8381 / referral,2
+127.0.0.1:8384 / referral,2
+127.0.0.1:8390 / referral,2
+127.0.0.1:8405 / referral,2
+127.0.0.1:8411 / referral,2
+127.0.0.1:8422 / referral,2
+127.0.0.1:8432 / referral,2
+127.0.0.1:8450 / referral,2
+127.0.0.1:8455 / referral,2
+127.0.0.1:8464 / referral,2
+127.0.0.1:8465 / referral,2
+127.0.0.1:8466 / referral,2
+127.0.0.1:8472 / referral,2
+127.0.0.1:8473 / referral,2
+127.0.0.1:8476 / referral,2
+127.0.0.1:8484 / referral,2
+127.0.0.1:8486 / referral,2
+127.0.0.1:8496 / referral,2
+127.0.0.1:8506 / referral,2
+127.0.0.1:8521 / referral,2
+127.0.0.1:8534 / referral,2
+127.0.0.1:8535 / referral,2
+127.0.0.1:8536 / referral,2
+127.0.0.1:8549 / referral,2
+127.0.0.1:8550 / referral,2
+127.0.0.1:8552 / referral,2
+127.0.0.1:8554 / referral,2
+127.0.0.1:8557 / referral,2
+127.0.0.1:8571 / referral,2
+127.0.0.1:8573 / referral,2
+127.0.0.1:8579 / referral,2
+127.0.0.1:8585 / referral,2
+127.0.0.1:8596 / referral,2
+127.0.0.1:8599 / referral,2
+127.0.0.1:8605 / referral,2
+127.0.0.1:8606 / referral,2
+127.0.0.1:8607 / referral,2
+127.0.0.1:8608 / referral,2
+127.0.0.1:8611 / referral,2
+127.0.0.1:8618 / referral,2
+127.0.0.1:8619 / referral,2
+127.0.0.1:8625 / referral,2
+127.0.0.1:8629 / referral,2
+127.0.0.1:8636 / referral,2
+127.0.0.1:8642 / referral,2
+127.0.0.1:8646 / referral,2
+127.0.0.1:8650 / referral,2
+127.0.0.1:8658 / referral,2
+127.0.0.1:8660 / referral,2
+127.0.0.1:8667 / referral,2
+127.0.0.1:8673 / referral,2
+127.0.0.1:8674 / referral,2
+127.0.0.1:8675 / referral,2
+127.0.0.1:8676 / referral,2
+127.0.0.1:8681 / referral,2
+127.0.0.1:8689 / referral,2
+127.0.0.1:8697 / referral,2
+127.0.0.1:8704 / referral,2
+127.0.0.1:8711 / referral,2
+127.0.0.1:8721 / referral,2
+127.0.0.1:8737 / referral,2
+127.0.0.1:8744 / referral,2
+127.0.0.1:8746 / referral,2
+127.0.0.1:8750 / referral,2
+127.0.0.1:8760 / referral,2
+127.0.0.1:8763 / referral,2
+127.0.0.1:8781 / referral,2
+127.0.0.1:8783 / referral,2
+127.0.0.1:8788 / referral,2
+127.0.0.1:8792 / referral,2
+127.0.0.1:8794 / referral,2
+127.0.0.1:8795 / referral,2
+127.0.0.1:8799 / referral,2
+127.0.0.1:8803 / referral,2
+127.0.0.1:8810 / referral,2
+127.0.0.1:8826 / referral,2
+127.0.0.1:8829 / referral,2
+127.0.0.1:8833 / referral,2
+127.0.0.1:8837 / referral,2
+127.0.0.1:8843 / referral,2
+127.0.0.1:8844 / referral,2
+127.0.0.1:8848 / referral,2
+127.0.0.1:8851 / referral,2
+127.0.0.1:8868 / referral,2
+127.0.0.1:8869 / referral,2
+127.0.0.1:8870 / referral,2
+127.0.0.1:8879 / referral,2
+127.0.0.1:8893 / referral,2
+127.0.0.1:8897 / referral,2
+127.0.0.1:8900 / referral,2
+127.0.0.1:8901 / referral,2
+127.0.0.1:8907 / referral,2
+127.0.0.1:8908 / referral,2
+127.0.0.1:8909 / referral,2
+127.0.0.1:8910 / referral,2
+127.0.0.1:8914 / referral,2
+127.0.0.1:8915 / referral,2
+127.0.0.1:8917 / referral,2
+127.0.0.1:8919 / referral,2
+127.0.0.1:8924 / referral,2
+127.0.0.1:8927 / referral,2
+127.0.0.1:8931 / referral,2
+127.0.0.1:8932 / referral,2
+127.0.0.1:8936 / referral,2
+127.0.0.1:8940 / referral,2
+127.0.0.1:8944 / referral,2
+127.0.0.1:8948 / referral,2
+127.0.0.1:8951 / referral,2
+127.0.0.1:8954 / referral,2
+127.0.0.1:8964 / referral,2
+127.0.0.1:8966 / referral,2
+127.0.0.1:8971 / referral,2
+127.0.0.1:8975 / referral,2
+127.0.0.1:8980 / referral,2
+127.0.0.1:8985 / referral,2
+127.0.0.1:8991 / referral,2
+127.0.0.1:8996 / referral,2
+SnapChat / Content,2
+altxsaudi.sa / referral,2
+claude.ai / ai-assistant,2
+ecosia.org / organic,2
+email.bt.com / referral,2
+eyeofriyadh.com / referral,2
+gate.waed.com / referral,2
+mail.aol.com / referral,2
+manafa.sng.link / referral,2
+mc.sendgrid.com / referral,2
+mid_page / (not set),2
+openai / paid,2
+outlook.cloud.microsoft / referral,2
+sig-synopsys.lightning.force.com / referral,2
+youtube.com / referral,2
+127.0.0.1:50264 / referral,1
+127.0.0.1:50794 / referral,1
+127.0.0.1:50812 / referral,1
+127.0.0.1:51149 / referral,1
+127.0.0.1:51152 / referral,1
+127.0.0.1:51156 / referral,1
+127.0.0.1:51283 / referral,1
+127.0.0.1:51309 / referral,1
+127.0.0.1:51346 / referral,1
+127.0.0.1:51499 / referral,1
+127.0.0.1:51866 / referral,1
+127.0.0.1:51958 / referral,1
+127.0.0.1:51993 / referral,1
+127.0.0.1:52129 / referral,1
+127.0.0.1:52151 / referral,1
+127.0.0.1:52192 / referral,1
+127.0.0.1:52223 / referral,1
+127.0.0.1:52232 / referral,1
+127.0.0.1:52275 / referral,1
+127.0.0.1:52472 / referral,1
+127.0.0.1:52500 / referral,1
+127.0.0.1:52538 / referral,1
+127.0.0.1:52644 / referral,1
+127.0.0.1:52809 / referral,1
+127.0.0.1:53161 / referral,1
+127.0.0.1:53175 / referral,1
+127.0.0.1:53217 / referral,1
+127.0.0.1:53359 / referral,1
+127.0.0.1:53737 / referral,1
+127.0.0.1:53821 / referral,1
+127.0.0.1:53929 / referral,1
+127.0.0.1:54029 / referral,1
+127.0.0.1:54232 / referral,1
+127.0.0.1:54335 / referral,1
+127.0.0.1:54419 / referral,1
+127.0.0.1:54709 / referral,1
+127.0.0.1:54881 / referral,1
+127.0.0.1:54914 / referral,1
+127.0.0.1:55133 / referral,1
+127.0.0.1:55136 / referral,1
+127.0.0.1:55201 / referral,1
+127.0.0.1:55295 / referral,1
+127.0.0.1:55643 / referral,1
+127.0.0.1:55650 / referral,1
+127.0.0.1:55673 / referral,1
+127.0.0.1:55868 / referral,1
+127.0.0.1:56003 / referral,1
+127.0.0.1:56088 / referral,1
+127.0.0.1:56441 / referral,1
+127.0.0.1:56513 / referral,1
+127.0.0.1:56544 / referral,1
+127.0.0.1:56551 / referral,1
+127.0.0.1:56703 / referral,1
+127.0.0.1:56724 / referral,1
+127.0.0.1:56799 / referral,1
+127.0.0.1:56928 / referral,1
+127.0.0.1:56977 / referral,1
+127.0.0.1:57019 / referral,1
+127.0.0.1:57206 / referral,1
+127.0.0.1:57250 / referral,1
+127.0.0.1:57261 / referral,1
+127.0.0.1:57347 / referral,1
+127.0.0.1:57412 / referral,1
+127.0.0.1:57455 / referral,1
+127.0.0.1:57606 / referral,1
+127.0.0.1:57883 / referral,1
+127.0.0.1:58135 / referral,1
+127.0.0.1:58213 / referral,1
+127.0.0.1:58321 / referral,1
+127.0.0.1:58341 / referral,1
+127.0.0.1:58403 / referral,1
+127.0.0.1:58415 / referral,1
+127.0.0.1:58476 / referral,1
+127.0.0.1:58660 / referral,1
+127.0.0.1:58772 / referral,1
+127.0.0.1:58895 / referral,1
+127.0.0.1:58925 / referral,1
+127.0.0.1:58943 / referral,1
+127.0.0.1:59021 / referral,1
+127.0.0.1:59049 / referral,1
+127.0.0.1:59320 / referral,1
+127.0.0.1:59424 / referral,1
+127.0.0.1:59446 / referral,1
+127.0.0.1:59515 / referral,1
+127.0.0.1:59540 / referral,1
+127.0.0.1:59845 / referral,1
+127.0.0.1:59981 / referral,1
+127.0.0.1:8000 / referral,1
+127.0.0.1:8004 / referral,1
+127.0.0.1:8005 / referral,1
+127.0.0.1:8007 / referral,1
+127.0.0.1:8008 / referral,1
+127.0.0.1:8009 / referral,1
+127.0.0.1:8010 / referral,1
+127.0.0.1:8013 / referral,1
+127.0.0.1:8016 / referral,1
+127.0.0.1:8018 / referral,1
+127.0.0.1:8020 / referral,1
+127.0.0.1:8026 / referral,1
+127.0.0.1:8027 / referral,1
+127.0.0.1:8029 / referral,1
+127.0.0.1:8030 / referral,1
+127.0.0.1:8031 / referral,1
+127.0.0.1:8035 / referral,1
+127.0.0.1:8036 / referral,1
+127.0.0.1:8037 / referral,1
+127.0.0.1:8039 / referral,1
+127.0.0.1:8041 / referral,1
+127.0.0.1:8046 / referral,1
+127.0.0.1:8049 / referral,1
+127.0.0.1:8050 / referral,1
+127.0.0.1:8051 / referral,1
+127.0.0.1:8057 / referral,1
+127.0.0.1:8065 / referral,1
+127.0.0.1:8067 / referral,1
+127.0.0.1:8071 / referral,1
+127.0.0.1:8074 / referral,1
+127.0.0.1:8076 / referral,1
+127.0.0.1:8080 / referral,1
+127.0.0.1:8081 / referral,1
+127.0.0.1:8083 / referral,1
+127.0.0.1:8088 / referral,1
+127.0.0.1:8089 / referral,1
+127.0.0.1:8090 / referral,1
+127.0.0.1:8091 / referral,1
+127.0.0.1:8092 / referral,1
+127.0.0.1:8093 / referral,1
+127.0.0.1:8099 / referral,1
+127.0.0.1:8100 / referral,1
+127.0.0.1:8101 / referral,1
+127.0.0.1:8104 / referral,1
+127.0.0.1:8109 / referral,1
+127.0.0.1:8112 / referral,1
+127.0.0.1:8113 / referral,1
+127.0.0.1:8117 / referral,1
+127.0.0.1:8119 / referral,1
+127.0.0.1:8120 / referral,1
+127.0.0.1:8121 / referral,1
+127.0.0.1:8123 / referral,1
+127.0.0.1:8128 / referral,1
+127.0.0.1:8129 / referral,1
+127.0.0.1:8130 / referral,1
+127.0.0.1:8134 / referral,1
+127.0.0.1:8136 / referral,1
+127.0.0.1:8141 / referral,1
+127.0.0.1:8144 / referral,1
+127.0.0.1:8151 / referral,1
+127.0.0.1:8152 / referral,1
+127.0.0.1:8154 / referral,1
+127.0.0.1:8155 / referral,1
+127.0.0.1:8156 / referral,1
+127.0.0.1:8157 / referral,1
+127.0.0.1:8159 / referral,1
+127.0.0.1:8160 / referral,1
+127.0.0.1:8162 / referral,1
+127.0.0.1:8163 / referral,1
+127.0.0.1:8169 / referral,1
+127.0.0.1:8177 / referral,1
+127.0.0.1:8182 / referral,1
+127.0.0.1:8183 / referral,1
+127.0.0.1:8185 / referral,1
+127.0.0.1:8186 / referral,1
+127.0.0.1:8193 / referral,1
+127.0.0.1:8202 / referral,1
+127.0.0.1:8204 / referral,1
+127.0.0.1:8206 / referral,1
+127.0.0.1:8210 / referral,1
+127.0.0.1:8213 / referral,1
+127.0.0.1:8214 / referral,1
+127.0.0.1:8216 / referral,1
+127.0.0.1:8217 / referral,1
+127.0.0.1:8218 / referral,1
+127.0.0.1:8222 / referral,1
+127.0.0.1:8223 / referral,1
+127.0.0.1:8225 / referral,1
+127.0.0.1:8227 / referral,1
+127.0.0.1:8230 / referral,1
+127.0.0.1:8236 / referral,1
+127.0.0.1:8238 / referral,1
+127.0.0.1:8239 / referral,1
+127.0.0.1:8244 / referral,1
+127.0.0.1:8246 / referral,1
+127.0.0.1:8248 / referral,1
+127.0.0.1:8252 / referral,1
+127.0.0.1:8255 / referral,1
+127.0.0.1:8258 / referral,1
+127.0.0.1:8264 / referral,1
+127.0.0.1:8266 / referral,1
+127.0.0.1:8267 / referral,1
+127.0.0.1:8269 / referral,1
+127.0.0.1:8271 / referral,1
+127.0.0.1:8272 / referral,1
+127.0.0.1:8274 / referral,1
+127.0.0.1:8277 / referral,1
+127.0.0.1:8280 / referral,1
+127.0.0.1:8281 / referral,1
+127.0.0.1:8285 / referral,1
+127.0.0.1:8287 / referral,1
+127.0.0.1:8296 / referral,1
+127.0.0.1:8298 / referral,1
+127.0.0.1:8302 / referral,1
+127.0.0.1:8307 / referral,1
+127.0.0.1:8308 / referral,1
+127.0.0.1:8309 / referral,1
+127.0.0.1:8310 / referral,1
+127.0.0.1:8311 / referral,1
+127.0.0.1:8315 / referral,1
+127.0.0.1:8316 / referral,1
+127.0.0.1:8317 / referral,1
+127.0.0.1:8323 / referral,1
+127.0.0.1:8324 / referral,1
+127.0.0.1:8330 / referral,1
+127.0.0.1:8333 / referral,1
+127.0.0.1:8336 / referral,1
+127.0.0.1:8337 / referral,1
+127.0.0.1:8342 / referral,1
+127.0.0.1:8345 / referral,1
+127.0.0.1:8347 / referral,1
+127.0.0.1:8348 / referral,1
+127.0.0.1:8353 / referral,1
+127.0.0.1:8355 / referral,1
+127.0.0.1:8356 / referral,1
+127.0.0.1:8357 / referral,1
+127.0.0.1:8358 / referral,1
+127.0.0.1:8361 / referral,1
+127.0.0.1:8362 / referral,1
+127.0.0.1:8365 / referral,1
+127.0.0.1:8369 / referral,1
+127.0.0.1:8370 / referral,1
+127.0.0.1:8378 / referral,1
+127.0.0.1:8379 / referral,1
+127.0.0.1:8385 / referral,1
+127.0.0.1:8386 / referral,1
+127.0.0.1:8389 / referral,1
+127.0.0.1:8391 / referral,1
+127.0.0.1:8393 / referral,1
+127.0.0.1:8394 / referral,1
+127.0.0.1:8397 / referral,1
+127.0.0.1:8398 / referral,1
+127.0.0.1:8400 / referral,1
+127.0.0.1:8406 / referral,1
+127.0.0.1:8407 / referral,1
+127.0.0.1:8409 / referral,1
+127.0.0.1:8410 / referral,1
+127.0.0.1:8417 / referral,1
+127.0.0.1:8419 / referral,1
+127.0.0.1:8423 / referral,1
+127.0.0.1:8424 / referral,1
+127.0.0.1:8425 / referral,1
+127.0.0.1:8428 / referral,1
+127.0.0.1:8429 / referral,1
+127.0.0.1:8430 / referral,1
+127.0.0.1:8433 / referral,1
+127.0.0.1:8434 / referral,1
+127.0.0.1:8437 / referral,1
+127.0.0.1:8440 / referral,1
+127.0.0.1:8442 / referral,1
+127.0.0.1:8445 / referral,1
+127.0.0.1:8446 / referral,1
+127.0.0.1:8447 / referral,1
+127.0.0.1:8459 / referral,1
+127.0.0.1:8463 / referral,1
+127.0.0.1:8467 / referral,1
+127.0.0.1:8470 / referral,1
+127.0.0.1:8474 / referral,1
+127.0.0.1:8475 / referral,1
+127.0.0.1:8480 / referral,1
+127.0.0.1:8481 / referral,1
+127.0.0.1:8483 / referral,1
+127.0.0.1:8488 / referral,1
+127.0.0.1:8489 / referral,1
+127.0.0.1:8491 / referral,1
+127.0.0.1:8492 / referral,1
+127.0.0.1:8494 / referral,1
+127.0.0.1:8495 / referral,1
+127.0.0.1:8497 / referral,1
+127.0.0.1:8504 / referral,1
+127.0.0.1:8509 / referral,1
+127.0.0.1:8511 / referral,1
+127.0.0.1:8512 / referral,1
+127.0.0.1:8515 / referral,1
+127.0.0.1:8519 / referral,1
+127.0.0.1:8520 / referral,1
+127.0.0.1:8523 / referral,1
+127.0.0.1:8525 / referral,1
+127.0.0.1:8527 / referral,1
+127.0.0.1:8532 / referral,1
+127.0.0.1:8537 / referral,1
+127.0.0.1:8538 / referral,1
+127.0.0.1:8541 / referral,1
+127.0.0.1:8542 / referral,1
+127.0.0.1:8543 / referral,1
+127.0.0.1:8547 / referral,1
+127.0.0.1:8548 / referral,1
+127.0.0.1:8551 / referral,1
+127.0.0.1:8553 / referral,1
+127.0.0.1:8560 / referral,1
+127.0.0.1:8561 / referral,1
+127.0.0.1:8562 / referral,1
+127.0.0.1:8570 / referral,1
+127.0.0.1:8575 / referral,1
+127.0.0.1:8578 / referral,1
+127.0.0.1:8580 / referral,1
+127.0.0.1:8582 / referral,1
+127.0.0.1:8584 / referral,1
+127.0.0.1:8589 / referral,1
+127.0.0.1:8590 / referral,1
+127.0.0.1:8591 / referral,1
+127.0.0.1:8592 / referral,1
+127.0.0.1:8602 / referral,1
+127.0.0.1:8603 / referral,1
+127.0.0.1:8604 / referral,1
+127.0.0.1:8609 / referral,1
+127.0.0.1:8612 / referral,1
+127.0.0.1:8613 / referral,1
+127.0.0.1:8614 / referral,1
+127.0.0.1:8616 / referral,1
+127.0.0.1:8617 / referral,1
+127.0.0.1:8622 / referral,1
+127.0.0.1:8627 / referral,1
+127.0.0.1:8630 / referral,1
+127.0.0.1:8631 / referral,1
+127.0.0.1:8633 / referral,1
+127.0.0.1:8634 / referral,1
+127.0.0.1:8635 / referral,1
+127.0.0.1:8639 / referral,1
+127.0.0.1:8644 / referral,1
+127.0.0.1:8647 / referral,1
+127.0.0.1:8649 / referral,1
+127.0.0.1:8654 / referral,1
+127.0.0.1:8656 / referral,1
+127.0.0.1:8659 / referral,1
+127.0.0.1:8661 / referral,1
+127.0.0.1:8665 / referral,1
+127.0.0.1:8666 / referral,1
+127.0.0.1:8672 / referral,1
+127.0.0.1:8682 / referral,1
+127.0.0.1:8691 / referral,1
+127.0.0.1:8694 / referral,1
+127.0.0.1:8695 / referral,1
+127.0.0.1:8699 / referral,1
+127.0.0.1:8700 / referral,1
+127.0.0.1:8702 / referral,1
+127.0.0.1:8703 / referral,1
+127.0.0.1:8706 / referral,1
+127.0.0.1:8709 / referral,1
+127.0.0.1:8710 / referral,1
+127.0.0.1:8713 / referral,1
+127.0.0.1:8714 / referral,1
+127.0.0.1:8718 / referral,1
+127.0.0.1:8720 / referral,1
+127.0.0.1:8722 / referral,1
+127.0.0.1:8728 / referral,1
+127.0.0.1:8729 / referral,1
+127.0.0.1:8730 / referral,1
+127.0.0.1:8731 / referral,1
+127.0.0.1:8732 / referral,1
+127.0.0.1:8733 / referral,1
+127.0.0.1:8738 / referral,1
+127.0.0.1:8739 / referral,1
+127.0.0.1:8741 / referral,1
+127.0.0.1:8742 / referral,1
+127.0.0.1:8747 / referral,1
+127.0.0.1:8748 / referral,1
+127.0.0.1:8751 / referral,1
+127.0.0.1:8753 / referral,1
+127.0.0.1:8754 / referral,1
+127.0.0.1:8755 / referral,1
+127.0.0.1:8759 / referral,1
+127.0.0.1:8766 / referral,1
+127.0.0.1:8769 / referral,1
+127.0.0.1:8770 / referral,1
+127.0.0.1:8772 / referral,1
+127.0.0.1:8773 / referral,1
+127.0.0.1:8774 / referral,1
+127.0.0.1:8775 / referral,1
+127.0.0.1:8777 / referral,1
+127.0.0.1:8784 / referral,1
+127.0.0.1:8791 / referral,1
+127.0.0.1:8793 / referral,1
+127.0.0.1:8797 / referral,1
+127.0.0.1:8798 / referral,1
+127.0.0.1:8802 / referral,1
+127.0.0.1:8804 / referral,1
+127.0.0.1:8807 / referral,1
+127.0.0.1:8809 / referral,1
+127.0.0.1:8813 / referral,1
+127.0.0.1:8814 / referral,1
+127.0.0.1:8815 / referral,1
+127.0.0.1:8816 / referral,1
+127.0.0.1:8817 / referral,1
+127.0.0.1:8818 / referral,1
+127.0.0.1:8831 / referral,1
+127.0.0.1:8832 / referral,1
+127.0.0.1:8834 / referral,1
+127.0.0.1:8835 / referral,1
+127.0.0.1:8838 / referral,1
+127.0.0.1:8840 / referral,1
+127.0.0.1:8842 / referral,1
+127.0.0.1:8847 / referral,1
+127.0.0.1:8852 / referral,1
+127.0.0.1:8853 / referral,1
+127.0.0.1:8854 / referral,1
+127.0.0.1:8856 / referral,1
+127.0.0.1:8864 / referral,1
+127.0.0.1:8871 / referral,1
+127.0.0.1:8872 / referral,1
+127.0.0.1:8874 / referral,1
+127.0.0.1:8875 / referral,1
+127.0.0.1:8882 / referral,1
+127.0.0.1:8883 / referral,1
+127.0.0.1:8884 / referral,1
+127.0.0.1:8886 / referral,1
+127.0.0.1:8889 / referral,1
+127.0.0.1:8891 / referral,1
+127.0.0.1:8892 / referral,1
+127.0.0.1:8899 / referral,1
+127.0.0.1:8905 / referral,1
+127.0.0.1:8911 / referral,1
+127.0.0.1:8920 / referral,1
+127.0.0.1:8921 / referral,1
+127.0.0.1:8926 / referral,1
+127.0.0.1:8933 / referral,1
+127.0.0.1:8938 / referral,1
+127.0.0.1:8941 / referral,1
+127.0.0.1:8942 / referral,1
+127.0.0.1:8943 / referral,1
+127.0.0.1:8946 / referral,1
+127.0.0.1:8949 / referral,1
+127.0.0.1:8950 / referral,1
+127.0.0.1:8952 / referral,1
+127.0.0.1:8958 / referral,1
+127.0.0.1:8959 / referral,1
+127.0.0.1:8960 / referral,1
+127.0.0.1:8961 / referral,1
+127.0.0.1:8962 / referral,1
+127.0.0.1:8963 / referral,1
+127.0.0.1:8967 / referral,1
+127.0.0.1:8969 / referral,1
+127.0.0.1:8970 / referral,1
+127.0.0.1:8973 / referral,1
+127.0.0.1:8981 / referral,1
+127.0.0.1:8982 / referral,1
+127.0.0.1:8984 / referral,1
+127.0.0.1:8986 / referral,1
+127.0.0.1:8987 / referral,1
+127.0.0.1:8988 / referral,1
+127.0.0.1:8989 / referral,1
+127.0.0.1:8992 / referral,1
+127.0.0.1:8997 / referral,1
+127.0.0.1:8998 / referral,1
+127.0.0.1:8999 / referral,1
+SendGrid / Content,1
+Unifonic / SMS,1
+borrower.dynalinks.app / referral,1
+connect.xfinity.com / referral,1
+cr.m365copilotapp.svc.cloud.microsoft / referral,1
+deel.lightning.force.com / referral,1
+deref-gmx.com / referral,1
+download_app_modal / (not set),1
+duckduckgo / organic,1
+equipmentshare.frontapp.com / referral,1
+financing.manafa.co / referral,1
+gatekeeperapp.net / referral,1
+ixbrowser.biz.id / referral,1
+l.instagram.com / referral,1
+lendo.sa / referral,1
+linkedin / cpc,1
+links.uk.defend.egress.com / referral,1
+m.youtube.com / referral,1
+m365.eu.vadesecure.com / referral,1
+mail.ocn.jp / referral,1
+manafasa.sng.link / referral,1
+muqeem.sa / referral,1
+mustathmir.ai / referral,1
+nam04.safelinks.protection.outlook.com / referral,1
+resourceinn.com / referral,1
+rzm.com.sa / referral,1
+search-dra.dt.dbankcloud.com / referral,1
+secureurl.ukr.net / referral,1
+thecrowdspace.com / referral,1
+tiktok.com / referral,1
+trello.com / referral,1
+ui-deref.de / referral,1
+vision2030.ai / referral,1
+webmail.centurylink.net / referral,1
+webmail.strato.com / referral,1
+wo-drcn.dbankcloud.cn / referral,1
+zmail.primericaonline.com / referral,1
+
+#  
+# Start date: 20261020
+# End date: 20261110
+Nth day,returning,new
+0000,3745,1880
+0001,3099,1732
+0002,4217,2300
+0003,2878,1606
+0004,2200,1304
+0005,3677,1874
+0006,3095,1691
+0007,4022,1994
+0008,3188,1550
+0009,3052,1591
+0010,2762,1404
+0011,2714,1447
+0012,5165,2282
+0013,3806,2299
+0014,3323,1637
+0015,3261,1500
+0016,2971,1386
+0017,2647,1152
+0018,2219,1134
+0019,4026,1558
+0020,3337,1522
+0021,2889,1738
+
+# How does activity on your platforms compare?
+# Start date: 20261020
+# End date: 20261110
+Platform,Key events
+iOS,31791
+Android,13843
+web,12171
+
+#  
+# Start date: 20261020
+# End date: 20261110
+City,Active users
+Riyadh,20025
+Jeddah,12695
+Dammam,7413
+Madinah,3291
+Buraydah,2136
+Makkah,1246
+Abha,1069
+Al Khobar,695
+Al Jubail,556
+Taif,505
+Dhahran,400
+Boardman,390
+Al Hofuf,333
+Tabuk,305
+Amsterdam,220
+Al Qatif,206
+Najran,203
+Dublin,200
+Yanbu,177
+Unaizah,160
+Lahore,155
+Hail,148
+Hafar Al Batin,113
+Arar,109
+Al Mubarraz,108
+New York,105
+London,97
+Dubai,93
+Al-Kharj,91
+Manama,81
+Doha,80
+Jazan,75
+Ashburn,69
+San Jose,58
+Abu Arish,54
+Cairo,53
+Moses Lake,53
+Amman,50
+New Cairo City,49
+Khafji,48
+Flint Hill,45
+Salmiya,42
+Giza,39
+Frankfurt am Main,37
+Istanbul,35
+Saihat,34
+Paris,33
+Ahad Rafidah,32
+Chicago,27
+Abqaiq,26
+Rafha,26
+Ras Tanura,24
+Beirut,22
+Jabriya,22
+Alghuwayla Agricutural Subdivision,21
+91520,19
+Al Majma'ah,19
+Hong Kong,18
+Singapore,18
+Abu Dhabi,17
+Umluj,17
+Casablanca,16
+Zurich,16
+Anak,15
+Al Bahah,14
+Des Moines,14
+Diriyah,14
+Jazan City for Primary and Downstream Industries,14
+Toronto,14
+Atlanta,12
+King Abdullah University Of Science And Technology,12
+Mississauga,12
+Sabya,12
+Cardiff,11
+Nozha 2,11
+6th of October City,10
+Al Jahra,10
+AlUla,10
+Hamad Town,10
+Kuala Lumpur,10
+Milan,10
+North Charleston,10
+Vienna,10
+Vilnius,10
+Damascus,9
+Duba,9
+Irbid,9
+Madrid,9
+Muscat,9
+Reston,9
+Al Obour City,8
+Alexandria,8
+Berlin,8
+Fes,8
+New Delhi,8
+Ras Al Khair,8
+Salford,8
+Bangkok,7
+Brussels,7
+Galali,7
+Jakarta,7
+Karachi,7
+October Gardens,7
+Riffa,7
+Serrekunda,7
+Sharjah,7
+Shibuya,7
+Southampton,7
+Sydney,7
+Tangier,7
+Al Makhwah,6
+As Saffaniyah,6
+Baghdad,6
+Baltimore,6
+Boston,6
+Bucharest,6
+Columbus,6
+Dalung,6
+Fuchu,6
+Hyderabad,6
+Mansoura,6
+Orlando,6
+Rome,6
+Sanaa,6
+Surabaya,6
+7597,5
+Algiers,5
+Atbara,5
+Budapest,5
+Daher,5
+Delhi,5
+El Sheikh Zayed City,5
+Guangzhou,5
+Kuwait City,5
+Luanda,5
+North Bergen,5
+Osaka,5
+Quezon City,5
+Rabigh,5
+Sakarya,5
+Salman City,5
+Warsaw,5
+10th of Ramadan City,4
+Arlington,4
+Austin,4
+Bandung,4
+Chennai,4
+Dallas,4
+Gurugram,4
+Islamabad,4
+Kuta Selatan,4
+Manchester,4
+Mangaf,4
+Marrakesh,4
+Medford,4
+Melbourne,4
+Naaldwijk,4
+Perth,4
+Prague,4
+Prineville,4
+Safwa,4
+Sheffield,4
+Tehran,4
+Tripoli,4
+Ubud,4
+6005,3
+Addis Ababa,3
+Al Farwaniyah,3
+Al Hudaydah,3
+Asyut,3
+Baguio,3
+Barraute,3
+Bath,3
+Bengaluru,3
+Birmingham,3
+Bursa,3
+Chiyoda City,3
+Faisalabad,3
+Graz,3
+Jacksonville,3
+Limerick,3
+Los Angeles,3
+Lusail,3
+Marseille,3
+McLean,3
+Multan,3
+Mumbai,3
+New Bani Suef,3
+Palm Bay,3
+Piscataway,3
+Prudhoe,3
+Pune,3
+Rawalpindi,3
+Rumaithiya,3
+Sale,3
+Santa Clara,3
+Secaucus,3
+Seoul,3
+Shanghai,3
+Shebeen El-Kom,3
+Shinjuku City,3
+Slough,3
+Tanomah,3
+Thunder Bay,3
+Tirana,3
+94970,2
+A'ali,2
+Abdullah Al Mubarak Al Sabah,2
+Abuja,2
+Accra,2
+Aden,2
+Al Hamriyah,2
+Al Jubaylah,2
+Al Khor and Al Thakhira Municipality,2
+Al Qaisumah,2
+Al-Hawamidiyya,2
+Al-Rayyan,2
+Alhada,2
+Ancona,2
+Angers,2
+Ankara,2
+Ardiya,2
+Auckland,2
+Badr,2
+Badr City,2
+Baku,2
+Barcelona,2
+Beijing,2
+Belqas,2
+Bilbeis,2
+Bolzano,2
+Buenos Aires,2
+Busan,2
+Calpella,2
+Cape Coast,2
+Cape Town,2
+Castle Donington,2
+Catania,2
+Centreville,2
+Chandler's Ford,2
+Chuo City,2
+Clifton,2
+Copenhagen,2
+Curitiba,2
+Damietta,2
+Denpasar,2
+Dhaka,2
+El Balyana,2
+El-Mahalla El-Kubra,2
+Es-Sedra,2
+Florence,2
+Fort Worth,2
+Goiania,2
+Hannoville,2
+Hawally,2
+Houston,2
+Idku,2
+Incheon,2
+Indianapolis,2
+Irvine,2
+Isa Town,2
+Kaithal,2
+Khartoum,2
+Khulais,2
+Kothamangalam,2
+Kumasi,2
+Kyoto,2
+La Rochelle,2
+Lapu-Lapu,2
+Leeds,2
+Libreville,2
+Lisbon,2
+Liverpool,2
+Ludhiana,2
+Lviv,2
+Maidenhead,2
+Manila,2
+Markaz Minya al Qamh,2
+Marsa Matruh,2
+Meknes,2
+Minato City,2
+Montornes del Valles,2
+Morfelden-Walldorf,2
+Muhlhausen,2
+Newcastle upon Tyne,2
+Nottingham,2
+Oslo Municipality,2
+Ota City,2
+Owerri,2
+Oxford,2
+Palatine,2
+Pattaya City,2
+Phoenix,2
+Port Sudan,2
+Sabt Al Alayah,2
+Salerno,2
+Seeb,2
+Seville,2
+Sfax,2
+Sharma,2
+Sidi Bel Abbes,2
+Sousse,2
+Sumqayit,2
+Taguig,2
+Tempe,2
+Tunis,2
+Turin,2
+Udhailiyah,2
+Washington,2
+Windham,2
+Zahra,2
+Zallaq,2
+Zaventem,2
+70310,1
+89176,1
+A Coruna,1
+Aalborg,1
+Aberdeen,1
+Addayer,1
+Adoni,1
+Ajman,1
+Al Batanun,1
+Al Dhaid,1
+Al Dulaymiyah,1
+Al Mukalla,1
+Al Usaylah,1
+Al Uyaynah,1
+Al-Muzahmiyya,1
+Amarillo,1
+Andalous,1
+Angeles,1
+Antananarivo,1
+Apeldoorn,1
+Ar-Ramtha,1
+Ariana Superieur,1
+Asansol,1
+Asele,1
+Asmara,1
+Bacolod,1
+Badrshein,1
+Ballinasloe,1
+Banha,1
+Basrah,1
+Beckenham,1
+Berrechid,1
+Bhairab,1
+Bishkek,1
+Bissen,1
+Bogor,1
+Bordj Bou Arreridj,1
+Bournemouth,1
+Brisbane,1
+Buckhurst Hill,1
+Cabudare,1
+Calamba,1
+Campbell,1
+Castro Valley,1
+Cherkasy,1
+Cologne,1
+Crofton,1
+Cumilla,1
+Cupertino,1
+Daringibadi,1
+Dax,1
+Detroit,1
+Dortmund,1
+Dusseldorf,1
+El Khroub,1
+El Waqf,1
+Elk Grove Village,1
+Enugu,1
+Erbil,1
+Estherville,1
+Faiyum,1
+Fontainebleau,1
+Forest City,1
+Fort Collins,1
+Fox Crossing,1
+Girona,1
+Glasgow,1
+Haarlem,1
+Hammamet,1
+Harrison,1
+Harrow,1
+Hartford,1
+Hassan,1
+Jaipur,1
+Jakobsberg,1
+Jerusalem,1
+Kafr El-Shaikh,1
+Kampala,1
+Karipur,1
+Kazan,1
+Kempton Park,1
+Khairpur,1
+Khenchela,1
+Kinshasa,1
+Kochi,1
+Korba,1
+Kuttanad,1
+Lagos,1
+Lakshmipur,1
+Lekki,1
+Lille,1
+Limassol,1
+Los Guayos,1
+Lucknow,1
+Luxembourg,1
+Maiduguri,1
+Makati City,1
+Malacca,1
+Malung,1
+Marlow,1
+Matsudo,1
+Medellin,1
+Miami,1
+Minneapolis,1
+Minya,1
+Mit Ghamr,1
+Monroeville,1
+Montreal,1
+Montreux,1
+Moroni,1
+Moscow,1
+Mountain View,1
+Muntinlupa,1
+Murphy,1
+Nablus,1
+Narita,1
+Nevsehir,1
+Newmarket,1
+Niagara Falls,1
+Norderstedt,1
+Nouakchott,1
+Oberhausen,1
+Ottawa,1
+Oum El Bouaghi,1
+Oyonnax,1
+Pa Tong,1
+Palo Alto,1
+Paranaque,1
+Patimuan,1
+Phuket,1
+Pimpri-Chinchwad,1
+Port Harcourt,1
+Pudahuel,1
+Pyramids Gardens,1
+Qena,1
+Ras Al-Khaimah,1
+Reading,1
+Rochester,1
+Rotterdam,1
+Rouen,1
+Saida,1
+Saint Petersburg,1
+Saint-Denis,1
+Saint-Felicien,1
+Samarkand,1
+San Fernando,1
+San Juan,1
+San Salvador,1
+Sao Caetano do Sul,1
+Sao Paulo,1
+Seattle,1
+Setif,1
+Sheikhupura,1
+Sitra,1
+Sofia,1
+Solapur,1
+State College,1
+Stockholm,1
+Stuttgart,1
+Suez,1
+Sukadana,1
+Swindon,1
+Talkha,1
+Tamanrasset,1
+Tarlac City,1
+Tarragona,1
+Tashkent,1
+Tbilisi,1
+Temecula,1
+The Dalles,1
+The Hague,1
+The Pas,1
+Thrissur,1
+Tlemcen,1
+Vadodara,1
+Valencia,1
+Vancouver,1
+Vaughan,1
+Villanova,1
+Warri,1
+West Hollywood,1
+Wolverhampton,1
+Xiamen,1
+Zanzibar,1
+Zaria,1
+
+#  
+# Start date: 20261020
+# End date: 20261110
+Audience name,Active users
+All Users,49359

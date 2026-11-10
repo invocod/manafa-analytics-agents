@@ -1,2 +1,5 @@
 2026-11-10T20:11Z  checked=0  acted=0  note="DRY RUN (first run) — target week 2026-W45; all 7 sources unreachable/unverified; state initialized, cursor NOT advanced; no Slack post; report written to reports/2026/W46/tracking-qa-dryrun.md"
   decision: first-run watermark stays null until a run with real data completes, so the first real run audits the first available closed week instead of skipping it
+2026-11-10T20:35Z  checked=82200_sessions/799_sm  acted=5  note="first real run on GA4 snapshot Oct20-Nov10; UTM audit ran; heartbeat+receipt not covered (export lacks event x date; no singular/ads files); 5 issues filed tqa-001..005; Slack staged (channel not created yet)"
+  decision: direct/(none) at 79% is the headline — composition investigation (web vs app split) is the single next check
+  decision: GA4 export format needs event-name x date for the heartbeat — requested from team

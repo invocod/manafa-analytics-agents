@@ -1,14 +1,23 @@
 {
   "loop": "tracking-qa",
-  "cursor": null,
-  "cursor_note": "No week audited yet — first real run with data sets this to the first closed week it audits. Dry run 2026-11-10 did not advance it (all sources unreachable).",
-  "open_issues": [],
+  "cursor": "2026-11-10",
+  "cursor_note": "UTM audit covers the 2026-10-20..2026-11-10 GA4 snapshot. Heartbeat/receipt checks have never run — their first run should NOT skip this window.",
+  "open_issues": [
+    {"id": "tqa-001", "found": "2026-11-11", "severity": "high", "what": "direct/(none) = 78.9% of sessions — attribution mostly blind", "status": "open", "confirming_check": "direct share split by platform (web-only)"},
+    {"id": "tqa-002", "found": "2026-11-11", "severity": "high", "what": "paid social nearly invisible in GA4 (snap 17, tiktok ~2 sessions/22d) — likely untagged", "status": "open", "confirming_check": "platform spend vs GA4 sessions for same window"},
+    {"id": "tqa-003", "found": "2026-11-11", "severity": "med", "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes", "status": "open"},
+    {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
+    {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"}
+  ],
   "baselines": {
+    "direct_share_sessions": 0.789,
+    "direct_share_first_user": 0.733,
+    "distinct_source_medium": 799,
     "unassigned_share": null,
     "backend_weekday_bands": null
   },
   "source_status_last_run": {
-    "ga4_csv": "awaiting first drop in data/exports/ga4/ (interim ledger)",
+    "ga4_csv": "fresh — Reports_snapshot.csv 2026-11-11 (no event-name x date breakdown; heartbeat uncovered)",
     "singular_csv": "awaiting first drop in data/exports/singular/",
     "google_ads_csv": "awaiting first drop in data/exports/google-ads/",
     "meta": "not configured",
