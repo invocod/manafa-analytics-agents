@@ -1,0 +1,19 @@
+{
+  "loop": "tracking-qa",
+  "cursor": null,
+  "cursor_note": "No week audited yet — first real run with data sets this to the first closed week it audits. Dry run 2026-11-10 did not advance it (all sources unreachable).",
+  "open_issues": [],
+  "baselines": {
+    "unassigned_share": null,
+    "backend_weekday_bands": null
+  },
+  "source_status_last_run": {
+    "backend_csv": "unreachable — no files in data/exports/backend/",
+    "ga4": "unverified — GA4_SERVICE_ACCOUNT_JSON / GA4_PROPERTY_ID not configured",
+    "singular": "unverified — SINGULAR_API_KEY not configured",
+    "google-ads": "stale — no export",
+    "meta": "stale — no export",
+    "tiktok": "stale — no export",
+    "snapchat": "stale — no export"
+  }
+}

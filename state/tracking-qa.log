@@ -1,0 +1,2 @@
+2026-11-10T20:11Z  checked=0  acted=0  note="DRY RUN (first run) — target week 2026-W45; all 7 sources unreachable/unverified; state initialized, cursor NOT advanced; no Slack post; report written to reports/2026/W46/tracking-qa-dryrun.md"
+  decision: first-run watermark stays null until a run with real data completes, so the first real run audits the first available closed week instead of skipping it
