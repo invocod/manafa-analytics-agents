@@ -38,6 +38,21 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 
 Open this repo in Claude Code and ask: *"Run the tracking-qa loop for last week"* — the skill, context, and state do the rest. Same body, no automation: perfectly valid while proving a loop out.
 
+## Scheduling (when ready — currently run manually)
+
+Cloud routines need this repo pushed to GitHub first. Then create one routine per loop at claude.ai/code/routines (or ask Claude Code to create them via `/schedule`), with the prompt template below and these crons (Riyadh = UTC+3):
+
+| Loop | Riyadh time | Cron (UTC) | Phase |
+|---|---|---|---|
+| tracking-qa | Mon 07:00 | `0 4 * * 1` | 1 — enable first |
+| weekly-marketing-review | Mon 09:00 | `0 6 * * 1` | 1 — enable first |
+| attribution-recon | Mon 08:00 | `0 5 * * 1` | 2 — create paused |
+| analytics-anomaly | daily 08:00 | `0 5 * * *` | 2 — create paused |
+| weekly-ads-check | Mon 08:00 | `0 5 * * 1` | 3 — create paused |
+| funnel-health | Tue 08:00 | `0 5 * * 2` | 3 — create paused |
+
+campaign-postmortem has no cron — run it on demand.
+
 ## Routine prompt template (what each schedule sends)
 
 ```
