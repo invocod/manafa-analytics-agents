@@ -85,3 +85,31 @@ GA4's own platform split says iOS ≈ 55% of key events, so a Singular file set 
 ### Bonus observations (for other loops, not re-filed here)
 - GA4 `registration_started` 9,652 vs `registration_completed` 3,010 (31% completion) → first funnel-health run should start here.
 - Singular registration sources: web organic 519 · Android adwords 233 · web google/cpc 109 · chatgpt.com 13 · linkedin 1 → attribution-recon's first ledger-vs-claims table is now possible for web+Android.
+
+---
+
+# Update 2 (same day): iOS Singular file landed — receipt check now has full platform coverage
+
+New input (**Observed**): iOS row-level Singular log (175MB, same Oct 19–Nov 9 window; raw kept local, aggregate regenerated with all 3 platforms).
+
+## Heartbeat (all platforms): ✅ still healthy
+registration 1,908 (14–153/day) · kyc 1,562 (16–90) · deposit 1,976 (1–237) · investment 14,761 (7–3,258) — no zero-days anywhere.
+
+## Receipt check, full coverage (GA4 Oct 20–Nov 10 vs Singular Oct 19–Nov 9, 1-day offset)
+
+| Event | GA4 | Singular (all) | Ratio | Verdict |
+|---|---|---|---|---|
+| deposit_success | 1,975 | 1,976 | 100% | ✅ reconciles exactly |
+| investment_completed | 16,002 | 14,761 | 92% | ✅ normal band (10–30% gap expected) |
+| registration_completed | 3,010 | 1,908 | 63% | ⚠️ 37% gap — above normal band |
+| kyc_completed | 2,960 | 1,562 | 53% | 🔶 47% gap — investigate band |
+
+**Money events reconcile; identity events don't.** The exact deposit match strongly suggests both tools hear the same backend signal for money moments, while `registration_completed`/`kyc_completed` fire more in GA4 than Singular. **Inferred** candidates: GA4 double-firing on those two (e.g. GTM + SDK both sending), a web-only Singular capture loss concentrated at signup (ad-blocker-prone surface), or a definitional difference (GA4 counting event instances vs Singular deduping). Confirming check unchanged: **GA4 event × platform explore** for the window.
+
+## Issue updates
+- **tqa-006 → RESOLVED**: iOS Singular data exists (SDK integrated; earlier drop just omitted it). 
+- **tqa-007 → narrowed**: scope is now registrations + KYC only; deposits & investments are clean.
+- **tqa-002 → materially reframed**: paid social IS driving conversions — in the app, where GA4 web can't see it. iOS registrations by Singular source: **tiktok ads 208, snapchat 160** (vs GA4's 17 Snapchat sessions). GA4 alone under-states paid social badly; Singular is the system of record for app acquisition. The web-tagging fixes still stand, but the "paid social invisible" severity drops from high to med — it's invisible *in GA4*, not in reality.
+
+## Attribution preview (for attribution-recon's first run)
+Registrations by source (Singular, all platforms): web organic 519 · iOS organic 509 · Android adwords 233 · iOS tiktok ads 208 · iOS snapchat 160 · web google/cpc 109. Deposits: iOS organic 1,394 of 1,976 (71%). The first-touch vs last-touch and GA4-vs-Singular channel comparison is now fully possible.

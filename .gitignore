@@ -4,5 +4,5 @@ __pycache__/
 .env
 
 # Raw row-level exports stay local (size + data hygiene) — commit aggregates only
-data/exports/singular/a3ee50bd-*.csv
-data/exports/singular/a72ab903-*.csv
+data/exports/singular/*.csv
+!data/exports/singular/singular-aggregate-*.csv

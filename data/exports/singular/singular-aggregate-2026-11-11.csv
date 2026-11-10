@@ -20,6 +20,32 @@ date,platform,event,count
 2026-10-19,android,registration_completed,2
 2026-10-19,android,step_failed,6
 2026-10-19,android,withdrawal_completed,3
+2026-10-19,ios,Auto Invest Activation,8
+2026-10-19,ios,Auto Invest Deactivation,1
+2026-10-19,ios,Deposit Instruction Click,4
+2026-10-19,ios,Draft Account Creation Completed,7
+2026-10-19,ios,Investment Made,7
+2026-10-19,ios,Investment Screen,74
+2026-10-19,ios,KYC Completion,9
+2026-10-19,ios,Nafath Verified,3
+2026-10-19,ios,Opportunity Details View,110
+2026-10-19,ios,Withdrawal Click,4
+2026-10-19,ios,Withdrawal Success,4
+2026-10-19,ios,__SESSION__,137
+2026-10-19,ios,auto_invest_disabled,1
+2026-10-19,ios,auto_invest_enabled,6
+2026-10-19,ios,bank_account_added,1
+2026-10-19,ios,deposit_success,1
+2026-10-19,ios,email_verified,8
+2026-10-19,ios,identity_verified,7
+2026-10-19,ios,investment_completed,7
+2026-10-19,ios,kyc_completed,8
+2026-10-19,ios,login_completed,111
+2026-10-19,ios,passcode_enabled,1
+2026-10-19,ios,registration_completed,7
+2026-10-19,ios,step_failed,1
+2026-10-19,ios,unique_investors,1
+2026-10-19,ios,withdrawal_completed,2
 2026-10-19,web,__PAGE_VISIT__,381
 2026-10-19,web,__SESSION__,147
 2026-10-19,web,auto_invest_enabled,2
@@ -71,6 +97,43 @@ date,platform,event,count
 2026-10-20,android,wheel_spin_click,1
 2026-10-20,android,withdrawal_completed,65
 2026-10-20,android,withdrawal_settled,71
+2026-10-20,ios,Auto Invest Activation,37
+2026-10-20,ios,Auto Invest Deactivation,19
+2026-10-20,ios,Cancel Investment,16
+2026-10-20,ios,Deposit Instruction Click,31
+2026-10-20,ios,Draft Account Creation Completed,57
+2026-10-20,ios,Investment Made,259
+2026-10-20,ios,Investment Screen,1334
+2026-10-20,ios,KYC Completion,59
+2026-10-20,ios,Nafath Verified,26
+2026-10-20,ios,Opportunity Details View,3142
+2026-10-20,ios,Withdrawal Click,237
+2026-10-20,ios,Withdrawal Success,237
+2026-10-20,ios,__SESSION__,1941
+2026-10-20,ios,app_view_page_dropped,2
+2026-10-20,ios,auto_invest_disabled,15
+2026-10-20,ios,auto_invest_enabled,29
+2026-10-20,ios,bank_account_added,17
+2026-10-20,ios,bank_account_removed,1
+2026-10-20,ios,deposit_failed,35
+2026-10-20,ios,deposit_success,74
+2026-10-20,ios,email_verified,66
+2026-10-20,ios,identity_verified,56
+2026-10-20,ios,investment_cancelled,17
+2026-10-20,ios,investment_completed,243
+2026-10-20,ios,kyc_completed,59
+2026-10-20,ios,login_completed,2292
+2026-10-20,ios,notification_preference_updated,5
+2026-10-20,ios,passcode_changed,22
+2026-10-20,ios,passcode_enabled,13
+2026-10-20,ios,referral_reward_earned,1
+2026-10-20,ios,registration_completed,55
+2026-10-20,ios,step_failed,4
+2026-10-20,ios,unique_investors,5
+2026-10-20,ios,withdrawal_completed,217
+2026-10-20,ios,withdrawal_failed,1
+2026-10-20,ios,withdrawal_reversed,1
+2026-10-20,ios,withdrawal_settled,209
 2026-10-20,web,Assess__Sing,6
 2026-10-20,web,Offered_Sing,3
 2026-10-20,web,__PAGE_VISIT__,3717
@@ -121,6 +184,40 @@ date,platform,event,count
 2026-10-21,android,step_failed,22
 2026-10-21,android,withdrawal_completed,45
 2026-10-21,android,withdrawal_settled,44
+2026-10-21,ios,Auto Invest Activation,41
+2026-10-21,ios,Auto Invest Deactivation,13
+2026-10-21,ios,Cancel Investment,20
+2026-10-21,ios,Deposit Instruction Click,40
+2026-10-21,ios,Draft Account Creation Completed,46
+2026-10-21,ios,Investment Made,166
+2026-10-21,ios,Investment Screen,960
+2026-10-21,ios,KYC Completion,50
+2026-10-21,ios,Nafath Verified,20
+2026-10-21,ios,Opportunity Details View,2090
+2026-10-21,ios,Withdrawal Click,131
+2026-10-21,ios,Withdrawal Success,131
+2026-10-21,ios,__SESSION__,1602
+2026-10-21,ios,app_view_page_dropped,4
+2026-10-21,ios,auto_invest_disabled,11
+2026-10-21,ios,auto_invest_enabled,34
+2026-10-21,ios,bank_account_added,14
+2026-10-21,ios,bank_account_removed,1
+2026-10-21,ios,deposit_failed,23
+2026-10-21,ios,deposit_success,57
+2026-10-21,ios,email_verified,53
+2026-10-21,ios,identity_verified,46
+2026-10-21,ios,investment_cancelled,20
+2026-10-21,ios,investment_completed,151
+2026-10-21,ios,kyc_completed,50
+2026-10-21,ios,login_completed,1785
+2026-10-21,ios,passcode_changed,34
+2026-10-21,ios,passcode_enabled,12
+2026-10-21,ios,referral_reward_earned,1
+2026-10-21,ios,registration_completed,46
+2026-10-21,ios,step_failed,5
+2026-10-21,ios,unique_investors,4
+2026-10-21,ios,withdrawal_completed,130
+2026-10-21,ios,withdrawal_settled,141
 2026-10-21,web,Assess__Sing,1
 2026-10-21,web,Offered_Sing,1
 2026-10-21,web,__PAGE_VISIT__,3632
@@ -179,6 +276,44 @@ date,platform,event,count
 2026-10-22,android,step_failed,36
 2026-10-22,android,withdrawal_completed,114
 2026-10-22,android,withdrawal_settled,106
+2026-10-22,ios,Auto Invest Activation,46
+2026-10-22,ios,Auto Invest Deactivation,38
+2026-10-22,ios,Cancel Investment,33
+2026-10-22,ios,Deposit Instruction Click,51
+2026-10-22,ios,Draft Account Creation Completed,53
+2026-10-22,ios,Investment Made,448
+2026-10-22,ios,Investment Screen,1825
+2026-10-22,ios,KYC Completion,64
+2026-10-22,ios,Nafath Verified,30
+2026-10-22,ios,Opportunity Details View,4330
+2026-10-22,ios,Withdrawal Click,446
+2026-10-22,ios,Withdrawal Success,446
+2026-10-22,ios,__SESSION__,2183
+2026-10-22,ios,app_view_page_dropped,1
+2026-10-22,ios,auto_invest_disabled,38
+2026-10-22,ios,auto_invest_enabled,38
+2026-10-22,ios,bank_account_added,39
+2026-10-22,ios,bank_account_removed,1
+2026-10-22,ios,deposit_failed,22
+2026-10-22,ios,deposit_success,68
+2026-10-22,ios,email_verified,76
+2026-10-22,ios,identity_verified,54
+2026-10-22,ios,investment_cancelled,33
+2026-10-22,ios,investment_completed,423
+2026-10-22,ios,kyc_completed,60
+2026-10-22,ios,login_completed,3332
+2026-10-22,ios,notification_preference_updated,34
+2026-10-22,ios,passcode_changed,43
+2026-10-22,ios,passcode_enabled,13
+2026-10-22,ios,profile_updated,1
+2026-10-22,ios,referral_reward_earned,2
+2026-10-22,ios,registration_completed,54
+2026-10-22,ios,step_failed,10
+2026-10-22,ios,unique_investors,3
+2026-10-22,ios,withdrawal_completed,397
+2026-10-22,ios,withdrawal_failed,4
+2026-10-22,ios,withdrawal_reversed,4
+2026-10-22,ios,withdrawal_settled,372
 2026-10-22,web,Assess__Sing,4
 2026-10-22,web,Offered_Sing,4
 2026-10-22,web,__PAGE_VISIT__,3610
@@ -237,6 +372,40 @@ date,platform,event,count
 2026-10-23,android,unique_investors,1
 2026-10-23,android,withdrawal_completed,33
 2026-10-23,android,withdrawal_settled,37
+2026-10-23,ios,Auto Invest Activation,38
+2026-10-23,ios,Auto Invest Deactivation,8
+2026-10-23,ios,Cancel Investment,2
+2026-10-23,ios,Deposit Instruction Click,32
+2026-10-23,ios,Draft Account Creation Completed,53
+2026-10-23,ios,Investment Made,177
+2026-10-23,ios,Investment Screen,958
+2026-10-23,ios,KYC Completion,64
+2026-10-23,ios,Nafath Verified,26
+2026-10-23,ios,Opportunity Details View,2088
+2026-10-23,ios,Withdrawal Click,115
+2026-10-23,ios,Withdrawal Success,115
+2026-10-23,ios,__SESSION__,1602
+2026-10-23,ios,auto_invest_disabled,6
+2026-10-23,ios,auto_invest_enabled,34
+2026-10-23,ios,bank_account_added,16
+2026-10-23,ios,bank_account_removed,2
+2026-10-23,ios,deposit_failed,20
+2026-10-23,ios,deposit_success,40
+2026-10-23,ios,email_verified,69
+2026-10-23,ios,identity_verified,52
+2026-10-23,ios,investment_cancelled,2
+2026-10-23,ios,investment_completed,157
+2026-10-23,ios,kyc_completed,62
+2026-10-23,ios,login_completed,1573
+2026-10-23,ios,notification_preference_updated,1
+2026-10-23,ios,passcode_changed,35
+2026-10-23,ios,passcode_enabled,18
+2026-10-23,ios,phone_verified,1
+2026-10-23,ios,registration_completed,53
+2026-10-23,ios,step_failed,2
+2026-10-23,ios,unique_investors,3
+2026-10-23,ios,withdrawal_completed,97
+2026-10-23,ios,withdrawal_settled,115
 2026-10-23,web,__PAGE_VISIT__,1634
 2026-10-23,web,__SESSION__,484
 2026-10-23,web,auto_invest_disabled,1
@@ -287,6 +456,36 @@ date,platform,event,count
 2026-10-24,android,withdrawal_failed,1
 2026-10-24,android,withdrawal_reversed,1
 2026-10-24,android,withdrawal_settled,19
+2026-10-24,ios,Auto Invest Activation,32
+2026-10-24,ios,Auto Invest Deactivation,3
+2026-10-24,ios,Deposit Instruction Click,20
+2026-10-24,ios,Draft Account Creation Completed,56
+2026-10-24,ios,Investment Made,76
+2026-10-24,ios,Investment Screen,591
+2026-10-24,ios,KYC Completion,60
+2026-10-24,ios,Nafath Verified,28
+2026-10-24,ios,Opportunity Details View,1236
+2026-10-24,ios,Withdrawal Click,85
+2026-10-24,ios,Withdrawal Success,85
+2026-10-24,ios,__SESSION__,1305
+2026-10-24,ios,app_view_page_dropped,1
+2026-10-24,ios,auto_invest_disabled,3
+2026-10-24,ios,auto_invest_enabled,27
+2026-10-24,ios,bank_account_added,12
+2026-10-24,ios,deposit_failed,4
+2026-10-24,ios,deposit_success,20
+2026-10-24,ios,email_verified,64
+2026-10-24,ios,identity_verified,55
+2026-10-24,ios,investment_completed,73
+2026-10-24,ios,kyc_completed,58
+2026-10-24,ios,login_completed,1102
+2026-10-24,ios,passcode_changed,30
+2026-10-24,ios,passcode_enabled,11
+2026-10-24,ios,registration_completed,56
+2026-10-24,ios,step_failed,3
+2026-10-24,ios,unique_investors,1
+2026-10-24,ios,withdrawal_completed,68
+2026-10-24,ios,withdrawal_settled,71
 2026-10-24,web,__PAGE_VISIT__,1744
 2026-10-24,web,__SESSION__,520
 2026-10-24,web,auto_invest_enabled,1
@@ -338,6 +537,39 @@ date,platform,event,count
 2026-10-25,android,unique_investors,1
 2026-10-25,android,withdrawal_completed,69
 2026-10-25,android,withdrawal_settled,67
+2026-10-25,ios,Auto Invest Activation,46
+2026-10-25,ios,Auto Invest Deactivation,7
+2026-10-25,ios,Cancel Investment,4
+2026-10-25,ios,Deposit Instruction Click,35
+2026-10-25,ios,Draft Account Creation Completed,52
+2026-10-25,ios,Investment Made,165
+2026-10-25,ios,Investment Screen,1149
+2026-10-25,ios,KYC Completion,64
+2026-10-25,ios,Nafath Verified,22
+2026-10-25,ios,Opportunity Details View,2460
+2026-10-25,ios,Withdrawal Click,196
+2026-10-25,ios,Withdrawal Success,196
+2026-10-25,ios,__SESSION__,1923
+2026-10-25,ios,app_view_page_dropped,1
+2026-10-25,ios,auto_invest_disabled,7
+2026-10-25,ios,auto_invest_enabled,35
+2026-10-25,ios,bank_account_added,22
+2026-10-25,ios,bank_account_removed,1
+2026-10-25,ios,deposit_failed,10
+2026-10-25,ios,deposit_success,67
+2026-10-25,ios,email_verified,74
+2026-10-25,ios,identity_verified,51
+2026-10-25,ios,investment_cancelled,4
+2026-10-25,ios,investment_completed,148
+2026-10-25,ios,kyc_completed,58
+2026-10-25,ios,login_completed,2186
+2026-10-25,ios,passcode_changed,48
+2026-10-25,ios,passcode_enabled,9
+2026-10-25,ios,registration_completed,52
+2026-10-25,ios,step_failed,8
+2026-10-25,ios,unique_investors,4
+2026-10-25,ios,withdrawal_completed,223
+2026-10-25,ios,withdrawal_settled,221
 2026-10-25,web,Assess__Sing,4
 2026-10-25,web,Offered_Sing,3
 2026-10-25,web,__PAGE_VISIT__,3502
@@ -395,6 +627,42 @@ date,platform,event,count
 2026-10-26,android,unique_investors,1
 2026-10-26,android,withdrawal_completed,30
 2026-10-26,android,withdrawal_settled,33
+2026-10-26,ios,Auto Invest Activation,43
+2026-10-26,ios,Auto Invest Deactivation,8
+2026-10-26,ios,Cancel Investment,4
+2026-10-26,ios,Deposit Instruction Click,52
+2026-10-26,ios,Deposit Successful,2
+2026-10-26,ios,Draft Account Creation Completed,52
+2026-10-26,ios,Investment Made,160
+2026-10-26,ios,Investment Screen,1099
+2026-10-26,ios,KYC Completion,53
+2026-10-26,ios,Nafath Verified,23
+2026-10-26,ios,Opportunity Details View,2320
+2026-10-26,ios,Withdrawal Click,85
+2026-10-26,ios,Withdrawal Success,86
+2026-10-26,ios,__SESSION__,1687
+2026-10-26,ios,app_view_page_dropped,3
+2026-10-26,ios,auto_invest_disabled,8
+2026-10-26,ios,auto_invest_enabled,34
+2026-10-26,ios,bank_account_added,11
+2026-10-26,ios,deposit_failed,27
+2026-10-26,ios,deposit_success,85
+2026-10-26,ios,email_verified,66
+2026-10-26,ios,identity_verified,51
+2026-10-26,ios,investment_cancelled,4
+2026-10-26,ios,investment_completed,179
+2026-10-26,ios,kyc_completed,50
+2026-10-26,ios,login_completed,1879
+2026-10-26,ios,passcode_changed,23
+2026-10-26,ios,passcode_enabled,22
+2026-10-26,ios,phone_verified,1
+2026-10-26,ios,registration_completed,52
+2026-10-26,ios,step_failed,6
+2026-10-26,ios,unique_investors,6
+2026-10-26,ios,withdrawal_completed,85
+2026-10-26,ios,withdrawal_failed,2
+2026-10-26,ios,withdrawal_reversed,2
+2026-10-26,ios,withdrawal_settled,89
 2026-10-26,web,Assess__Sing,5
 2026-10-26,web,Offered_Sing,4
 2026-10-26,web,__PAGE_VISIT__,5101
@@ -452,6 +720,45 @@ date,platform,event,count
 2026-10-27,android,step_failed,46
 2026-10-27,android,withdrawal_completed,19
 2026-10-27,android,withdrawal_settled,21
+2026-10-27,ios,Auto Invest Activation,37
+2026-10-27,ios,Auto Invest Deactivation,15
+2026-10-27,ios,Cancel Investment,9
+2026-10-27,ios,Deposit Instruction Click,73
+2026-10-27,ios,Deposit Successful,4
+2026-10-27,ios,Draft Account Creation Completed,54
+2026-10-27,ios,Investment Made,253
+2026-10-27,ios,Investment Screen,1645
+2026-10-27,ios,KYC Completion,65
+2026-10-27,ios,Nafath Verified,16
+2026-10-27,ios,Opportunity Details View,3203
+2026-10-27,ios,Withdrawal Click,98
+2026-10-27,ios,Withdrawal Success,98
+2026-10-27,ios,__SESSION__,2161
+2026-10-27,ios,app_view_page_dropped,5
+2026-10-27,ios,auto_invest_disabled,13
+2026-10-27,ios,auto_invest_enabled,32
+2026-10-27,ios,bank_account_added,26
+2026-10-27,ios,bank_account_removed,2
+2026-10-27,ios,deposit_failed,60
+2026-10-27,ios,deposit_success,202
+2026-10-27,ios,email_verified,78
+2026-10-27,ios,identity_verified,54
+2026-10-27,ios,investment_cancelled,9
+2026-10-27,ios,investment_completed,421
+2026-10-27,ios,kyc_completed,58
+2026-10-27,ios,login_completed,2554
+2026-10-27,ios,notification_preference_updated,9
+2026-10-27,ios,passcode_changed,29
+2026-10-27,ios,passcode_enabled,28
+2026-10-27,ios,phone_verified,5
+2026-10-27,ios,referral_reward_earned,1
+2026-10-27,ios,registration_completed,54
+2026-10-27,ios,step_failed,8
+2026-10-27,ios,unique_investors,15
+2026-10-27,ios,withdrawal_completed,94
+2026-10-27,ios,withdrawal_failed,1
+2026-10-27,ios,withdrawal_reversed,1
+2026-10-27,ios,withdrawal_settled,99
 2026-10-27,web,Assess__Sing,5
 2026-10-27,web,__PAGE_VISIT__,4467
 2026-10-27,web,__SESSION__,1280
@@ -507,6 +814,41 @@ date,platform,event,count
 2026-10-28,android,step_failed,21
 2026-10-28,android,withdrawal_completed,29
 2026-10-28,android,withdrawal_settled,29
+2026-10-28,ios,Auto Invest Activation,58
+2026-10-28,ios,Auto Invest Deactivation,11
+2026-10-28,ios,Cancel Investment,4
+2026-10-28,ios,Deposit Instruction Click,40
+2026-10-28,ios,Deposit Successful,1
+2026-10-28,ios,Draft Account Creation Completed,50
+2026-10-28,ios,Investment Made,158
+2026-10-28,ios,Investment Screen,1173
+2026-10-28,ios,KYC Completion,57
+2026-10-28,ios,Nafath Verified,22
+2026-10-28,ios,Opportunity Details View,2484
+2026-10-28,ios,Withdrawal Click,83
+2026-10-28,ios,Withdrawal Success,84
+2026-10-28,ios,__SESSION__,1643
+2026-10-28,ios,app_view_page_dropped,2
+2026-10-28,ios,auto_invest_disabled,10
+2026-10-28,ios,auto_invest_enabled,47
+2026-10-28,ios,bank_account_added,7
+2026-10-28,ios,deposit_failed,53
+2026-10-28,ios,deposit_success,82
+2026-10-28,ios,email_verified,72
+2026-10-28,ios,identity_verified,50
+2026-10-28,ios,investment_cancelled,4
+2026-10-28,ios,investment_completed,459
+2026-10-28,ios,kyc_completed,57
+2026-10-28,ios,login_completed,1956
+2026-10-28,ios,passcode_changed,23
+2026-10-28,ios,passcode_enabled,13
+2026-10-28,ios,phone_verified,2
+2026-10-28,ios,registration_completed,50
+2026-10-28,ios,stamp_view,1
+2026-10-28,ios,step_failed,3
+2026-10-28,ios,unique_investors,6
+2026-10-28,ios,withdrawal_completed,79
+2026-10-28,ios,withdrawal_settled,79
 2026-10-28,web,Assess__Sing,6
 2026-10-28,web,Offered_Sing,6
 2026-10-28,web,__PAGE_VISIT__,3073
@@ -563,6 +905,43 @@ date,platform,event,count
 2026-10-29,android,step_failed,28
 2026-10-29,android,withdrawal_completed,39
 2026-10-29,android,withdrawal_settled,38
+2026-10-29,ios,Auto Invest Activation,41
+2026-10-29,ios,Auto Invest Deactivation,12
+2026-10-29,ios,Cancel Investment,12
+2026-10-29,ios,Deposit Instruction Click,42
+2026-10-29,ios,Draft Account Creation Completed,47
+2026-10-29,ios,Investment Made,140
+2026-10-29,ios,Investment Screen,992
+2026-10-29,ios,KYC Completion,49
+2026-10-29,ios,Nafath Verified,22
+2026-10-29,ios,Opportunity Details View,2165
+2026-10-29,ios,Withdrawal Click,126
+2026-10-29,ios,Withdrawal Success,126
+2026-10-29,ios,__SESSION__,1573
+2026-10-29,ios,app_view_page_dropped,1
+2026-10-29,ios,auto_invest_disabled,6
+2026-10-29,ios,auto_invest_enabled,29
+2026-10-29,ios,bank_account_added,15
+2026-10-29,ios,bank_account_removed,2
+2026-10-29,ios,deposit_failed,46
+2026-10-29,ios,deposit_success,80
+2026-10-29,ios,email_verified,56
+2026-10-29,ios,identity_verified,46
+2026-10-29,ios,investment_cancelled,12
+2026-10-29,ios,investment_completed,304
+2026-10-29,ios,kyc_completed,45
+2026-10-29,ios,login_completed,1853
+2026-10-29,ios,notification_preference_updated,4
+2026-10-29,ios,passcode_changed,23
+2026-10-29,ios,passcode_enabled,21
+2026-10-29,ios,profile_updated,1
+2026-10-29,ios,registration_completed,46
+2026-10-29,ios,step_failed,4
+2026-10-29,ios,unique_investors,5
+2026-10-29,ios,withdrawal_completed,116
+2026-10-29,ios,withdrawal_failed,5
+2026-10-29,ios,withdrawal_reversed,5
+2026-10-29,ios,withdrawal_settled,110
 2026-10-29,web,Assess__Sing,2
 2026-10-29,web,Offered_Sing,4
 2026-10-29,web,__PAGE_VISIT__,3579
@@ -618,6 +997,42 @@ date,platform,event,count
 2026-10-30,android,wheel_spin_click,2
 2026-10-30,android,withdrawal_completed,10
 2026-10-30,android,withdrawal_settled,12
+2026-10-30,ios,Auto Invest Activation,43
+2026-10-30,ios,Auto Invest Deactivation,13
+2026-10-30,ios,Cancel Investment,2
+2026-10-30,ios,Deposit Instruction Click,46
+2026-10-30,ios,Deposit Successful,1
+2026-10-30,ios,Draft Account Creation Completed,43
+2026-10-30,ios,Investment Made,85
+2026-10-30,ios,Investment Screen,821
+2026-10-30,ios,KYC Completion,50
+2026-10-30,ios,Nafath Verified,21
+2026-10-30,ios,Opportunity Details View,1696
+2026-10-30,ios,Withdrawal Click,57
+2026-10-30,ios,Withdrawal Success,57
+2026-10-30,ios,__SESSION__,1567
+2026-10-30,ios,auto_invest_disabled,10
+2026-10-30,ios,auto_invest_enabled,35
+2026-10-30,ios,bank_account_added,17
+2026-10-30,ios,bank_account_removed,1
+2026-10-30,ios,deposit_failed,20
+2026-10-30,ios,deposit_success,68
+2026-10-30,ios,email_verified,60
+2026-10-30,ios,identity_verified,41
+2026-10-30,ios,investment_cancelled,2
+2026-10-30,ios,investment_completed,192
+2026-10-30,ios,kyc_completed,44
+2026-10-30,ios,login_completed,1531
+2026-10-30,ios,notification_preference_updated,1
+2026-10-30,ios,passcode_changed,42
+2026-10-30,ios,passcode_enabled,19
+2026-10-30,ios,phone_verified,2
+2026-10-30,ios,profile_updated,1
+2026-10-30,ios,registration_completed,43
+2026-10-30,ios,step_failed,9
+2026-10-30,ios,unique_investors,4
+2026-10-30,ios,withdrawal_completed,50
+2026-10-30,ios,withdrawal_settled,52
 2026-10-30,web,__PAGE_VISIT__,1427
 2026-10-30,web,__SESSION__,503
 2026-10-30,web,auto_invest_disabled,1
@@ -669,6 +1084,41 @@ date,platform,event,count
 2026-10-31,android,unique_investors,2
 2026-10-31,android,withdrawal_completed,12
 2026-10-31,android,withdrawal_settled,9
+2026-10-31,ios,Auto Invest Activation,41
+2026-10-31,ios,Auto Invest Deactivation,15
+2026-10-31,ios,Cancel Investment,7
+2026-10-31,ios,Deposit Instruction Click,41
+2026-10-31,ios,Draft Account Creation Completed,45
+2026-10-31,ios,Investment Made,84
+2026-10-31,ios,Investment Screen,817
+2026-10-31,ios,KYC Completion,46
+2026-10-31,ios,Nafath Verified,12
+2026-10-31,ios,Opportunity Details View,1546
+2026-10-31,ios,Withdrawal Click,47
+2026-10-31,ios,Withdrawal Success,47
+2026-10-31,ios,__SESSION__,1555
+2026-10-31,ios,app_view_page_dropped,1
+2026-10-31,ios,auto_invest_disabled,15
+2026-10-31,ios,auto_invest_enabled,34
+2026-10-31,ios,bank_account_added,10
+2026-10-31,ios,deposit_failed,26
+2026-10-31,ios,deposit_success,53
+2026-10-31,ios,email_verified,77
+2026-10-31,ios,identity_verified,45
+2026-10-31,ios,investment_cancelled,7
+2026-10-31,ios,investment_completed,116
+2026-10-31,ios,kyc_completed,45
+2026-10-31,ios,login_completed,1503
+2026-10-31,ios,passcode_changed,43
+2026-10-31,ios,passcode_enabled,26
+2026-10-31,ios,phone_verified,1
+2026-10-31,ios,registration_completed,45
+2026-10-31,ios,step_failed,3
+2026-10-31,ios,unique_investors,7
+2026-10-31,ios,withdrawal_completed,37
+2026-10-31,ios,withdrawal_failed,1
+2026-10-31,ios,withdrawal_reversed,1
+2026-10-31,ios,withdrawal_settled,37
 2026-10-31,web,__PAGE_VISIT__,2712
 2026-10-31,web,__SESSION__,709
 2026-10-31,web,auto_invest_disabled,1
@@ -733,6 +1183,44 @@ date,platform,event,count
 2026-11-01,android,unique_investors,2
 2026-11-01,android,withdrawal_completed,44
 2026-11-01,android,withdrawal_settled,43
+2026-11-01,ios,App Install,1
+2026-11-01,ios,Auto Invest Activation,59
+2026-11-01,ios,Auto Invest Deactivation,18
+2026-11-01,ios,Cancel Investment,10
+2026-11-01,ios,Deposit Instruction Click,66
+2026-11-01,ios,Draft Account Creation Completed,49
+2026-11-01,ios,Investment Made,207
+2026-11-01,ios,Investment Screen,1684
+2026-11-01,ios,KYC Completion,50
+2026-11-01,ios,Nafath Verified,28
+2026-11-01,ios,Opportunity Details View,3212
+2026-11-01,ios,Withdrawal Click,149
+2026-11-01,ios,Withdrawal Success,149
+2026-11-01,ios,__SESSION__,2741
+2026-11-01,ios,app_view_page_dropped,1
+2026-11-01,ios,auto_invest_disabled,16
+2026-11-01,ios,auto_invest_enabled,49
+2026-11-01,ios,bank_account_added,24
+2026-11-01,ios,bank_account_removed,1
+2026-11-01,ios,deposit_failed,38
+2026-11-01,ios,deposit_success,121
+2026-11-01,ios,email_verified,81
+2026-11-01,ios,identity_verified,48
+2026-11-01,ios,investment_cancelled,10
+2026-11-01,ios,investment_completed,482
+2026-11-01,ios,kyc_completed,47
+2026-11-01,ios,login_completed,2911
+2026-11-01,ios,notification_preference_updated,3
+2026-11-01,ios,passcode_changed,51
+2026-11-01,ios,passcode_enabled,26
+2026-11-01,ios,phone_verified,1
+2026-11-01,ios,public_app_view_page_dropped,3
+2026-11-01,ios,referral_reward_earned,3
+2026-11-01,ios,registration_completed,49
+2026-11-01,ios,step_failed,10
+2026-11-01,ios,unique_investors,6
+2026-11-01,ios,withdrawal_completed,153
+2026-11-01,ios,withdrawal_settled,146
 2026-11-01,web,Assess__Sing,4
 2026-11-01,web,Offered_Sing,1
 2026-11-01,web,__PAGE_VISIT__,3708
@@ -801,6 +1289,53 @@ date,platform,event,count
 2026-11-02,android,withdrawal_reversed,1
 2026-11-02,android,withdrawal_settled,50
 2026-11-02,android,withdrawal_started,10
+2026-11-02,ios,App Install,261
+2026-11-02,ios,Auto Invest Activation,28
+2026-11-02,ios,Auto Invest Deactivation,15
+2026-11-02,ios,Cancel Investment,12
+2026-11-02,ios,Deposit Instruction Click,105
+2026-11-02,ios,Deposit Successful,1
+2026-11-02,ios,Draft Account Creation Completed,21
+2026-11-02,ios,Investment Made,184
+2026-11-02,ios,Investment Screen,1540
+2026-11-02,ios,KYC Completion,25
+2026-11-02,ios,Nafath Verified,9
+2026-11-02,ios,Opportunity Details View,2694
+2026-11-02,ios,Withdrawal Click,120
+2026-11-02,ios,Withdrawal Success,112
+2026-11-02,ios,__SESSION__,1962
+2026-11-02,ios,app_view_page_dropped,5
+2026-11-02,ios,auto_invest_disabled,15
+2026-11-02,ios,auto_invest_enabled,27
+2026-11-02,ios,auto_invest_setup_started,24
+2026-11-02,ios,bank_account_added,24
+2026-11-02,ios,deposit_failed,33
+2026-11-02,ios,deposit_started,26
+2026-11-02,ios,deposit_success,90
+2026-11-02,ios,email_verified,64
+2026-11-02,ios,identity_verified,38
+2026-11-02,ios,investment_cancelled,12
+2026-11-02,ios,investment_completed,877
+2026-11-02,ios,investment_started,78
+2026-11-02,ios,kyc_completed,36
+2026-11-02,ios,kyc_started,17
+2026-11-02,ios,login_completed,2269
+2026-11-02,ios,nid_page_dropped,1
+2026-11-02,ios,notification_preference_updated,7
+2026-11-02,ios,passcode_changed,62
+2026-11-02,ios,passcode_enabled,28
+2026-11-02,ios,phone_verified,1
+2026-11-02,ios,profile_updated,1
+2026-11-02,ios,referral_reward_earned,3
+2026-11-02,ios,registration_completed,38
+2026-11-02,ios,registration_started,53
+2026-11-02,ios,step_failed,5
+2026-11-02,ios,unique_investors,7
+2026-11-02,ios,withdrawal_completed,116
+2026-11-02,ios,withdrawal_failed,2
+2026-11-02,ios,withdrawal_reversed,2
+2026-11-02,ios,withdrawal_settled,118
+2026-11-02,ios,withdrawal_started,9
 2026-11-02,web,Assess__Sing,4
 2026-11-02,web,Offered_Sing,2
 2026-11-02,web,__PAGE_VISIT__,5119
@@ -871,6 +1406,47 @@ date,platform,event,count
 2026-11-03,android,withdrawal_reversed,25
 2026-11-03,android,withdrawal_settled,29
 2026-11-03,android,withdrawal_started,31
+2026-11-03,ios,App Install,660
+2026-11-03,ios,Auto Invest Activation,6
+2026-11-03,ios,Auto Invest Deactivation,6
+2026-11-03,ios,Cancel Investment,6
+2026-11-03,ios,Deposit Instruction Click,49
+2026-11-03,ios,Deposit Successful,1
+2026-11-03,ios,Draft Account Creation Completed,1
+2026-11-03,ios,Investment Made,79
+2026-11-03,ios,Investment Screen,1015
+2026-11-03,ios,KYC Completion,2
+2026-11-03,ios,Opportunity Details View,2442
+2026-11-03,ios,Withdrawal Click,145
+2026-11-03,ios,Withdrawal Success,91
+2026-11-03,ios,__SESSION__,1669
+2026-11-03,ios,auto_invest_disabled,8
+2026-11-03,ios,auto_invest_enabled,24
+2026-11-03,ios,auto_invest_setup_started,60
+2026-11-03,ios,bank_account_added,21
+2026-11-03,ios,bank_account_removed,1
+2026-11-03,ios,deposit_failed,72
+2026-11-03,ios,deposit_started,113
+2026-11-03,ios,deposit_success,84
+2026-11-03,ios,email_verified,43
+2026-11-03,ios,identity_verified,29
+2026-11-03,ios,investment_cancelled,9
+2026-11-03,ios,investment_completed,496
+2026-11-03,ios,investment_started,326
+2026-11-03,ios,kyc_completed,31
+2026-11-03,ios,kyc_started,30
+2026-11-03,ios,login_completed,1996
+2026-11-03,ios,passcode_changed,31
+2026-11-03,ios,passcode_enabled,18
+2026-11-03,ios,registration_completed,29
+2026-11-03,ios,registration_started,137
+2026-11-03,ios,step_failed,6
+2026-11-03,ios,unique_investors,1
+2026-11-03,ios,withdrawal_completed,143
+2026-11-03,ios,withdrawal_failed,67
+2026-11-03,ios,withdrawal_reversed,67
+2026-11-03,ios,withdrawal_settled,72
+2026-11-03,ios,withdrawal_started,59
 2026-11-03,web,Assess__Sing,8
 2026-11-03,web,Offered_Sing,7
 2026-11-03,web,__PAGE_VISIT__,4267
@@ -937,6 +1513,47 @@ date,platform,event,count
 2026-11-04,android,withdrawal_completed,45
 2026-11-04,android,withdrawal_settled,47
 2026-11-04,android,withdrawal_started,33
+2026-11-04,ios,App Install,751
+2026-11-04,ios,Auto Invest Activation,5
+2026-11-04,ios,Auto Invest Deactivation,7
+2026-11-04,ios,Cancel Investment,6
+2026-11-04,ios,Deposit Instruction Click,62
+2026-11-04,ios,Draft Account Creation Completed,5
+2026-11-04,ios,Investment Made,55
+2026-11-04,ios,Investment Screen,961
+2026-11-04,ios,KYC Completion,6
+2026-11-04,ios,Nafath Verified,1
+2026-11-04,ios,Opportunity Details View,2654
+2026-11-04,ios,Withdrawal Click,132
+2026-11-04,ios,Withdrawal Success,50
+2026-11-04,ios,__SESSION__,1617
+2026-11-04,ios,app_view_page_dropped,1
+2026-11-04,ios,auto_invest_disabled,8
+2026-11-04,ios,auto_invest_enabled,24
+2026-11-04,ios,auto_invest_setup_started,78
+2026-11-04,ios,bank_account_added,18
+2026-11-04,ios,bank_account_removed,6
+2026-11-04,ios,deposit_failed,25
+2026-11-04,ios,deposit_started,181
+2026-11-04,ios,deposit_success,90
+2026-11-04,ios,email_verified,67
+2026-11-04,ios,identity_verified,48
+2026-11-04,ios,investment_cancelled,9
+2026-11-04,ios,investment_completed,585
+2026-11-04,ios,investment_started,440
+2026-11-04,ios,kyc_completed,52
+2026-11-04,ios,kyc_started,50
+2026-11-04,ios,login_completed,2011
+2026-11-04,ios,notification_preference_updated,4
+2026-11-04,ios,passcode_changed,22
+2026-11-04,ios,passcode_enabled,16
+2026-11-04,ios,registration_completed,49
+2026-11-04,ios,registration_started,172
+2026-11-04,ios,step_failed,6
+2026-11-04,ios,unique_investors,2
+2026-11-04,ios,withdrawal_completed,131
+2026-11-04,ios,withdrawal_settled,131
+2026-11-04,ios,withdrawal_started,94
 2026-11-04,web,Assess__Sing,6
 2026-11-04,web,Offered_Sing,6
 2026-11-04,web,__PAGE_VISIT__,3590
@@ -996,6 +1613,46 @@ date,platform,event,count
 2026-11-05,android,withdrawal_completed,21
 2026-11-05,android,withdrawal_settled,20
 2026-11-05,android,withdrawal_started,20
+2026-11-05,ios,App Install,602
+2026-11-05,ios,Auto Invest Activation,1
+2026-11-05,ios,Auto Invest Deactivation,2
+2026-11-05,ios,Cancel Investment,14
+2026-11-05,ios,Deposit Instruction Click,48
+2026-11-05,ios,Investment Made,49
+2026-11-05,ios,Investment Screen,1072
+2026-11-05,ios,Opportunity Details View,2351
+2026-11-05,ios,Withdrawal Click,106
+2026-11-05,ios,Withdrawal Success,35
+2026-11-05,ios,__SESSION__,1497
+2026-11-05,ios,app_view_page_dropped,1
+2026-11-05,ios,auto_invest_disabled,7
+2026-11-05,ios,auto_invest_enabled,24
+2026-11-05,ios,auto_invest_setup_started,55
+2026-11-05,ios,bank_account_added,13
+2026-11-05,ios,bank_account_removed,3
+2026-11-05,ios,deposit_failed,29
+2026-11-05,ios,deposit_started,146
+2026-11-05,ios,deposit_success,63
+2026-11-05,ios,email_verified,33
+2026-11-05,ios,identity_verified,24
+2026-11-05,ios,investment_cancelled,17
+2026-11-05,ios,investment_completed,356
+2026-11-05,ios,investment_started,490
+2026-11-05,ios,kyc_completed,27
+2026-11-05,ios,kyc_started,27
+2026-11-05,ios,login_completed,1734
+2026-11-05,ios,passcode_changed,19
+2026-11-05,ios,passcode_enabled,10
+2026-11-05,ios,phone_verified,1
+2026-11-05,ios,referral_reward_earned,1
+2026-11-05,ios,registration_completed,24
+2026-11-05,ios,registration_started,132
+2026-11-05,ios,step_failed,10
+2026-11-05,ios,withdrawal_completed,99
+2026-11-05,ios,withdrawal_failed,1
+2026-11-05,ios,withdrawal_reversed,1
+2026-11-05,ios,withdrawal_settled,100
+2026-11-05,ios,withdrawal_started,76
 2026-11-05,web,Assess__Sing,3
 2026-11-05,web,Offered_Sing,4
 2026-11-05,web,__PAGE_VISIT__,3449
@@ -1062,6 +1719,44 @@ date,platform,event,count
 2026-11-06,android,withdrawal_completed,10
 2026-11-06,android,withdrawal_settled,9
 2026-11-06,android,withdrawal_started,10
+2026-11-06,ios,App Install,639
+2026-11-06,ios,Auto Invest Activation,1
+2026-11-06,ios,Auto Invest Deactivation,2
+2026-11-06,ios,Cancel Investment,8
+2026-11-06,ios,Deposit Instruction Click,38
+2026-11-06,ios,Draft Account Creation Completed,1
+2026-11-06,ios,Investment Made,15
+2026-11-06,ios,Investment Screen,868
+2026-11-06,ios,Opportunity Details View,1670
+2026-11-06,ios,Withdrawal Click,54
+2026-11-06,ios,Withdrawal Success,17
+2026-11-06,ios,__SESSION__,1477
+2026-11-06,ios,auto_invest_disabled,8
+2026-11-06,ios,auto_invest_enabled,23
+2026-11-06,ios,auto_invest_setup_started,68
+2026-11-06,ios,bank_account_added,12
+2026-11-06,ios,deposit_failed,22
+2026-11-06,ios,deposit_started,128
+2026-11-06,ios,deposit_success,46
+2026-11-06,ios,email_verified,46
+2026-11-06,ios,identity_verified,35
+2026-11-06,ios,investment_cancelled,10
+2026-11-06,ios,investment_completed,91
+2026-11-06,ios,investment_started,452
+2026-11-06,ios,kyc_completed,36
+2026-11-06,ios,kyc_started,41
+2026-11-06,ios,login_completed,1439
+2026-11-06,ios,notification_preference_updated,5
+2026-11-06,ios,passcode_changed,20
+2026-11-06,ios,passcode_enabled,15
+2026-11-06,ios,registration_completed,36
+2026-11-06,ios,registration_started,122
+2026-11-06,ios,step_failed,7
+2026-11-06,ios,withdrawal_completed,44
+2026-11-06,ios,withdrawal_failed,1
+2026-11-06,ios,withdrawal_reversed,1
+2026-11-06,ios,withdrawal_settled,52
+2026-11-06,ios,withdrawal_started,38
 2026-11-06,web,__PAGE_VISIT__,1899
 2026-11-06,web,__SESSION__,525
 2026-11-06,web,auto_invest_disabled,1
@@ -1117,6 +1812,43 @@ date,platform,event,count
 2026-11-07,android,withdrawal_completed,13
 2026-11-07,android,withdrawal_settled,11
 2026-11-07,android,withdrawal_started,12
+2026-11-07,ios,App Install,510
+2026-11-07,ios,Auto Invest Activation,5
+2026-11-07,ios,Auto Invest Deactivation,2
+2026-11-07,ios,Cancel Investment,7
+2026-11-07,ios,Deposit Instruction Click,30
+2026-11-07,ios,Draft Account Creation Completed,1
+2026-11-07,ios,Investment Made,17
+2026-11-07,ios,Investment Screen,843
+2026-11-07,ios,KYC Completion,1
+2026-11-07,ios,Opportunity Details View,1404
+2026-11-07,ios,Withdrawal Click,39
+2026-11-07,ios,Withdrawal Success,13
+2026-11-07,ios,__SESSION__,1236
+2026-11-07,ios,auto_invest_disabled,6
+2026-11-07,ios,auto_invest_enabled,29
+2026-11-07,ios,auto_invest_setup_started,80
+2026-11-07,ios,bank_account_added,9
+2026-11-07,ios,deposit_failed,26
+2026-11-07,ios,deposit_started,94
+2026-11-07,ios,deposit_success,24
+2026-11-07,ios,email_verified,66
+2026-11-07,ios,identity_verified,52
+2026-11-07,ios,investment_cancelled,8
+2026-11-07,ios,investment_completed,78
+2026-11-07,ios,investment_started,364
+2026-11-07,ios,kyc_completed,56
+2026-11-07,ios,kyc_started,57
+2026-11-07,ios,login_completed,1111
+2026-11-07,ios,passcode_changed,20
+2026-11-07,ios,passcode_enabled,12
+2026-11-07,ios,phone_verified,1
+2026-11-07,ios,registration_completed,52
+2026-11-07,ios,registration_started,163
+2026-11-07,ios,step_failed,5
+2026-11-07,ios,withdrawal_completed,33
+2026-11-07,ios,withdrawal_settled,36
+2026-11-07,ios,withdrawal_started,27
 2026-11-07,web,__PAGE_VISIT__,1969
 2026-11-07,web,__SESSION__,587
 2026-11-07,web,auto_invest_disabled,2
@@ -1175,6 +1907,46 @@ date,platform,event,count
 2026-11-08,android,withdrawal_completed,36
 2026-11-08,android,withdrawal_settled,34
 2026-11-08,android,withdrawal_started,30
+2026-11-08,ios,App Install,791
+2026-11-08,ios,Auto Invest Activation,2
+2026-11-08,ios,Deposit Instruction Click,39
+2026-11-08,ios,Draft Account Creation Completed,1
+2026-11-08,ios,Investment Made,30
+2026-11-08,ios,Investment Screen,919
+2026-11-08,ios,Nafath Verified,1
+2026-11-08,ios,Opportunity Details View,1993
+2026-11-08,ios,Withdrawal Click,83
+2026-11-08,ios,Withdrawal Success,14
+2026-11-08,ios,__SESSION__,2081
+2026-11-08,ios,app_view_page_dropped,3
+2026-11-08,ios,auto_invest_disabled,5
+2026-11-08,ios,auto_invest_enabled,28
+2026-11-08,ios,auto_invest_setup_started,72
+2026-11-08,ios,bank_account_added,7
+2026-11-08,ios,deposit_failed,35
+2026-11-08,ios,deposit_started,122
+2026-11-08,ios,deposit_success,65
+2026-11-08,ios,email_verified,43
+2026-11-08,ios,identity_verified,29
+2026-11-08,ios,investment_cancelled,3
+2026-11-08,ios,investment_completed,340
+2026-11-08,ios,investment_started,440
+2026-11-08,ios,kyc_completed,32
+2026-11-08,ios,kyc_started,35
+2026-11-08,ios,login_completed,2180
+2026-11-08,ios,notification_preference_updated,3
+2026-11-08,ios,passcode_changed,22
+2026-11-08,ios,passcode_enabled,12
+2026-11-08,ios,referral_reward_earned,1
+2026-11-08,ios,registration_completed,32
+2026-11-08,ios,registration_started,180
+2026-11-08,ios,step_failed,12
+2026-11-08,ios,unique_investors,2
+2026-11-08,ios,withdrawal_completed,86
+2026-11-08,ios,withdrawal_failed,1
+2026-11-08,ios,withdrawal_reversed,1
+2026-11-08,ios,withdrawal_settled,81
+2026-11-08,ios,withdrawal_started,79
 2026-11-08,web,Assess__Sing,2
 2026-11-08,web,__PAGE_VISIT__,3343
 2026-11-08,web,__SESSION__,996
@@ -1234,6 +2006,43 @@ date,platform,event,count
 2026-11-09,android,withdrawal_completed,38
 2026-11-09,android,withdrawal_settled,41
 2026-11-09,android,withdrawal_started,36
+2026-11-09,ios,App Install,486
+2026-11-09,ios,Auto Invest Activation,1
+2026-11-09,ios,Auto Invest Deactivation,3
+2026-11-09,ios,Deposit Instruction Click,24
+2026-11-09,ios,Investment Made,21
+2026-11-09,ios,Investment Screen,907
+2026-11-09,ios,Opportunity Details View,1844
+2026-11-09,ios,Withdrawal Click,121
+2026-11-09,ios,Withdrawal Success,20
+2026-11-09,ios,__SESSION__,1525
+2026-11-09,ios,app_view_page_dropped,1
+2026-11-09,ios,auto_invest_disabled,7
+2026-11-09,ios,auto_invest_enabled,18
+2026-11-09,ios,auto_invest_setup_started,48
+2026-11-09,ios,bank_account_added,12
+2026-11-09,ios,bank_account_removed,3
+2026-11-09,ios,deposit_failed,13
+2026-11-09,ios,deposit_started,80
+2026-11-09,ios,deposit_success,50
+2026-11-09,ios,email_verified,32
+2026-11-09,ios,identity_verified,26
+2026-11-09,ios,investment_cancelled,7
+2026-11-09,ios,investment_completed,676
+2026-11-09,ios,investment_started,475
+2026-11-09,ios,kyc_completed,25
+2026-11-09,ios,kyc_started,26
+2026-11-09,ios,login_completed,1849
+2026-11-09,ios,notification_preference_updated,8
+2026-11-09,ios,passcode_changed,14
+2026-11-09,ios,passcode_enabled,5
+2026-11-09,ios,profile_updated,1
+2026-11-09,ios,registration_completed,27
+2026-11-09,ios,registration_started,124
+2026-11-09,ios,step_failed,8
+2026-11-09,ios,withdrawal_completed,117
+2026-11-09,ios,withdrawal_settled,124
+2026-11-09,ios,withdrawal_started,108
 2026-11-09,web,Assess__Sing,4
 2026-11-09,web,__PAGE_VISIT__,3441
 2026-11-09,web,__SESSION__,975

@@ -4,12 +4,12 @@
   "cursor_note": "UTM audit covers the 2026-10-20..2026-11-10 GA4 snapshot. Heartbeat/receipt checks have never run — their first run should NOT skip this window.",
   "open_issues": [
     {"id": "tqa-001", "found": "2026-11-11", "severity": "high", "what": "direct/(none) = 78.9% of sessions — attribution mostly blind", "status": "open", "confirming_check": "direct share split by platform (web-only)"},
-    {"id": "tqa-002", "found": "2026-11-11", "severity": "high", "what": "paid social nearly invisible in GA4 (snap 17, tiktok ~2 sessions/22d) — likely untagged", "status": "open", "confirming_check": "platform spend vs GA4 sessions for same window"},
+    {"id": "tqa-002", "found": "2026-11-11", "severity": "med", "what": "paid social invisible in GA4 web but confirmed in app via Singular (ios: tiktok 208, snapchat 160 registrations) — fix web tagging; use Singular as app-acquisition record", "status": "open", "confirming_check": "platform spend vs Singular-attributed conversions for same window"},
     {"id": "tqa-003", "found": "2026-11-11", "severity": "med", "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes", "status": "open"},
     {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
     {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"},
-    {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export — largest platform (~55% of GA4 key events) missing from app attribution", "status": "open", "confirming_check": "iOS Singular export for same window, or confirm iOS SDK integration"},
-    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "reg/kyc/deposit GA4-vs-Singular gaps (19-32% vs ~45% expected after iOS adjustment); investments reconcile at 49%", "status": "open", "confirming_check": "GA4 event counts split by platform (event name x platform explore)"}
+    {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export", "status": "resolved", "resolved": "2026-11-11 — iOS file provided; SDK integrated", "resolution_note": "earlier drop simply omitted iOS"},
+    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "confirming_check": "GA4 event counts split by platform (event name x platform explore)"}
   ],
   "baselines": {
     "direct_share_sessions": 0.789,
@@ -17,7 +17,7 @@
     "distinct_source_medium": 799,
     "unassigned_share": null,
     "ledger_daily_oct20_nov09": "data/exports/singular/singular-aggregate-2026-11-11.csv (web+android; seeds weekday bands)",
-    "claim_ratio_singular_vs_ga4": {"investment_completed": 0.49, "registration_completed": 0.32, "kyc_completed": 0.19, "deposit_success": 0.23}
+    "claim_ratio_singular_vs_ga4": {"investment_completed": 0.92, "registration_completed": 0.63, "kyc_completed": 0.53, "deposit_success": 1.00, "note": "full platform coverage incl. iOS, windows offset 1 day"}
   },
   "source_status_last_run": {
     "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview.csv (event x count; still no event x date x platform)",
