@@ -7,18 +7,21 @@
     {"id": "tqa-002", "found": "2026-11-11", "severity": "high", "what": "paid social nearly invisible in GA4 (snap 17, tiktok ~2 sessions/22d) — likely untagged", "status": "open", "confirming_check": "platform spend vs GA4 sessions for same window"},
     {"id": "tqa-003", "found": "2026-11-11", "severity": "med", "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes", "status": "open"},
     {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
-    {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"}
+    {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"},
+    {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export — largest platform (~55% of GA4 key events) missing from app attribution", "status": "open", "confirming_check": "iOS Singular export for same window, or confirm iOS SDK integration"},
+    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "reg/kyc/deposit GA4-vs-Singular gaps (19-32% vs ~45% expected after iOS adjustment); investments reconcile at 49%", "status": "open", "confirming_check": "GA4 event counts split by platform (event name x platform explore)"}
   ],
   "baselines": {
     "direct_share_sessions": 0.789,
     "direct_share_first_user": 0.733,
     "distinct_source_medium": 799,
     "unassigned_share": null,
-    "backend_weekday_bands": null
+    "ledger_daily_oct20_nov09": "data/exports/singular/singular-aggregate-2026-11-11.csv (web+android; seeds weekday bands)",
+    "claim_ratio_singular_vs_ga4": {"investment_completed": 0.49, "registration_completed": 0.32, "kyc_completed": 0.19, "deposit_success": 0.23}
   },
   "source_status_last_run": {
-    "ga4_csv": "fresh — Reports_snapshot.csv 2026-11-11 (no event-name x date breakdown; heartbeat uncovered)",
-    "singular_csv": "awaiting first drop in data/exports/singular/",
+    "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview.csv (event x count; still no event x date x platform)",
+    "singular_csv": "fresh — web+android row-level logs Oct19-Nov9 (raw kept local, aggregate committed); iOS missing",
     "google_ads_csv": "awaiting first drop in data/exports/google-ads/",
     "meta": "not configured",
     "tiktok": "not configured",

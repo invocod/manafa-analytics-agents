@@ -48,3 +48,40 @@ Verdict: ISSUES (5)
 • [med] 16-18-digit IDs in page titles — confirm not payment refs — app eng
 Not covered yet: event heartbeat (need event×date export), Singular/Ads receipt checks
 ```
+
+---
+
+# Update (same day, ~21:00Z): Singular logs + GA4 Engagement_overview landed — heartbeat & receipt checks ran
+
+New inputs (**Observed**): two Singular row-level event logs (web 101k rows, Android 81k rows; Oct 19 21:00Z → Nov 9 21:00Z; raw files kept local/gitignored, aggregate committed as `data/exports/singular/singular-aggregate-2026-11-11.csv`) and `data/exports/ga4/Engagement_overview.csv` (adds **event name × count** for Oct 20–Nov 10).
+
+## Check 1 — Heartbeat: ✅ HEALTHY (web + Android)
+Daily counts of all four ledger events, 22 days, from Singular logs:
+
+| Event | Total | Daily range | True zero-days |
+|---|---|---|---|
+| registration_completed | 959 | 24–101 | none |
+| kyc_completed | 566 | 18–40 | none |
+| deposit_success | 446 | 4–55 | none |
+| investment_completed | 7,907 | 30–2,835 | none |
+
+(Oct 19 "zeros" are a partial first day — export starts 21:00Z.) Investment spikes are offering-shaped (Oct 22 = 2,835) — the expected pattern, not an anomaly. These dailies seed the weekday baselines for future runs. ⚠️ Scope: **web + Android only** — see tqa-006.
+
+## Check 2 — Receipt: GA4 vs Singular, same window (1-day offset noted)
+
+| Event | GA4 (all platforms) | Singular (web+andr) | Singular/GA4 |
+|---|---|---|---|
+| investment_completed | 16,002 | 7,907 | 49% |
+| registration_completed | 3,010 | 959 | 32% |
+| kyc_completed | 2,960 | 566 | 19% |
+| deposit_success | 1,975 | 446 | 23% |
+
+GA4's own platform split says iOS ≈ 55% of key events, so a Singular file set without iOS should sit near ~45% of GA4. **Investments do (49% — reconciles, pending iOS data). Registrations, KYC and deposits don't (19–32%)** — beyond the >40% investigate band even after the iOS adjustment. **Inferred** candidates: Singular web under-capture (ad blockers explain 10–30%, not 70%+), GA4 double-firing these events, or definitional mismatch. Verdict: **INVESTIGATE** (tqa-007).
+
+### New issues
+- **tqa-006 · [high] No iOS data in Singular export** — the largest platform (~55% of GA4 key events) is missing, so app attribution and reconciliation can't close. Next check: export iOS from Singular for the same window, or confirm whether the iOS SDK is integrated at all.
+- **tqa-007 · [med] reg/kyc/deposit gaps GA4-vs-Singular exceed the explainable share** — next check: GA4 event counts **split by platform** (one Explore: event name × platform) to isolate web-vs-web, which no current export allows.
+
+### Bonus observations (for other loops, not re-filed here)
+- GA4 `registration_started` 9,652 vs `registration_completed` 3,010 (31% completion) → first funnel-health run should start here.
+- Singular registration sources: web organic 519 · Android adwords 233 · web google/cpc 109 · chatgpt.com 13 · linkedin 1 → attribution-recon's first ledger-vs-claims table is now possible for web+Android.

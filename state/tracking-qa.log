@@ -3,3 +3,6 @@
 2026-11-10T20:35Z  checked=82200_sessions/799_sm  acted=5  note="first real run on GA4 snapshot Oct20-Nov10; UTM audit ran; heartbeat+receipt not covered (export lacks event x date; no singular/ads files); 5 issues filed tqa-001..005; Slack staged (channel not created yet)"
   decision: direct/(none) at 79% is the headline — composition investigation (web vs app split) is the single next check
   decision: GA4 export format needs event-name x date for the heartbeat — requested from team
+2026-11-10T21:05Z  checked=182803_rows+2_ga4_exports  acted=2  note="singular web+android logs + GA4 Engagement_overview landed; heartbeat HEALTHY (no true zero-days, 22d); receipt: investments reconcile at 49% (iOS-missing adjusted), reg/kyc/deposit 19-32% = INVESTIGATE; filed tqa-006 (no iOS in Singular), tqa-007 (unexplained reg/kyc/deposit gap)"
+  decision: raw row-level Singular files stay local and gitignored; aggregates are the committable format
+  decision: next data ask = GA4 event x platform explore + Singular iOS export — both close tqa-007/006

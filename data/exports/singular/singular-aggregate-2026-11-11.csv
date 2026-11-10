@@ -1,0 +1,1258 @@
+date,platform,event,count
+2026-10-19,android,Auto Invest Activation,1
+2026-10-19,android,Deposit Instruction Click,5
+2026-10-19,android,Draft Account Creation Completed,2
+2026-10-19,android,Investment Screen,30
+2026-10-19,android,KYC Completion,4
+2026-10-19,android,Nafath Verified,1
+2026-10-19,android,Opportunity Details View,26
+2026-10-19,android,Withdrawal Click,3
+2026-10-19,android,Withdrawal Success,3
+2026-10-19,android,__SESSION__,38
+2026-10-19,android,auto_invest_enabled,1
+2026-10-19,android,deposit_failed,3
+2026-10-19,android,email_verified,5
+2026-10-19,android,identity_verified,2
+2026-10-19,android,kyc_completed,5
+2026-10-19,android,login_completed,46
+2026-10-19,android,passcode_changed,2
+2026-10-19,android,passcode_enabled,1
+2026-10-19,android,registration_completed,2
+2026-10-19,android,step_failed,6
+2026-10-19,android,withdrawal_completed,3
+2026-10-19,web,__PAGE_VISIT__,381
+2026-10-19,web,__SESSION__,147
+2026-10-19,web,auto_invest_enabled,2
+2026-10-19,web,email_verified,3
+2026-10-19,web,identity_verified,5
+2026-10-19,web,kyc_completed,3
+2026-10-19,web,login_completed,2
+2026-10-19,web,passcode_changed,1
+2026-10-19,web,phone_verified,1
+2026-10-19,web,registration_completed,5
+2026-10-20,android,Auto Invest Activation,12
+2026-10-20,android,Auto Invest Deactivation,8
+2026-10-20,android,Cancel Investment,3
+2026-10-20,android,Deposit Instruction Click,8
+2026-10-20,android,Deposit Successful,1
+2026-10-20,android,Draft Account Creation Completed,12
+2026-10-20,android,Investment Made,121
+2026-10-20,android,Investment Screen,423
+2026-10-20,android,KYC Completion,15
+2026-10-20,android,Nafath Verified,6
+2026-10-20,android,Opportunity Details View,1140
+2026-10-20,android,Withdrawal Click,68
+2026-10-20,android,Withdrawal Success,68
+2026-10-20,android,__SESSION__,2440
+2026-10-20,android,app_view_page_dropped,3
+2026-10-20,android,auto_invest_disabled,5
+2026-10-20,android,auto_invest_enabled,9
+2026-10-20,android,bank_account_added,3
+2026-10-20,android,campaign_dashboard_view,6
+2026-10-20,android,campaign_entry_click,5
+2026-10-20,android,campaign_intro_view,4
+2026-10-20,android,deposit_failed,4
+2026-10-20,android,deposit_success,9
+2026-10-20,android,email_verified,18
+2026-10-20,android,identity_verified,11
+2026-10-20,android,investment_cancelled,3
+2026-10-20,android,investment_completed,97
+2026-10-20,android,kyc_completed,13
+2026-10-20,android,login_completed,808
+2026-10-20,android,notification_preference_updated,2
+2026-10-20,android,passcode_changed,6
+2026-10-20,android,passcode_enabled,5
+2026-10-20,android,public_app_view_page_dropped,1
+2026-10-20,android,registration_completed,11
+2026-10-20,android,stamp_collect_click,1
+2026-10-20,android,stamp_hunt_started,5
+2026-10-20,android,stamp_view,5
+2026-10-20,android,step_failed,35
+2026-10-20,android,wheel_spin_click,1
+2026-10-20,android,withdrawal_completed,65
+2026-10-20,android,withdrawal_settled,71
+2026-10-20,web,Assess__Sing,6
+2026-10-20,web,Offered_Sing,3
+2026-10-20,web,__PAGE_VISIT__,3717
+2026-10-20,web,__SESSION__,1189
+2026-10-20,web,auto_invest_disabled,1
+2026-10-20,web,auto_invest_enabled,6
+2026-10-20,web,bank_account_added,3
+2026-10-20,web,deposit_success,6
+2026-10-20,web,email_verified,15
+2026-10-20,web,gtm.dom,5
+2026-10-20,web,gtm.init,5
+2026-10-20,web,gtm.init_consent,6
+2026-10-20,web,gtm.js,5
+2026-10-20,web,gtm.load,5
+2026-10-20,web,identity_verified,44
+2026-10-20,web,investment_completed,692
+2026-10-20,web,kyc_completed,13
+2026-10-20,web,login_completed,114
+2026-10-20,web,passcode_changed,15
+2026-10-20,web,phone_verified,1
+2026-10-20,web,profile_updated,1
+2026-10-20,web,registration_completed,43
+2026-10-20,web,withdrawal_completed,6
+2026-10-20,web,withdrawal_settled,5
+2026-10-21,android,Auto Invest Activation,13
+2026-10-21,android,Deposit Instruction Click,11
+2026-10-21,android,Draft Account Creation Completed,25
+2026-10-21,android,Investment Made,56
+2026-10-21,android,Investment Screen,258
+2026-10-21,android,KYC Completion,25
+2026-10-21,android,Nafath Verified,17
+2026-10-21,android,Opportunity Details View,682
+2026-10-21,android,Withdrawal Click,45
+2026-10-21,android,Withdrawal Success,45
+2026-10-21,android,__SESSION__,792
+2026-10-21,android,auto_invest_enabled,11
+2026-10-21,android,bank_account_added,5
+2026-10-21,android,deposit_failed,5
+2026-10-21,android,deposit_success,6
+2026-10-21,android,email_verified,29
+2026-10-21,android,identity_verified,23
+2026-10-21,android,investment_completed,52
+2026-10-21,android,kyc_completed,23
+2026-10-21,android,login_completed,618
+2026-10-21,android,passcode_changed,9
+2026-10-21,android,passcode_enabled,4
+2026-10-21,android,registration_completed,23
+2026-10-21,android,step_failed,22
+2026-10-21,android,withdrawal_completed,45
+2026-10-21,android,withdrawal_settled,44
+2026-10-21,web,Assess__Sing,1
+2026-10-21,web,Offered_Sing,1
+2026-10-21,web,__PAGE_VISIT__,3632
+2026-10-21,web,__SESSION__,1186
+2026-10-21,web,auto_invest_enabled,7
+2026-10-21,web,bank_account_added,2
+2026-10-21,web,deposit_success,3
+2026-10-21,web,email_verified,15
+2026-10-21,web,gtm.dom,3
+2026-10-21,web,gtm.init,3
+2026-10-21,web,gtm.init_consent,3
+2026-10-21,web,gtm.js,3
+2026-10-21,web,gtm.load,3
+2026-10-21,web,identity_verified,43
+2026-10-21,web,investment_completed,699
+2026-10-21,web,kyc_completed,17
+2026-10-21,web,login_completed,82
+2026-10-21,web,passcode_changed,21
+2026-10-21,web,phone_verified,2
+2026-10-21,web,profile_updated,1
+2026-10-21,web,registration_completed,39
+2026-10-21,web,withdrawal_completed,2
+2026-10-21,web,withdrawal_settled,3
+2026-10-22,android,Auto Invest Activation,5
+2026-10-22,android,Auto Invest Deactivation,10
+2026-10-22,android,Cancel Investment,4
+2026-10-22,android,Deposit Instruction Click,18
+2026-10-22,android,Draft Account Creation Completed,11
+2026-10-22,android,Investment Made,194
+2026-10-22,android,Investment Screen,563
+2026-10-22,android,KYC Completion,13
+2026-10-22,android,Nafath Verified,8
+2026-10-22,android,Opportunity Details View,1468
+2026-10-22,android,Withdrawal Click,145
+2026-10-22,android,Withdrawal Success,145
+2026-10-22,android,__SESSION__,897
+2026-10-22,android,app_view_page_dropped,1
+2026-10-22,android,auto_invest_disabled,11
+2026-10-22,android,auto_invest_enabled,5
+2026-10-22,android,bank_account_added,7
+2026-10-22,android,bank_account_removed,1
+2026-10-22,android,deposit_failed,2
+2026-10-22,android,deposit_success,19
+2026-10-22,android,email_verified,14
+2026-10-22,android,identity_verified,11
+2026-10-22,android,investment_cancelled,4
+2026-10-22,android,investment_completed,180
+2026-10-22,android,kyc_completed,10
+2026-10-22,android,login_completed,1246
+2026-10-22,android,passcode_changed,8
+2026-10-22,android,passcode_enabled,4
+2026-10-22,android,phone_number_page_dropped,1
+2026-10-22,android,public_app_view_page_dropped,1
+2026-10-22,android,referral_reward_earned,1
+2026-10-22,android,registration_completed,11
+2026-10-22,android,step_failed,36
+2026-10-22,android,withdrawal_completed,114
+2026-10-22,android,withdrawal_settled,106
+2026-10-22,web,Assess__Sing,4
+2026-10-22,web,Offered_Sing,4
+2026-10-22,web,__PAGE_VISIT__,3610
+2026-10-22,web,__SESSION__,1265
+2026-10-22,web,auto_invest_disabled,5
+2026-10-22,web,auto_invest_enabled,11
+2026-10-22,web,bank_account_added,2
+2026-10-22,web,bank_account_approved,1
+2026-10-22,web,bank_account_rejected,2
+2026-10-22,web,deposit_success,36
+2026-10-22,web,email_verified,15
+2026-10-22,web,gtm.dom,6
+2026-10-22,web,gtm.init,6
+2026-10-22,web,gtm.init_consent,6
+2026-10-22,web,gtm.js,6
+2026-10-22,web,gtm.load,6
+2026-10-22,web,identity_verified,67
+2026-10-22,web,investment_completed,2655
+2026-10-22,web,kyc_completed,16
+2026-10-22,web,login_completed,188
+2026-10-22,web,passcode_changed,15
+2026-10-22,web,profile_updated,2
+2026-10-22,web,registration_completed,65
+2026-10-22,web,withdrawal_completed,23
+2026-10-22,web,withdrawal_failed,1
+2026-10-22,web,withdrawal_reversed,1
+2026-10-22,web,withdrawal_settled,17
+2026-10-23,android,Auto Invest Activation,10
+2026-10-23,android,Auto Invest Deactivation,2
+2026-10-23,android,Deposit Instruction Click,24
+2026-10-23,android,Draft Account Creation Completed,12
+2026-10-23,android,Investment Made,86
+2026-10-23,android,Investment Screen,438
+2026-10-23,android,KYC Completion,12
+2026-10-23,android,Nafath Verified,5
+2026-10-23,android,Opportunity Details View,960
+2026-10-23,android,Withdrawal Click,35
+2026-10-23,android,Withdrawal Success,35
+2026-10-23,android,__SESSION__,2431
+2026-10-23,android,auto_invest_disabled,1
+2026-10-23,android,auto_invest_enabled,8
+2026-10-23,android,bank_account_added,7
+2026-10-23,android,campaign_dashboard_view,1
+2026-10-23,android,campaign_entry_click,1
+2026-10-23,android,deposit_failed,4
+2026-10-23,android,deposit_success,12
+2026-10-23,android,email_verified,16
+2026-10-23,android,identity_verified,12
+2026-10-23,android,investment_completed,90
+2026-10-23,android,kyc_completed,11
+2026-10-23,android,login_completed,607
+2026-10-23,android,passcode_changed,9
+2026-10-23,android,passcode_enabled,5
+2026-10-23,android,registration_completed,12
+2026-10-23,android,step_failed,19
+2026-10-23,android,unique_investors,1
+2026-10-23,android,withdrawal_completed,33
+2026-10-23,android,withdrawal_settled,37
+2026-10-23,web,__PAGE_VISIT__,1634
+2026-10-23,web,__SESSION__,484
+2026-10-23,web,auto_invest_disabled,1
+2026-10-23,web,auto_invest_enabled,3
+2026-10-23,web,deposit_failed,1
+2026-10-23,web,deposit_success,3
+2026-10-23,web,email_verified,6
+2026-10-23,web,gtm.init_consent,1
+2026-10-23,web,identity_verified,15
+2026-10-23,web,investment_completed,215
+2026-10-23,web,kyc_completed,7
+2026-10-23,web,login_completed,67
+2026-10-23,web,passcode_changed,10
+2026-10-23,web,phone_verified,1
+2026-10-23,web,registration_completed,15
+2026-10-23,web,withdrawal_completed,3
+2026-10-23,web,withdrawal_settled,10
+2026-10-24,android,Auto Invest Activation,6
+2026-10-24,android,Cancel Investment,3
+2026-10-24,android,Deposit Instruction Click,58
+2026-10-24,android,Draft Account Creation Completed,21
+2026-10-24,android,Investment Made,55
+2026-10-24,android,Investment Screen,387
+2026-10-24,android,KYC Completion,19
+2026-10-24,android,Nafath Verified,12
+2026-10-24,android,Opportunity Details View,747
+2026-10-24,android,Withdrawal Click,23
+2026-10-24,android,Withdrawal Success,23
+2026-10-24,android,__SESSION__,498
+2026-10-24,android,app_view_page_dropped,2
+2026-10-24,android,auto_invest_enabled,6
+2026-10-24,android,bank_account_added,2
+2026-10-24,android,deposit_failed,3
+2026-10-24,android,deposit_success,11
+2026-10-24,android,email_verified,20
+2026-10-24,android,identity_verified,21
+2026-10-24,android,investment_cancelled,2
+2026-10-24,android,investment_completed,29
+2026-10-24,android,kyc_completed,16
+2026-10-24,android,login_completed,456
+2026-10-24,android,passcode_changed,7
+2026-10-24,android,passcode_enabled,4
+2026-10-24,android,public_app_view_page_dropped,1
+2026-10-24,android,registration_completed,21
+2026-10-24,android,step_failed,13
+2026-10-24,android,unique_investors,3
+2026-10-24,android,withdrawal_completed,17
+2026-10-24,android,withdrawal_failed,1
+2026-10-24,android,withdrawal_reversed,1
+2026-10-24,android,withdrawal_settled,19
+2026-10-24,web,__PAGE_VISIT__,1744
+2026-10-24,web,__SESSION__,520
+2026-10-24,web,auto_invest_enabled,1
+2026-10-24,web,bank_account_added,2
+2026-10-24,web,email_verified,4
+2026-10-24,web,gtm.dom,1
+2026-10-24,web,gtm.init,1
+2026-10-24,web,gtm.init_consent,1
+2026-10-24,web,gtm.js,1
+2026-10-24,web,gtm.load,1
+2026-10-24,web,identity_verified,8
+2026-10-24,web,investment_completed,20
+2026-10-24,web,kyc_completed,4
+2026-10-24,web,login_completed,45
+2026-10-24,web,passcode_changed,13
+2026-10-24,web,registration_completed,7
+2026-10-24,web,withdrawal_completed,2
+2026-10-24,web,withdrawal_settled,2
+2026-10-25,android,Auto Invest Activation,9
+2026-10-25,android,Auto Invest Deactivation,3
+2026-10-25,android,Deposit Instruction Click,13
+2026-10-25,android,Deposit Successful,2
+2026-10-25,android,Draft Account Creation Completed,15
+2026-10-25,android,Investment Made,76
+2026-10-25,android,Investment Screen,345
+2026-10-25,android,KYC Completion,16
+2026-10-25,android,Nafath Verified,5
+2026-10-25,android,Opportunity Details View,902
+2026-10-25,android,Withdrawal Click,49
+2026-10-25,android,Withdrawal Success,49
+2026-10-25,android,__SESSION__,2483
+2026-10-25,android,auto_invest_disabled,1
+2026-10-25,android,auto_invest_enabled,7
+2026-10-25,android,bank_account_added,6
+2026-10-25,android,bank_account_removed,1
+2026-10-25,android,deposit_failed,2
+2026-10-25,android,deposit_success,23
+2026-10-25,android,email_verified,21
+2026-10-25,android,identity_verified,15
+2026-10-25,android,investment_completed,70
+2026-10-25,android,kyc_completed,15
+2026-10-25,android,login_completed,815
+2026-10-25,android,notification_preference_updated,1
+2026-10-25,android,passcode_changed,5
+2026-10-25,android,passcode_enabled,4
+2026-10-25,android,profile_updated,1
+2026-10-25,android,registration_completed,15
+2026-10-25,android,step_failed,34
+2026-10-25,android,unique_investors,1
+2026-10-25,android,withdrawal_completed,69
+2026-10-25,android,withdrawal_settled,67
+2026-10-25,web,Assess__Sing,4
+2026-10-25,web,Offered_Sing,3
+2026-10-25,web,__PAGE_VISIT__,3502
+2026-10-25,web,__SESSION__,1129
+2026-10-25,web,auto_invest_disabled,2
+2026-10-25,web,auto_invest_enabled,3
+2026-10-25,web,bank_account_added,4
+2026-10-25,web,deposit_success,1
+2026-10-25,web,email_verified,10
+2026-10-25,web,gtm.dom,4
+2026-10-25,web,gtm.init,4
+2026-10-25,web,gtm.init_consent,5
+2026-10-25,web,gtm.js,4
+2026-10-25,web,gtm.load,4
+2026-10-25,web,identity_verified,28
+2026-10-25,web,investment_completed,509
+2026-10-25,web,kyc_completed,12
+2026-10-25,web,login_completed,104
+2026-10-25,web,passcode_changed,20
+2026-10-25,web,phone_verified,1
+2026-10-25,web,registration_completed,25
+2026-10-25,web,withdrawal_completed,9
+2026-10-25,web,withdrawal_failed,1
+2026-10-25,web,withdrawal_reversed,1
+2026-10-25,web,withdrawal_settled,9
+2026-10-26,android,Auto Invest Activation,13
+2026-10-26,android,Auto Invest Deactivation,2
+2026-10-26,android,Cancel Investment,1
+2026-10-26,android,Deposit Instruction Click,28
+2026-10-26,android,Draft Account Creation Completed,21
+2026-10-26,android,Investment Made,56
+2026-10-26,android,Investment Screen,369
+2026-10-26,android,KYC Completion,21
+2026-10-26,android,Nafath Verified,9
+2026-10-26,android,Opportunity Details View,849
+2026-10-26,android,Withdrawal Click,27
+2026-10-26,android,Withdrawal Success,27
+2026-10-26,android,__SESSION__,730
+2026-10-26,android,auto_invest_disabled,2
+2026-10-26,android,auto_invest_enabled,11
+2026-10-26,android,bank_account_added,8
+2026-10-26,android,deposit_failed,8
+2026-10-26,android,deposit_success,19
+2026-10-26,android,email_verified,27
+2026-10-26,android,identity_verified,21
+2026-10-26,android,investment_cancelled,1
+2026-10-26,android,investment_completed,58
+2026-10-26,android,kyc_completed,19
+2026-10-26,android,login_completed,625
+2026-10-26,android,passcode_changed,8
+2026-10-26,android,passcode_enabled,5
+2026-10-26,android,public_app_view_page_dropped,1
+2026-10-26,android,registration_completed,21
+2026-10-26,android,step_failed,60
+2026-10-26,android,unique_investors,1
+2026-10-26,android,withdrawal_completed,30
+2026-10-26,android,withdrawal_settled,33
+2026-10-26,web,Assess__Sing,5
+2026-10-26,web,Offered_Sing,4
+2026-10-26,web,__PAGE_VISIT__,5101
+2026-10-26,web,__SESSION__,1442
+2026-10-26,web,auto_invest_enabled,4
+2026-10-26,web,bank_account_added,4
+2026-10-26,web,bank_account_removed,1
+2026-10-26,web,deposit_failed,1
+2026-10-26,web,deposit_success,15
+2026-10-26,web,email_verified,7
+2026-10-26,web,gtm.dom,5
+2026-10-26,web,gtm.init,5
+2026-10-26,web,gtm.init_consent,7
+2026-10-26,web,gtm.js,5
+2026-10-26,web,gtm.load,5
+2026-10-26,web,identity_verified,81
+2026-10-26,web,investment_cancelled,2
+2026-10-26,web,investment_completed,115
+2026-10-26,web,kyc_completed,12
+2026-10-26,web,login_completed,129
+2026-10-26,web,passcode_changed,36
+2026-10-26,web,phone_verified,2
+2026-10-26,web,registration_completed,80
+2026-10-26,web,withdrawal_completed,5
+2026-10-26,web,withdrawal_settled,5
+2026-10-27,android,Auto Invest Activation,6
+2026-10-27,android,Auto Invest Deactivation,1
+2026-10-27,android,Cancel Investment,1
+2026-10-27,android,Deposit Instruction Click,17
+2026-10-27,android,Deposit Successful,2
+2026-10-27,android,Draft Account Creation Completed,10
+2026-10-27,android,Investment Made,85
+2026-10-27,android,Investment Screen,469
+2026-10-27,android,KYC Completion,15
+2026-10-27,android,Nafath Verified,6
+2026-10-27,android,Opportunity Details View,1036
+2026-10-27,android,Withdrawal Click,22
+2026-10-27,android,Withdrawal Success,22
+2026-10-27,android,__SESSION__,2395
+2026-10-27,android,app_view_page_dropped,2
+2026-10-27,android,auto_invest_disabled,2
+2026-10-27,android,auto_invest_enabled,5
+2026-10-27,android,bank_account_added,4
+2026-10-27,android,deposit_failed,5
+2026-10-27,android,deposit_success,30
+2026-10-27,android,email_verified,16
+2026-10-27,android,identity_verified,10
+2026-10-27,android,investment_cancelled,1
+2026-10-27,android,investment_completed,116
+2026-10-27,android,kyc_completed,13
+2026-10-27,android,login_completed,921
+2026-10-27,android,passcode_changed,11
+2026-10-27,android,passcode_enabled,5
+2026-10-27,android,registration_completed,10
+2026-10-27,android,step_failed,46
+2026-10-27,android,withdrawal_completed,19
+2026-10-27,android,withdrawal_settled,21
+2026-10-27,web,Assess__Sing,5
+2026-10-27,web,__PAGE_VISIT__,4467
+2026-10-27,web,__SESSION__,1280
+2026-10-27,web,auto_invest_disabled,2
+2026-10-27,web,auto_invest_enabled,3
+2026-10-27,web,bank_account_added,3
+2026-10-27,web,bank_account_removed,1
+2026-10-27,web,deposit_failed,2
+2026-10-27,web,deposit_success,5
+2026-10-27,web,email_verified,9
+2026-10-27,web,gtm.dom,2
+2026-10-27,web,gtm.init,2
+2026-10-27,web,gtm.init_consent,2
+2026-10-27,web,gtm.js,2
+2026-10-27,web,gtm.load,2
+2026-10-27,web,identity_verified,44
+2026-10-27,web,investment_completed,29
+2026-10-27,web,kyc_completed,8
+2026-10-27,web,login_completed,151
+2026-10-27,web,passcode_changed,20
+2026-10-27,web,profile_updated,2
+2026-10-27,web,registration_completed,48
+2026-10-27,web,withdrawal_completed,5
+2026-10-27,web,withdrawal_settled,5
+2026-10-28,android,Auto Invest Activation,12
+2026-10-28,android,Auto Invest Deactivation,4
+2026-10-28,android,Cancel Investment,5
+2026-10-28,android,Deposit Instruction Click,16
+2026-10-28,android,Deposit Successful,1
+2026-10-28,android,Draft Account Creation Completed,11
+2026-10-28,android,Investment Made,69
+2026-10-28,android,Investment Screen,337
+2026-10-28,android,KYC Completion,15
+2026-10-28,android,Nafath Verified,10
+2026-10-28,android,Opportunity Details View,908
+2026-10-28,android,Withdrawal Click,27
+2026-10-28,android,Withdrawal Success,27
+2026-10-28,android,__SESSION__,645
+2026-10-28,android,app_view_page_dropped,1
+2026-10-28,android,auto_invest_disabled,4
+2026-10-28,android,auto_invest_enabled,7
+2026-10-28,android,bank_account_added,7
+2026-10-28,android,deposit_success,21
+2026-10-28,android,email_verified,20
+2026-10-28,android,identity_verified,12
+2026-10-28,android,investment_cancelled,5
+2026-10-28,android,investment_completed,198
+2026-10-28,android,kyc_completed,15
+2026-10-28,android,login_completed,725
+2026-10-28,android,passcode_changed,6
+2026-10-28,android,passcode_enabled,3
+2026-10-28,android,registration_completed,12
+2026-10-28,android,step_failed,21
+2026-10-28,android,withdrawal_completed,29
+2026-10-28,android,withdrawal_settled,29
+2026-10-28,web,Assess__Sing,6
+2026-10-28,web,Offered_Sing,6
+2026-10-28,web,__PAGE_VISIT__,3073
+2026-10-28,web,__SESSION__,1013
+2026-10-28,web,auto_invest_enabled,2
+2026-10-28,web,bank_account_added,2
+2026-10-28,web,deposit_success,12
+2026-10-28,web,email_verified,8
+2026-10-28,web,gtm.dom,3
+2026-10-28,web,gtm.init,3
+2026-10-28,web,gtm.init_consent,5
+2026-10-28,web,gtm.js,3
+2026-10-28,web,gtm.load,3
+2026-10-28,web,identity_verified,28
+2026-10-28,web,investment_completed,35
+2026-10-28,web,kyc_completed,6
+2026-10-28,web,login_completed,82
+2026-10-28,web,notification_preference_updated,8
+2026-10-28,web,passcode_changed,19
+2026-10-28,web,passcode_enabled,1
+2026-10-28,web,phone_verified,2
+2026-10-28,web,profile_updated,2
+2026-10-28,web,registration_completed,29
+2026-10-28,web,withdrawal_completed,6
+2026-10-28,web,withdrawal_settled,5
+2026-10-29,android,Auto Invest Activation,11
+2026-10-29,android,Auto Invest Deactivation,7
+2026-10-29,android,Cancel Investment,1
+2026-10-29,android,Deposit Instruction Click,17
+2026-10-29,android,Deposit Successful,2
+2026-10-29,android,Draft Account Creation Completed,14
+2026-10-29,android,Investment Made,54
+2026-10-29,android,Investment Screen,328
+2026-10-29,android,KYC Completion,15
+2026-10-29,android,Nafath Verified,7
+2026-10-29,android,Opportunity Details View,714
+2026-10-29,android,Withdrawal Click,40
+2026-10-29,android,Withdrawal Success,40
+2026-10-29,android,__SESSION__,684
+2026-10-29,android,auto_invest_disabled,7
+2026-10-29,android,auto_invest_enabled,9
+2026-10-29,android,bank_account_added,1
+2026-10-29,android,deposit_failed,12
+2026-10-29,android,deposit_success,17
+2026-10-29,android,email_verified,15
+2026-10-29,android,identity_verified,14
+2026-10-29,android,investment_cancelled,1
+2026-10-29,android,investment_completed,118
+2026-10-29,android,kyc_completed,14
+2026-10-29,android,login_completed,756
+2026-10-29,android,passcode_changed,7
+2026-10-29,android,passcode_enabled,5
+2026-10-29,android,registration_completed,14
+2026-10-29,android,step_failed,28
+2026-10-29,android,withdrawal_completed,39
+2026-10-29,android,withdrawal_settled,38
+2026-10-29,web,Assess__Sing,2
+2026-10-29,web,Offered_Sing,4
+2026-10-29,web,__PAGE_VISIT__,3579
+2026-10-29,web,__SESSION__,1051
+2026-10-29,web,auto_invest_disabled,7
+2026-10-29,web,auto_invest_enabled,15
+2026-10-29,web,bank_account_added,2
+2026-10-29,web,deposit_success,8
+2026-10-29,web,email_verified,13
+2026-10-29,web,identity_verified,36
+2026-10-29,web,investment_completed,22
+2026-10-29,web,kyc_completed,17
+2026-10-29,web,login_completed,123
+2026-10-29,web,passcode_changed,25
+2026-10-29,web,registration_completed,32
+2026-10-29,web,withdrawal_completed,15
+2026-10-29,web,withdrawal_settled,16
+2026-10-30,android,App Install,8
+2026-10-30,android,Auto Invest Activation,23
+2026-10-30,android,Auto Invest Deactivation,6
+2026-10-30,android,Deposit Instruction Click,26
+2026-10-30,android,Draft Account Creation Completed,18
+2026-10-30,android,Investment Made,28
+2026-10-30,android,Investment Screen,410
+2026-10-30,android,KYC Completion,28
+2026-10-30,android,Nafath Verified,13
+2026-10-30,android,Opportunity Details View,623
+2026-10-30,android,Withdrawal Click,10
+2026-10-30,android,Withdrawal Success,10
+2026-10-30,android,__SESSION__,2145
+2026-10-30,android,auto_invest_disabled,4
+2026-10-30,android,auto_invest_enabled,14
+2026-10-30,android,bank_account_added,1
+2026-10-30,android,campaign_dashboard_view,5
+2026-10-30,android,campaign_entry_click,1
+2026-10-30,android,campaign_intro_view,4
+2026-10-30,android,deposit_failed,8
+2026-10-30,android,deposit_success,6
+2026-10-30,android,email_verified,20
+2026-10-30,android,identity_verified,17
+2026-10-30,android,investment_completed,79
+2026-10-30,android,kyc_completed,16
+2026-10-30,android,login_completed,568
+2026-10-30,android,notification_preference_updated,2
+2026-10-30,android,passcode_changed,15
+2026-10-30,android,passcode_enabled,9
+2026-10-30,android,phone_verified,2
+2026-10-30,android,registration_completed,17
+2026-10-30,android,stamp_collect_click,3
+2026-10-30,android,stamp_hunt_started,1
+2026-10-30,android,stamp_view,4
+2026-10-30,android,step_failed,61
+2026-10-30,android,wheel_spin_click,2
+2026-10-30,android,withdrawal_completed,10
+2026-10-30,android,withdrawal_settled,12
+2026-10-30,web,__PAGE_VISIT__,1427
+2026-10-30,web,__SESSION__,503
+2026-10-30,web,auto_invest_disabled,1
+2026-10-30,web,auto_invest_enabled,4
+2026-10-30,web,deposit_failed,1
+2026-10-30,web,deposit_success,5
+2026-10-30,web,email_verified,6
+2026-10-30,web,gtm.dom,10
+2026-10-30,web,gtm.init,10
+2026-10-30,web,gtm.init_consent,11
+2026-10-30,web,gtm.js,10
+2026-10-30,web,gtm.load,10
+2026-10-30,web,identity_verified,25
+2026-10-30,web,investment_completed,21
+2026-10-30,web,kyc_completed,14
+2026-10-30,web,login_completed,71
+2026-10-30,web,passcode_changed,11
+2026-10-30,web,phone_verified,1
+2026-10-30,web,registration_completed,19
+2026-10-30,web,withdrawal_completed,1
+2026-10-30,web,withdrawal_settled,1
+2026-10-31,android,Auto Invest Activation,10
+2026-10-31,android,Auto Invest Deactivation,7
+2026-10-31,android,Deposit Instruction Click,13
+2026-10-31,android,Deposit Successful,1
+2026-10-31,android,Draft Account Creation Completed,12
+2026-10-31,android,Investment Made,28
+2026-10-31,android,Investment Screen,343
+2026-10-31,android,KYC Completion,17
+2026-10-31,android,Nafath Verified,5
+2026-10-31,android,Opportunity Details View,559
+2026-10-31,android,Withdrawal Click,15
+2026-10-31,android,Withdrawal Success,15
+2026-10-31,android,__SESSION__,630
+2026-10-31,android,auto_invest_disabled,5
+2026-10-31,android,auto_invest_enabled,8
+2026-10-31,android,bank_account_added,3
+2026-10-31,android,deposit_failed,3
+2026-10-31,android,deposit_success,13
+2026-10-31,android,email_verified,20
+2026-10-31,android,identity_verified,11
+2026-10-31,android,investment_completed,42
+2026-10-31,android,kyc_completed,14
+2026-10-31,android,login_completed,541
+2026-10-31,android,passcode_changed,15
+2026-10-31,android,passcode_enabled,7
+2026-10-31,android,registration_completed,11
+2026-10-31,android,step_failed,18
+2026-10-31,android,unique_investors,2
+2026-10-31,android,withdrawal_completed,12
+2026-10-31,android,withdrawal_settled,9
+2026-10-31,web,__PAGE_VISIT__,2712
+2026-10-31,web,__SESSION__,709
+2026-10-31,web,auto_invest_disabled,1
+2026-10-31,web,auto_invest_enabled,6
+2026-10-31,web,bank_account_added,2
+2026-10-31,web,deposit_failed,1
+2026-10-31,web,email_verified,14
+2026-10-31,web,gtm.dom,3
+2026-10-31,web,gtm.init,3
+2026-10-31,web,gtm.init_consent,4
+2026-10-31,web,gtm.js,3
+2026-10-31,web,gtm.load,3
+2026-10-31,web,identity_verified,16
+2026-10-31,web,investment_completed,3
+2026-10-31,web,kyc_completed,14
+2026-10-31,web,login_completed,86
+2026-10-31,web,passcode_changed,38
+2026-10-31,web,passcode_enabled,1
+2026-10-31,web,registration_completed,13
+2026-10-31,web,withdrawal_completed,2
+2026-10-31,web,withdrawal_failed,1
+2026-10-31,web,withdrawal_reversed,1
+2026-11-01,android,Auto Invest Activation,12
+2026-11-01,android,Auto Invest Deactivation,13
+2026-11-01,android,Cancel Investment,4
+2026-11-01,android,Deposit Instruction Click,46
+2026-11-01,android,Draft Account Creation Completed,13
+2026-11-01,android,Investment Made,83
+2026-11-01,android,Investment Screen,377
+2026-11-01,android,KYC Completion,17
+2026-11-01,android,Nafath Verified,7
+2026-11-01,android,Opportunity Details View,887
+2026-11-01,android,Withdrawal Click,44
+2026-11-01,android,Withdrawal Success,44
+2026-11-01,android,__SESSION__,2276
+2026-11-01,android,app_view_page_dropped,3
+2026-11-01,android,auto_invest_disabled,11
+2026-11-01,android,auto_invest_enabled,6
+2026-11-01,android,bank_account_added,12
+2026-11-01,android,campaign_dashboard_view,10
+2026-11-01,android,campaign_entry_click,8
+2026-11-01,android,campaign_intro_view,4
+2026-11-01,android,deposit_failed,6
+2026-11-01,android,deposit_success,14
+2026-11-01,android,email_verified,25
+2026-11-01,android,identity_verified,11
+2026-11-01,android,investment_cancelled,4
+2026-11-01,android,investment_completed,212
+2026-11-01,android,kyc_completed,13
+2026-11-01,android,login_completed,1045
+2026-11-01,android,notification_preference_updated,7
+2026-11-01,android,passcode_changed,27
+2026-11-01,android,passcode_enabled,7
+2026-11-01,android,phone_number_page_dropped,1
+2026-11-01,android,phone_verified,1
+2026-11-01,android,public_app_view_page_dropped,3
+2026-11-01,android,referral_reward_earned,1
+2026-11-01,android,registration_completed,11
+2026-11-01,android,stamp_hunt_started,6
+2026-11-01,android,stamp_view,2
+2026-11-01,android,step_failed,88
+2026-11-01,android,unique_investors,2
+2026-11-01,android,withdrawal_completed,44
+2026-11-01,android,withdrawal_settled,43
+2026-11-01,web,Assess__Sing,4
+2026-11-01,web,Offered_Sing,1
+2026-11-01,web,__PAGE_VISIT__,3708
+2026-11-01,web,__SESSION__,1273
+2026-11-01,web,auto_invest_disabled,1
+2026-11-01,web,auto_invest_enabled,3
+2026-11-01,web,bank_account_added,1
+2026-11-01,web,bank_account_approved,1
+2026-11-01,web,deposit_success,5
+2026-11-01,web,email_verified,8
+2026-11-01,web,gtm.dom,2
+2026-11-01,web,gtm.init,2
+2026-11-01,web,gtm.init_consent,2
+2026-11-01,web,gtm.js,2
+2026-11-01,web,gtm.load,2
+2026-11-01,web,identity_verified,32
+2026-11-01,web,investment_completed,29
+2026-11-01,web,kyc_completed,14
+2026-11-01,web,login_completed,123
+2026-11-01,web,passcode_changed,21
+2026-11-01,web,phone_verified,4
+2026-11-01,web,profile_updated,3
+2026-11-01,web,registration_completed,25
+2026-11-01,web,withdrawal_completed,6
+2026-11-01,web,withdrawal_settled,6
+2026-11-02,android,App Install,106
+2026-11-02,android,Auto Invest Activation,12
+2026-11-02,android,Auto Invest Deactivation,4
+2026-11-02,android,Cancel Investment,1
+2026-11-02,android,Deposit Instruction Click,56
+2026-11-02,android,Deposit Successful,2
+2026-11-02,android,Draft Account Creation Completed,8
+2026-11-02,android,Investment Made,51
+2026-11-02,android,Investment Screen,502
+2026-11-02,android,KYC Completion,12
+2026-11-02,android,Nafath Verified,3
+2026-11-02,android,Opportunity Details View,873
+2026-11-02,android,Withdrawal Click,55
+2026-11-02,android,Withdrawal Success,47
+2026-11-02,android,__SESSION__,734
+2026-11-02,android,auto_invest_disabled,5
+2026-11-02,android,auto_invest_enabled,5
+2026-11-02,android,auto_invest_setup_started,10
+2026-11-02,android,bank_account_added,10
+2026-11-02,android,bank_account_removed,3
+2026-11-02,android,deposit_failed,1
+2026-11-02,android,deposit_started,25
+2026-11-02,android,deposit_success,20
+2026-11-02,android,email_verified,29
+2026-11-02,android,identity_verified,11
+2026-11-02,android,investment_cancelled,1
+2026-11-02,android,investment_completed,283
+2026-11-02,android,investment_started,65
+2026-11-02,android,kyc_completed,11
+2026-11-02,android,kyc_started,8
+2026-11-02,android,login_completed,848
+2026-11-02,android,passcode_changed,29
+2026-11-02,android,passcode_enabled,8
+2026-11-02,android,phone_verified,1
+2026-11-02,android,registration_completed,12
+2026-11-02,android,registration_started,45
+2026-11-02,android,step_failed,59
+2026-11-02,android,unique_investors,2
+2026-11-02,android,withdrawal_completed,51
+2026-11-02,android,withdrawal_failed,1
+2026-11-02,android,withdrawal_reversed,1
+2026-11-02,android,withdrawal_settled,50
+2026-11-02,android,withdrawal_started,10
+2026-11-02,web,Assess__Sing,4
+2026-11-02,web,Offered_Sing,2
+2026-11-02,web,__PAGE_VISIT__,5119
+2026-11-02,web,__SESSION__,1735
+2026-11-02,web,auto_invest_disabled,3
+2026-11-02,web,auto_invest_enabled,7
+2026-11-02,web,bank_account_added,3
+2026-11-02,web,bank_account_approved,1
+2026-11-02,web,deposit_failed,1
+2026-11-02,web,deposit_success,5
+2026-11-02,web,email_verified,22
+2026-11-02,web,gtm.dom,2
+2026-11-02,web,gtm.init,2
+2026-11-02,web,gtm.init_consent,2
+2026-11-02,web,gtm.js,2
+2026-11-02,web,gtm.load,2
+2026-11-02,web,identity_verified,60
+2026-11-02,web,investment_completed,63
+2026-11-02,web,kyc_completed,24
+2026-11-02,web,login_completed,157
+2026-11-02,web,passcode_changed,27
+2026-11-02,web,passcode_enabled,2
+2026-11-02,web,phone_verified,1
+2026-11-02,web,registration_completed,54
+2026-11-02,web,withdrawal_completed,9
+2026-11-02,web,withdrawal_settled,8
+2026-11-03,android,App Install,228
+2026-11-03,android,Auto Invest Activation,6
+2026-11-03,android,Auto Invest Deactivation,1
+2026-11-03,android,Cancel Investment,1
+2026-11-03,android,Deposit Instruction Click,22
+2026-11-03,android,Draft Account Creation Completed,3
+2026-11-03,android,Investment Made,28
+2026-11-03,android,Investment Screen,402
+2026-11-03,android,KYC Completion,3
+2026-11-03,android,Nafath Verified,16
+2026-11-03,android,Opportunity Details View,855
+2026-11-03,android,Withdrawal Click,54
+2026-11-03,android,Withdrawal Success,25
+2026-11-03,android,__SESSION__,588
+2026-11-03,android,app_view_page_dropped,1
+2026-11-03,android,auto_invest_disabled,1
+2026-11-03,android,auto_invest_enabled,2
+2026-11-03,android,auto_invest_setup_started,5
+2026-11-03,android,bank_account_added,3
+2026-11-03,android,bank_account_removed,2
+2026-11-03,android,deposit_failed,2
+2026-11-03,android,deposit_started,36
+2026-11-03,android,deposit_success,13
+2026-11-03,android,email_verified,8
+2026-11-03,android,identity_verified,6
+2026-11-03,android,investment_cancelled,5
+2026-11-03,android,investment_completed,175
+2026-11-03,android,investment_started,147
+2026-11-03,android,kyc_completed,5
+2026-11-03,android,kyc_started,2
+2026-11-03,android,login_completed,651
+2026-11-03,android,notification_preference_updated,5
+2026-11-03,android,passcode_changed,9
+2026-11-03,android,passcode_enabled,6
+2026-11-03,android,public_app_view_page_dropped,1
+2026-11-03,android,referral_reward_earned,1
+2026-11-03,android,registration_completed,6
+2026-11-03,android,registration_started,50
+2026-11-03,android,step_failed,43
+2026-11-03,android,withdrawal_completed,51
+2026-11-03,android,withdrawal_failed,25
+2026-11-03,android,withdrawal_reversed,25
+2026-11-03,android,withdrawal_settled,29
+2026-11-03,android,withdrawal_started,31
+2026-11-03,web,Assess__Sing,8
+2026-11-03,web,Offered_Sing,7
+2026-11-03,web,__PAGE_VISIT__,4267
+2026-11-03,web,__SESSION__,1047
+2026-11-03,web,auto_invest_disabled,3
+2026-11-03,web,auto_invest_enabled,6
+2026-11-03,web,bank_account_added,3
+2026-11-03,web,deposit_success,10
+2026-11-03,web,email_verified,22
+2026-11-03,web,gtm.dom,2
+2026-11-03,web,gtm.init,2
+2026-11-03,web,gtm.init_consent,5
+2026-11-03,web,gtm.js,2
+2026-11-03,web,gtm.load,2
+2026-11-03,web,identity_verified,39
+2026-11-03,web,investment_cancelled,1
+2026-11-03,web,investment_completed,42
+2026-11-03,web,kyc_completed,14
+2026-11-03,web,login_completed,148
+2026-11-03,web,passcode_changed,38
+2026-11-03,web,phone_verified,2
+2026-11-03,web,profile_updated,4
+2026-11-03,web,registration_completed,34
+2026-11-03,web,withdrawal_completed,5
+2026-11-03,web,withdrawal_failed,2
+2026-11-03,web,withdrawal_reversed,2
+2026-11-03,web,withdrawal_settled,2
+2026-11-04,android,App Install,214
+2026-11-04,android,Auto Invest Activation,1
+2026-11-04,android,Deposit Instruction Click,28
+2026-11-04,android,Draft Account Creation Completed,2
+2026-11-04,android,Investment Made,23
+2026-11-04,android,Investment Screen,390
+2026-11-04,android,KYC Completion,3
+2026-11-04,android,Nafath Verified,1
+2026-11-04,android,Opportunity Details View,1040
+2026-11-04,android,Withdrawal Click,46
+2026-11-04,android,Withdrawal Success,13
+2026-11-04,android,__SESSION__,579
+2026-11-04,android,app_view_page_dropped,1
+2026-11-04,android,auto_invest_disabled,3
+2026-11-04,android,auto_invest_enabled,8
+2026-11-04,android,auto_invest_pick_strategy_page_d,1
+2026-11-04,android,auto_invest_setup_started,17
+2026-11-04,android,bank_account_added,8
+2026-11-04,android,bank_account_removed,1
+2026-11-04,android,deposit_failed,3
+2026-11-04,android,deposit_started,40
+2026-11-04,android,deposit_success,10
+2026-11-04,android,email_verified,19
+2026-11-04,android,identity_verified,14
+2026-11-04,android,investment_cancelled,5
+2026-11-04,android,investment_completed,192
+2026-11-04,android,investment_started,163
+2026-11-04,android,kyc_completed,15
+2026-11-04,android,kyc_started,16
+2026-11-04,android,login_completed,652
+2026-11-04,android,passcode_changed,5
+2026-11-04,android,passcode_enabled,2
+2026-11-04,android,registration_completed,14
+2026-11-04,android,registration_started,56
+2026-11-04,android,step_failed,32
+2026-11-04,android,unique_investors,1
+2026-11-04,android,withdrawal_completed,45
+2026-11-04,android,withdrawal_settled,47
+2026-11-04,android,withdrawal_started,33
+2026-11-04,web,Assess__Sing,6
+2026-11-04,web,Offered_Sing,6
+2026-11-04,web,__PAGE_VISIT__,3590
+2026-11-04,web,__SESSION__,1009
+2026-11-04,web,auto_invest_enabled,2
+2026-11-04,web,bank_account_added,2
+2026-11-04,web,bank_account_removed,1
+2026-11-04,web,deposit_success,2
+2026-11-04,web,email_verified,12
+2026-11-04,web,gtm.dom,9
+2026-11-04,web,gtm.init,9
+2026-11-04,web,gtm.init_consent,9
+2026-11-04,web,gtm.js,9
+2026-11-04,web,gtm.load,9
+2026-11-04,web,identity_verified,30
+2026-11-04,web,investment_completed,42
+2026-11-04,web,kyc_completed,8
+2026-11-04,web,login_completed,128
+2026-11-04,web,passcode_changed,23
+2026-11-04,web,passcode_enabled,1
+2026-11-04,web,phone_verified,1
+2026-11-04,web,registration_completed,29
+2026-11-04,web,withdrawal_completed,5
+2026-11-04,web,withdrawal_settled,5
+2026-11-05,android,App Install,213
+2026-11-05,android,Deposit Instruction Click,18
+2026-11-05,android,Draft Account Creation Completed,2
+2026-11-05,android,Investment Made,6
+2026-11-05,android,Investment Screen,403
+2026-11-05,android,KYC Completion,2
+2026-11-05,android,Nafath Verified,1
+2026-11-05,android,Opportunity Details View,920
+2026-11-05,android,Withdrawal Click,23
+2026-11-05,android,Withdrawal Success,4
+2026-11-05,android,__SESSION__,561
+2026-11-05,android,auto_invest_enabled,5
+2026-11-05,android,auto_invest_setup_started,12
+2026-11-05,android,bank_account_added,3
+2026-11-05,android,bank_account_removed,1
+2026-11-05,android,deposit_failed,1
+2026-11-05,android,deposit_started,33
+2026-11-05,android,deposit_success,13
+2026-11-05,android,email_verified,15
+2026-11-05,android,identity_verified,11
+2026-11-05,android,investment_cancelled,1
+2026-11-05,android,investment_completed,93
+2026-11-05,android,investment_started,212
+2026-11-05,android,kyc_completed,11
+2026-11-05,android,kyc_started,11
+2026-11-05,android,login_completed,611
+2026-11-05,android,notification_preference_updated,2
+2026-11-05,android,passcode_changed,11
+2026-11-05,android,passcode_enabled,5
+2026-11-05,android,registration_completed,11
+2026-11-05,android,registration_started,60
+2026-11-05,android,step_failed,42
+2026-11-05,android,withdrawal_completed,21
+2026-11-05,android,withdrawal_settled,20
+2026-11-05,android,withdrawal_started,20
+2026-11-05,web,Assess__Sing,3
+2026-11-05,web,Offered_Sing,4
+2026-11-05,web,__PAGE_VISIT__,3449
+2026-11-05,web,__SESSION__,1005
+2026-11-05,web,auto_invest_enabled,4
+2026-11-05,web,bank_account_added,4
+2026-11-05,web,deposit_failed,2
+2026-11-05,web,deposit_success,6
+2026-11-05,web,email_verified,14
+2026-11-05,web,gtm.dom,6
+2026-11-05,web,gtm.init,6
+2026-11-05,web,gtm.init_consent,6
+2026-11-05,web,gtm.js,6
+2026-11-05,web,gtm.load,6
+2026-11-05,web,identity_verified,21
+2026-11-05,web,investment_completed,34
+2026-11-05,web,kyc_completed,13
+2026-11-05,web,login_completed,135
+2026-11-05,web,passcode_changed,20
+2026-11-05,web,phone_verified,1
+2026-11-05,web,registration_completed,18
+2026-11-05,web,withdrawal_completed,5
+2026-11-05,web,withdrawal_settled,2
+2026-11-06,android,App Install,230
+2026-11-06,android,Auto Invest Activation,1
+2026-11-06,android,Deposit Instruction Click,21
+2026-11-06,android,Draft Account Creation Completed,1
+2026-11-06,android,Investment Made,4
+2026-11-06,android,Investment Screen,339
+2026-11-06,android,KYC Completion,1
+2026-11-06,android,Nafath Verified,1
+2026-11-06,android,Opportunity Details View,589
+2026-11-06,android,Withdrawal Click,10
+2026-11-06,android,Withdrawal Success,1
+2026-11-06,android,__SESSION__,729
+2026-11-06,android,app_view_page_dropped,1
+2026-11-06,android,auto_invest_disabled,3
+2026-11-06,android,auto_invest_enabled,6
+2026-11-06,android,auto_invest_setup_started,26
+2026-11-06,android,bank_account_added,3
+2026-11-06,android,bank_account_removed,1
+2026-11-06,android,campaign_dashboard_view,4
+2026-11-06,android,campaign_entry_click,3
+2026-11-06,android,deposit_failed,6
+2026-11-06,android,deposit_started,43
+2026-11-06,android,deposit_success,3
+2026-11-06,android,email_verified,18
+2026-11-06,android,identity_verified,15
+2026-11-06,android,investment_completed,29
+2026-11-06,android,investment_started,197
+2026-11-06,android,kyc_completed,12
+2026-11-06,android,kyc_started,14
+2026-11-06,android,login_completed,467
+2026-11-06,android,notification_preference_updated,14
+2026-11-06,android,passcode_changed,8
+2026-11-06,android,passcode_enabled,3
+2026-11-06,android,registration_completed,15
+2026-11-06,android,registration_started,67
+2026-11-06,android,stamp_collect_click,1
+2026-11-06,android,stamp_hunt_started,2
+2026-11-06,android,stamp_view,3
+2026-11-06,android,step_failed,65
+2026-11-06,android,wheel_spin_click,1
+2026-11-06,android,withdrawal_completed,10
+2026-11-06,android,withdrawal_settled,9
+2026-11-06,android,withdrawal_started,10
+2026-11-06,web,__PAGE_VISIT__,1899
+2026-11-06,web,__SESSION__,525
+2026-11-06,web,auto_invest_disabled,1
+2026-11-06,web,auto_invest_enabled,4
+2026-11-06,web,bank_account_added,2
+2026-11-06,web,deposit_failed,1
+2026-11-06,web,deposit_success,1
+2026-11-06,web,email_verified,10
+2026-11-06,web,gtm.dom,9
+2026-11-06,web,gtm.init,9
+2026-11-06,web,gtm.init_consent,9
+2026-11-06,web,gtm.js,9
+2026-11-06,web,gtm.load,9
+2026-11-06,web,identity_verified,15
+2026-11-06,web,investment_completed,8
+2026-11-06,web,kyc_completed,10
+2026-11-06,web,login_completed,51
+2026-11-06,web,passcode_changed,17
+2026-11-06,web,phone_verified,1
+2026-11-06,web,registration_completed,13
+2026-11-06,web,withdrawal_completed,1
+2026-11-06,web,withdrawal_settled,2
+2026-11-07,android,App Install,143
+2026-11-07,android,Auto Invest Activation,1
+2026-11-07,android,Deposit Instruction Click,18
+2026-11-07,android,Investment Made,5
+2026-11-07,android,Investment Screen,279
+2026-11-07,android,Opportunity Details View,463
+2026-11-07,android,Withdrawal Click,14
+2026-11-07,android,Withdrawal Success,3
+2026-11-07,android,__SESSION__,409
+2026-11-07,android,auto_invest_disabled,7
+2026-11-07,android,auto_invest_enabled,12
+2026-11-07,android,auto_invest_setup_started,23
+2026-11-07,android,bank_account_added,4
+2026-11-07,android,deposit_failed,5
+2026-11-07,android,deposit_started,37
+2026-11-07,android,deposit_success,14
+2026-11-07,android,email_verified,18
+2026-11-07,android,identity_verified,17
+2026-11-07,android,investment_cancelled,2
+2026-11-07,android,investment_completed,29
+2026-11-07,android,investment_started,160
+2026-11-07,android,kyc_completed,14
+2026-11-07,android,kyc_started,15
+2026-11-07,android,login_completed,373
+2026-11-07,android,passcode_changed,4
+2026-11-07,android,passcode_enabled,6
+2026-11-07,android,public_app_view_page_dropped,1
+2026-11-07,android,registration_completed,17
+2026-11-07,android,registration_started,59
+2026-11-07,android,step_failed,24
+2026-11-07,android,withdrawal_completed,13
+2026-11-07,android,withdrawal_settled,11
+2026-11-07,android,withdrawal_started,12
+2026-11-07,web,__PAGE_VISIT__,1969
+2026-11-07,web,__SESSION__,587
+2026-11-07,web,auto_invest_disabled,2
+2026-11-07,web,auto_invest_enabled,5
+2026-11-07,web,bank_account_added,4
+2026-11-07,web,deposit_failed,1
+2026-11-07,web,email_verified,9
+2026-11-07,web,identity_verified,25
+2026-11-07,web,investment_completed,1
+2026-11-07,web,kyc_completed,10
+2026-11-07,web,login_completed,60
+2026-11-07,web,passcode_changed,14
+2026-11-07,web,phone_verified,3
+2026-11-07,web,registration_completed,23
+2026-11-07,web,withdrawal_completed,1
+2026-11-07,web,withdrawal_settled,1
+2026-11-08,android,App Install,244
+2026-11-08,android,Auto Invest Activation,2
+2026-11-08,android,Auto Invest Deactivation,1
+2026-11-08,android,Deposit Instruction Click,10
+2026-11-08,android,Deposit Successful,2
+2026-11-08,android,Investment Made,4
+2026-11-08,android,Investment Screen,341
+2026-11-08,android,KYC Completion,1
+2026-11-08,android,Opportunity Details View,701
+2026-11-08,android,Withdrawal Click,33
+2026-11-08,android,Withdrawal Success,4
+2026-11-08,android,__SESSION__,1078
+2026-11-08,android,app_view_page_dropped,1
+2026-11-08,android,auto_invest_disabled,1
+2026-11-08,android,auto_invest_enabled,10
+2026-11-08,android,auto_invest_setup_started,15
+2026-11-08,android,bank_account_added,3
+2026-11-08,android,campaign_dashboard_view,9
+2026-11-08,android,campaign_entry_click,9
+2026-11-08,android,deposit_failed,3
+2026-11-08,android,deposit_started,25
+2026-11-08,android,deposit_success,21
+2026-11-08,android,email_verified,16
+2026-11-08,android,identity_verified,10
+2026-11-08,android,investment_completed,160
+2026-11-08,android,investment_started,205
+2026-11-08,android,kyc_completed,13
+2026-11-08,android,kyc_started,13
+2026-11-08,android,login_completed,824
+2026-11-08,android,passcode_changed,10
+2026-11-08,android,passcode_enabled,6
+2026-11-08,android,public_app_view_page_dropped,1
+2026-11-08,android,registration_completed,10
+2026-11-08,android,registration_started,77
+2026-11-08,android,stamp_collect_click,1
+2026-11-08,android,stamp_hunt_started,3
+2026-11-08,android,stamp_view,4
+2026-11-08,android,step_failed,57
+2026-11-08,android,wheel_spin_click,2
+2026-11-08,android,withdrawal_completed,36
+2026-11-08,android,withdrawal_settled,34
+2026-11-08,android,withdrawal_started,30
+2026-11-08,web,Assess__Sing,2
+2026-11-08,web,__PAGE_VISIT__,3343
+2026-11-08,web,__SESSION__,996
+2026-11-08,web,auto_invest_enabled,3
+2026-11-08,web,deposit_success,11
+2026-11-08,web,email_verified,16
+2026-11-08,web,gtm.dom,1
+2026-11-08,web,gtm.init,2
+2026-11-08,web,gtm.init_consent,2
+2026-11-08,web,gtm.js,1
+2026-11-08,web,gtm.load,1
+2026-11-08,web,identity_verified,35
+2026-11-08,web,investment_completed,30
+2026-11-08,web,kyc_completed,18
+2026-11-08,web,login_completed,104
+2026-11-08,web,passcode_changed,13
+2026-11-08,web,phone_verified,2
+2026-11-08,web,registration_completed,31
+2026-11-08,web,withdrawal_completed,3
+2026-11-08,web,withdrawal_settled,3
+2026-11-09,android,App Install,183
+2026-11-09,android,Deposit Instruction Click,24
+2026-11-09,android,Investment Made,4
+2026-11-09,android,Investment Screen,423
+2026-11-09,android,Opportunity Details View,1198
+2026-11-09,android,Withdrawal Click,39
+2026-11-09,android,Withdrawal Success,3
+2026-11-09,android,__SESSION__,572
+2026-11-09,android,app_view_page_dropped,1
+2026-11-09,android,auto_invest_disabled,1
+2026-11-09,android,auto_invest_enabled,8
+2026-11-09,android,auto_invest_setup_started,22
+2026-11-09,android,bank_account_added,3
+2026-11-09,android,bank_account_removed,2
+2026-11-09,android,campaign_dashboard_view,8
+2026-11-09,android,campaign_entry_click,5
+2026-11-09,android,campaign_intro_view,4
+2026-11-09,android,deposit_started,38
+2026-11-09,android,deposit_success,17
+2026-11-09,android,email_verified,21
+2026-11-09,android,identity_verified,15
+2026-11-09,android,investment_cancelled,1
+2026-11-09,android,investment_completed,286
+2026-11-09,android,investment_started,274
+2026-11-09,android,kyc_completed,19
+2026-11-09,android,kyc_started,20
+2026-11-09,android,login_completed,665
+2026-11-09,android,passcode_changed,6
+2026-11-09,android,passcode_enabled,7
+2026-11-09,android,registration_completed,16
+2026-11-09,android,registration_started,77
+2026-11-09,android,stamp_collect_click,2
+2026-11-09,android,stamp_hunt_started,3
+2026-11-09,android,stamp_view,3
+2026-11-09,android,step_failed,25
+2026-11-09,android,wheel_spin_click,1
+2026-11-09,android,withdrawal_completed,38
+2026-11-09,android,withdrawal_settled,41
+2026-11-09,android,withdrawal_started,36
+2026-11-09,web,Assess__Sing,4
+2026-11-09,web,__PAGE_VISIT__,3441
+2026-11-09,web,__SESSION__,975
+2026-11-09,web,auto_invest_disabled,1
+2026-11-09,web,auto_invest_enabled,5
+2026-11-09,web,bank_account_approved,2
+2026-11-09,web,deposit_success,1
+2026-11-09,web,email_verified,7
+2026-11-09,web,gtm.dom,2
+2026-11-09,web,gtm.init,2
+2026-11-09,web,gtm.init_consent,2
+2026-11-09,web,gtm.js,2
+2026-11-09,web,gtm.load,2
+2026-11-09,web,identity_verified,26
+2026-11-09,web,investment_completed,55
+2026-11-09,web,kyc_completed,15
+2026-11-09,web,login_completed,108
+2026-11-09,web,passcode_changed,21
+2026-11-09,web,phone_verified,1
+2026-11-09,web,registration_completed,20
+2026-11-09,web,withdrawal_completed,9
+2026-11-09,web,withdrawal_settled,8
