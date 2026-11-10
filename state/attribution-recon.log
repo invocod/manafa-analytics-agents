@@ -1,0 +1,4 @@
+2026-11-10T21:45Z  checked=4_ledger_events_x_3_sources  acted=1  note="first readout (baseline, Oct20-Nov9): paid = ~40% of attributed registrations (google 365, tiktok 246, snapchat 160) with tiktok/snap ~99% kyc completion; deposits/investments 90-96% organic/unattributed (existing base); google-ads export missing so platform-claims check pending"
+  decision: no budget-shift recommendation issued — blocked on google-ads export + reg->deposit lag measurement
+  decision: claim-ratio bands initialized; reg/kyc band encodes tqa-007 until resolved
+  learning-proposed: "GA4 alone cannot evaluate app acquisition — paid social is 0.18% of GA4 sessions but 21% of Singular-attributed registrations" (1 window; needs a 2nd run before promotion)
