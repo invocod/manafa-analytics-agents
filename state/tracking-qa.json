@@ -9,7 +9,8 @@
     {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
     {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"},
     {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export", "status": "resolved", "resolved": "2026-11-11 — iOS file provided; SDK integrated", "resolution_note": "earlier drop simply omitted iOS"},
-    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "confirming_check": "GA4 event counts split by platform (event name x platform explore)"}
+    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "confirming_check": "GA4 event counts split by platform (event name x platform explore)"},
+    {"id": "tqa-008", "found": "2026-11-11", "severity": "low", "what": "App Install event zero Oct 20-29, live from Oct 30 (7) ramping Nov 2-3 (318->855) — install tracking enabled mid-window (filed by analytics-anomaly an-001)", "status": "open", "confirming_check": "what changed in Singular config / app release Oct 30-Nov 2; install baselines valid from Nov 3"}
   ],
   "baselines": {
     "direct_share_sessions": 0.789,
