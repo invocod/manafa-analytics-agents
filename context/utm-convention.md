@@ -53,10 +53,12 @@ GA4's default grouping sends `creator`, `newsletter`, `podcast`, `community`, `r
 - **AI assistants channel**: rule matching referrers `chatgpt.com`, `perplexity.ai`, `gemini.google.com`, `copilot.microsoft.com`, and `utm_source` values assistants add. Treat it as a floor — most AI-influenced visits arrive as direct or branded search.
 - **Snapchat**: verify Snapchat ads traffic carries `utm_source=snapchat&utm_medium=cpc`; without UTMs, Snapchat's in-app browser often strips the referrer → Unassigned.
 
-TODO: confirm the custom channel group exists in GA4 and matches this table (tracking-QA loop checks this).
+Status: **unknown whether the custom channel group exists** (as of 2026-11-11). The tracking-QA loop's first run checks the property and reports: exists-and-matches, exists-but-diverges (with the diff), or missing (with the rules to create).
 
 ## Partner registry
 
+No active partners as of 2026-11-11. The rule stands: **every new deal gets a row here before its link ships** — the tracking-QA loop flags partner-pattern traffic whose source isn't registered.
+
 | Partner | utm_source value | Type | Active since |
 |---|---|---|---|
-| TODO | | | |
+| — | | | |

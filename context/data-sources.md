@@ -6,9 +6,10 @@ How each loop gets its numbers. **Hierarchy: backend > Singular/GA4 > ad platfor
 
 ### 1. Backend events (source of truth)
 - Events: `registration_completed`, `deposit_success`, `investment_completed` (server-fired from Laravel).
-- Access: TODO — pick one and fill in:
-  - [ ] Read-only reporting API endpoint (preferred): `BACKEND_REPORT_URL` + `BACKEND_REPORT_TOKEN` env vars — returns **daily aggregate counts only** (date, event, count, first-touch source if available). No row-level/user-level data.
-  - [ ] Daily aggregate CSV exported to `data/exports/backend/` (see format below).
+- Events include `kyc_completed` between registration and deposit.
+- Access — **CSV now, API later** (decided 2026-11-11):
+  - [x] **Current**: daily aggregate CSV exported to `data/exports/backend/` (see format below).
+  - [ ] **Planned upgrade**: read-only reporting API endpoint: `BACKEND_REPORT_URL` + `BACKEND_REPORT_TOKEN` env vars — returns **daily aggregate counts only** (date, event, count, first-touch source if available). No row-level/user-level data. Needs a backend ticket.
 - PDPL rule: the agent only ever receives aggregates. Never expose a row-level endpoint to it.
 
 ### 2. GA4 (Data API)
@@ -29,15 +30,16 @@ How each loop gets its numbers. **Hierarchy: backend > Singular/GA4 > ad platfor
 
 ## Slack delivery
 
-- Channel: `#marketing-loops` — TODO: confirm the real channel name.
+- Channel: `#marketing-loops` — dedicated channel for loop output (create it in Slack if it doesn't exist yet; invite the marketing team).
 - Posted via the Slack connector attached to each scheduled routine. Message = the report's verdict + top findings; full report is committed under `reports/`.
 
 ## Export CSV formats
 
-### `data/exports/backend/backend-{yyyy-mm-dd}.csv` (if not using the API)
+### `data/exports/backend/backend-{yyyy-mm-dd}.csv` (current method)
 ```
 date,event,count,utm_source,utm_medium,utm_campaign
 2026-11-09,registration_completed,142,google,cpc,registrations-investors-2026-11
+2026-11-09,kyc_completed,98,,,
 ```
 (source/medium/campaign columns optional; aggregate counts only, no user-level rows)
 
