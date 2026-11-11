@@ -113,3 +113,26 @@ registration 1,908 (14–153/day) · kyc 1,562 (16–90) · deposit 1,976 (1–2
 
 ## Attribution preview (for attribution-recon's first run)
 Registrations by source (Singular, all platforms): web organic 519 · iOS organic 509 · Android adwords 233 · iOS tiktok ads 208 · iOS snapchat 160 · web google/cpc 109. Deposits: iOS organic 1,394 of 1,976 (71%). The first-touch vs last-touch and GA4-vs-Singular channel comparison is now fully possible.
+
+---
+
+# Investigation: tqa-001 — why 79% of GA4 sessions are direct/(none)
+
+**Verdict: mostly a reporting artifact, not broken tracking. Downgraded high → low.** The 79% mixes app and web traffic in one GA4 property; app sessions are structurally "direct". Web-only direct is roughly **18–38% of web sessions**, normal for a product where two thirds of active users are returning.
+
+## Evidence (all Observed unless marked)
+1. **Same traffic, two tools:** GA4 82,200 sessions vs Singular 82,088 for the window — a 0.1% difference, so Singular's platform split can stand in for GA4's.
+2. **74.3% of sessions are app sessions** (iOS 36,684 + Android 24,334 = 61,018; web 21,070).
+3. **App sessions land in direct by design** (Inferred from GA4/Firebase behaviour): an app opened from the home screen carries no referrer or UTM, so GA4 assigns `(direct) / (none)`. Only installs from store campaigns or tagged deep links get a source — GA4 shows just 3,764 `google-play / organic` sessions.
+4. **Bounding web direct:** GA4 direct = 64,890. If every app session is direct, web direct = 3,872 (18.4% of web). If the 3,764 Play Store sessions are the only attributed app sessions, web direct = 7,636 (36.2% of web).
+5. **Independent check from Singular:** 8,122 of 21,070 web sessions (38.5%) carry no source signal — matching the upper bound.
+6. **Returning users:** GA4's returning/new split shows 66% of daily active users are returning. Returning users typing the URL or using bookmarks are genuine direct traffic.
+
+## What remains real
+- Web direct of 18–38% is normal territory, but part of it is recoverable: untagged paid-social clicks (tqa-002/003) and app deep links overwriting the source (tqa-004). Fixing those is where the remaining gain is.
+- The real reporting problem is **one blended number**: anyone reading GA4's top-level channel report sees "79% direct" and concludes marketing is unmeasurable.
+
+## Recommended actions (for human approval)
+1. Report web and app separately: a GA4 comparison or saved report filtered to platform = web for channel analysis; Singular for app acquisition (already the system of record per the attribution readout).
+2. Confirming check (Inferred bounds become Observed): one GA4 Explore of **session source/medium × platform** — the same export that also closes tqa-007.
+3. Keep the tagging fixes in tqa-002/003/004; they shrink the recoverable part of web direct.

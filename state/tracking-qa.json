@@ -3,7 +3,7 @@
   "cursor": "2026-11-10",
   "cursor_note": "UTM audit covers the 2026-10-20..2026-11-10 GA4 snapshot. Heartbeat/receipt checks have never run — their first run should NOT skip this window.",
   "open_issues": [
-    {"id": "tqa-001", "found": "2026-11-11", "severity": "high", "what": "direct/(none) = 78.9% of sessions — attribution mostly blind", "status": "open", "confirming_check": "direct share split by platform (web-only)"},
+    {"id": "tqa-001", "found": "2026-11-11", "severity": "low", "what": "direct/(none) = 78.9% of GA4 sessions — investigated 2026-11-11: mostly structural (74% of sessions are app sessions, which GA4 labels direct); web-only direct ~18-38% of web sessions (Singular: 38.5% of web sessions carry no source)", "status": "open", "downgraded": "high->low 2026-11-11", "confirming_check": "GA4 explore: session source/medium x platform (same export closes tqa-007)", "remaining_action": "report web and app separately; recoverable web direct handled by tqa-002/003/004"},
     {"id": "tqa-002", "found": "2026-11-11", "severity": "med", "what": "paid social invisible in GA4 web but confirmed in app via Singular (ios: tiktok 208, snapchat 160 registrations) — fix web tagging; use Singular as app-acquisition record", "status": "open", "confirming_check": "platform spend vs Singular-attributed conversions for same window"},
     {"id": "tqa-003", "found": "2026-11-11", "severity": "med", "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes", "status": "open"},
     {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
