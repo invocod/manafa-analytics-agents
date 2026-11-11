@@ -63,3 +63,5 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 ## Output
 
 Loop output goes to **Slack** (channel in `context/data-sources.md`) and is archived as markdown under `reports/`. Slack messages follow each skill's output format: lead with the verdict, keep it under ~30 lines, link nothing that requires a login to read, never include PII. If Slack is unreachable, still write the report file and commit it — the report is the deliverable, Slack is the delivery.
+
+**Presentation layer (user preference, 2026-11-11):** the primary human-facing view is the **Manafa Marketing Pulse dashboard** — https://claude.ai/artifact/Cu1WtFSKbL2DLzhCxSJRz3. After a run that changes the numbers, refresh it: regenerate the aggregate CSVs, upload them as assets to that artifact, update the `datasets/*` docs (`source.url`, `updated`) and keep the takeaway sentence, week tiles and issue board current (the page follows the Data type's one-writer rules — read its reference docs before editing `files/index.html`). Markdown reports remain the audit trail, not the presentation.
