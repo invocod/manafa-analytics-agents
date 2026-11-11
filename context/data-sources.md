@@ -16,6 +16,7 @@ Hierarchy until BigQuery: **GA4 key events (interim ledger) > Singular (app-side
   - Daily key-event counts by event name (the ledger — most important)
   - Sessions by session source/medium/campaign (UTM audit + channel checks)
   - Sessions/key events by default channel group (Unassigned share)
+- Platform splits (source/medium × platform, events × stream × platform) need GA4 Explore. Step-by-step setups are in `context/ga4-explore-recipes.md`.
 - Include as much history as convenient (8+ weeks makes the weekday bands real). Date, dimension columns, metric columns — the loop reads whatever shape GA4's export produces; keep the header row.
 - Later: GA4 Data API (`GA4_SERVICE_ACCOUNT_JSON` + `GA4_PROPERTY_ID`) or the GA4→BigQuery export replaces the manual drop.
 
