@@ -136,3 +136,23 @@ Registrations by source (Singular, all platforms): web organic 519 · iOS organi
 1. Report web and app separately: a GA4 comparison or saved report filtered to platform = web for channel analysis; Singular for app acquisition (already the system of record per the attribution readout).
 2. Confirming check (Inferred bounds become Observed): one GA4 Explore of **session source/medium × platform** — the same export that also closes tqa-007.
 3. Keep the tagging fixes in tqa-002/003/004; they shrink the recoverable part of web direct.
+
+---
+
+## Addendum — GA4 week Nov 4–10 (Engagement overview, 2026-11-11)
+
+New drop: the standard Engagement overview for one week, Nov 4–10. It has event totals but no platform or source split, so it **cannot close tqa-001 or tqa-007**. Those still need Explore Recipes A and B (`context/ga4-explore-recipes.md`). The earlier 22-day file is kept as `Engagement_overview_20261020-20261110.csv`.
+
+**Is the GA4 vs Singular gap new or steady? (Observed)** Ratio is Singular ÷ GA4. Singular windows end one day earlier (its data stops Nov 9), using the same offset as the baseline.
+
+| Event | Prior 15 days | Week Nov 4–10 | Read |
+|---|---|---|---|
+| registration_completed | 0.65 | 0.60 | Steady |
+| kyc_completed | 0.53 | 0.53 | Steady |
+| deposit_success | 0.98 | 1.05 | Reconciles |
+| investment_completed | 0.96 | 0.84 | See note |
+
+- **tqa-007 (Observed):** the registration and KYC gap is persistent, not a recent break. That points to a structural cause: double-firing, repeat fires per user, or a definitional difference. Recipe B tells these apart.
+- **Investments 0.84 (Inferred, no alert):** within the 10–30% normal band, but lower than before. The one-day offset can explain it on its own. Singular investments run about 1,000 a day on Mon/Tue (Nov 2: 1,223; Nov 9: 1,017). The Singular week includes Nov 3 (713) but not Nov 10, while the GA4 week includes Nov 10. A Singular Nov 10 of about 1,100 would restore 0.92. The week also overlaps the trailing 72 hours. Recheck once both sources cover the same dates.
+- **Signup step (Observed, period ratio, all platforms):** registration_started → registration_completed = 844 / 2,903 = **29.1%** in the first full week of registration_started tracking (tqa-008). This is funnel-health's first data point for this step.
+- Not judged: this week's daily rates run 15–24% below the prior 15 days. Those 15 days include the Oct 26–28 salary surge, and the week overlaps the trailing 72 hours. The weekly review handles this on the ISO-week basis.

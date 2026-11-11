@@ -1,0 +1,521 @@
+# ----------------------------------------
+# Engagement overview
+# Account: ManafaFinancing
+# Property: Manafa Mobile & Web Apps
+# ----------------------------------------
+#  
+# Start date: 20261104
+# End date: 20261110
+Nth day,Average engagement time per active user
+0000,90.47569522948226
+0001,96.31941699604744
+0002,79.29883753898497
+0003,71.31456743002545
+0004,74.36474628004578
+0005,80.76429199648197
+0006,90.25651883218185
+
+# Start date: 20261104
+# End date: 20261110
+Nth day,Engaged sessions per active user
+0000,0.6911598462581958
+0001,0.6766304347826086
+0002,0.6002268216614687
+0003,0.6199109414758269
+0004,0.6417397939717665
+0005,0.6800791556728232
+0006,0.7107198573657232
+
+# Start date: 20261104
+# End date: 20261110
+Nth day,Average engagement time per session
+0000,60.66919345057611
+0001,65.67306720565942
+0002,54.49863600935308
+0003,54.833211054047446
+0004,52.26870474658085
+0005,56.35409634857318
+0006,61.88584963325184
+
+#  
+# Start date: 20261104
+# End date: 20261110
+Nth day,Views
+0000,40446
+0001,38232
+0002,27910
+0003,24137
+0004,43177
+0005,40849
+0006,45398
+
+# Start date: 20261104
+# End date: 20261110
+Nth day,Event count
+0000,103591
+0001,94623
+0002,70876
+0003,62618
+0004,105623
+0005,99534
+0006,109649
+
+#  
+# Start date: 20261104
+# End date: 20261110
+Event name,Event count
+screen_view,212856
+user_engagement,154977
+page_view,47293
+login_completed,33007
+session_start,23828
+opportunity_view,18005
+company_view,14317
+password_view,8262
+otp_view,8015
+opportunity_list_view,7616
+otp_submitted,7211
+first_open,5608
+investment_started,5444
+password_submitted,5304
+nid_view,5212
+investment_completed,4545
+phone_number_view,4480
+prompt_view,3891
+app_update,3598
+passcode_submitted,3476
+application_view,3096
+registration_started,2903
+logout_click,2738
+first_visit,2689
+notification_click,2221
+cta_click,2198
+app_view_page_viewed,2062
+kyc_step_view,1964
+kyc_step_submitted,1903
+phone_number_submitted,1882
+nid_submitted,1844
+phone_verification_started,1823
+withdrawal_completed,1774
+User_launches_the_app,1706
+deposit_started,1649
+identity_verification_submitted,1433
+os_update,1404
+Opportunity_Details_View,1341
+step_back,1270
+auto_invest_step_view,1230
+Logged_in,1208
+identity_verification_started,1161
+tooltip_click,1048
+search_submitted,1014
+help_click,976
+article_view,969
+withdrawal_started,954
+transaction_view,941
+withdrawal_settled,933
+Company_Details_View,870
+registration_completed,844
+phone_verified,829
+kyc_completed,823
+opportunity_favorite_click,788
+auto_invest_step_submitted,764
+Transaction_View,733
+fast_login_view,733
+create_passcode_page_viewed,710
+identity_verified,701
+app_exception,683
+Investment_Screen,645
+fast_login_enabled,643
+auto_invest_setup_started,607
+bank_account_add_started,603
+email_verified,528
+deposit_success,517
+kyc_started,499
+email_verification_started,489
+registration_type_selected,432
+Deposit_Instruction_View,379
+create_passcode_page_back,375
+app_remove,372
+password_reset_started,371
+Opportunity_Listing_View,354
+auto_invest_strategy_selected,326
+passcode_changed,312
+feedback_submitted,285
+vote_distribution_view,276
+app_download_click,267
+lead_submitted,259
+password_reset_submitted,258
+auto_invest_enabled,252
+fast_login_skipped,250
+deposit_failed,245
+bank_account_added,226
+step_failed,226
+passcode_enabled,218
+passcode_remind_later,199
+auto_invest_disabled,182
+prompt_display_rate,174
+opportunity_unfavorite_click,163
+public_app_view_page_viewed,155
+click,150
+virtual_benefit_view,150
+Transaction_Details_View,119
+virtual_investment_started,117
+auto_invest_step_skipped,105
+Investment_Made,103
+Withdrawal_Click,82
+Withdrawal_Success,82
+file_download,80
+investment_cancelled,68
+Tool_Tip_Click,54
+notification_preference_updated,50
+view_search_results,48
+Favorite_Opportunity,45
+bank_account_removed,39
+Article_Details_Screen_View,37
+account_reactivation_submitted,36
+account_reactivation_started,34
+phone_number_page_viewed,32
+User_viewed_the_notification,22
+w2a_screen_view,22
+Help_Requested,20
+auto_invest_deactivated,16
+user_feedback_analysis,15
+vote_distribution_percentage,15
+Deposit_Successful,12
+app_store_redirection,9
+Bank_Account_Addition_Click,8
+nid_page_viewed,8
+w2a_button_click,8
+Unfavorite_Opportunity_,7
+app_clear_data,7
+nafath_page_viewed,7
+phone_number_page_back,7
+Manual_Bank_Account_Addition_Successful,6
+Personal_File_Screen_View,5
+withdrawal_failed,4
+withdrawal_reversed,4
+Article_List_Screen_View,3
+auto_invest_pick_strategy_page_viewed,3
+auto_invest_summary_page_viewed,3
+referral_reward_earned,3
+app_view_page_dropped,2
+auto_invest_activation_process_started,2
+auto_invest_summary_confirmed,2
+auto_invest_summary_page_back,2
+bank_account_approved,2
+w2a_answer_selected,2
+wakala_contract_view,2
+Draft_Account_Creation_Completed,1
+Ticketing_Homepage_Screen_View,1
+Wakalla_Contract_Screen_View,1
+auto_invest_activation_success_page_back,1
+nafath_page_back,1
+nid_page_back,1
+password_page_viewed,1
+profile_updated,1
+public_app_view_page_dropped,1
+w2a_funnel_started,1
+w2a_slider_changed,1
+
+#  
+# Start date: 20261104
+# End date: 20261110
+Page title and screen class,Views
+FlutterViewController,150344
+MainActivity,52236
+منافع - تسجيل الدخول - منافع للتمويل,5480
+منافع,4571
+منصة الدين,4522
+منافع - حلول وخدمات التمويل الجماعي بالدين,4194
+منصة الدين - الرئيسة,2667
+PermissionsActivity,2481
+منصة الدين - الاستثمارات,2200
+UIAlertController,2162
+منصة الدين - الصفحة الرئيسية,2053
+منافع - شريكك للنمو,1809
+منافع - تسجيل حساب طالب التمويل - منافع للتمويل,1551
+منصة الدين - طلبات التمويل,996
+المحفظة,973
+منافع - تسجيل حساب طالب - منافع للتمويل,894
+منصة الدين - ملف المنشأة,749
+ManafaFlowSheetViewController,735
+ICMRootViewController,664
+منافع - أكمل عملية الدفع,640
+HelpCenterContainerViewController,599
+HomescreenViewController,578
+منصة الدين - العمليات,554
+Debt Platform,530
+Debt platform – Home,522
+IntercomRootActivity,503
+ConversationViewController,496
+منافع - تغيير كلمة المرور - منافع للتمويل,493
+NotificationOpenedActivity,472
+منافع - الوظائف,464
+الأداء,451
+منافع - تواصل معنا - منافع للتمويل,370
+منافع - شروط الاستخدام - منافع للتمويل,369
+منافع - الموردين,359
+منافع - إعادة تعيين كلمة المرور - منافع للتمويل,353
+HelpCenterArticleContainerViewController,344
+Manafa,341
+منافع - منصة تقنية مالية للتمويل الجماعي بالدين,330
+Debt platform – Investments,322
+منصة الدين - الإعدادات,316
+الإعدادات,291
+اكتشف,279
+Debt platform,277
+منافع - المدونة - منافع للتمويل,273
+UIActivityViewController,268
+Manafa - Login - Manafa Financing,261
+"منافع - فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",254
+منصة الدين - التمويلات,251
+Debt Platform - Homepage,236
+SFSafariViewController,235
+منافع - أسئلة شائعة عن التمويل الجماعي بالدين للشركات,232
+منافع - بنك المنشآت الصغيرة والمتوسطة,230
+Manafa | Login - Manafa Financing,184
+منافع - حاسبة التمويل,183
+منافع - مقترض,183
+منافع - الرواتب,163
+Debt Platform - Financing requests,162
+منافع - تمويل فواتير للشركات يصل إلى 7.5 مليون ريال,157
+Performance,146
+منافع - أمر الشراء,145
+منافع - سلاسل الإمداد,139
+منافع - سياسة الخصوصية,138
+منصة الدين - شركة شبكات المستقبل للاتصالات,136
+Manafa - Crowdfunding Solutions and Services for Debt,134
+منافع - منافع في أرقام,131
+IntercomArticleActivity,121
+Manafa | Crowdfunding Solutions and Services for Debt,120
+منصة الدين - الخدمات,112
+InboxViewController,111
+Wallet,111
+منافع - الجهات التمويلية,102
+منافع - للتمويل,102
+Debt Platform - Entity Profile,101
+منصة الدين - الصفحة الشخصية,101
+ManafaFlowSheetActivity,98
+منافع - أرامكو تليد,96
+منافع - التمويل العقاري,94
+منافع | تسجيل الدخول - منافع للتمويل,93
+منافع - تمويل رأس المال العامل,89
+منصة الدين - شركة واعدة للاستثمار,89
+منافع - تمويل خطابات الضمان للشركات والمشاريع والمنافسات,84
+منافع - حلول تمويلية تتوافق مع أسس الشريعة الإسلامية,78
+منافع | حلول وخدمات التمويل الجماعي بالدين,75
+منافع | تسجيل حساب طالب التمويل - منافع للتمويل,74
+منافع - الاستثمار الآلي,73
+منافع - الأسعار,71
+منصة الدين - حساب جديد,67
+UIDocumentPickerViewController,64
+منصة الدين - شركة تكوين المتطورة للصناعات مساهمة عامة,58
+منصة الدين - الاستثمار الآلي,56
+SLComposeViewController,55
+Debt Platform - Financing,52
+منصة الدين - طلب جديد,52
+منافع - الأداء,46
+منافع - المشترين,46
+Discover,43
+منافع - تسجيل حساب شخصية اعتبارية - منافع للتمويل,43
+منصة الدين - المساعدة,43
+Manafa | A Fintech Platform for Debt Crowdfunding,40
+منافع - فرص استثمارية بتصنيف ائتماني دقيق,38
+التقارير,37
+Debt platform – Settings,35
+إنشاء حساب جديد,35
+Manafa | Register Borrower Account - Manafa Financing,34
+منافع | تسجيل حساب طالب - منافع للتمويل,34
+UISearchController,32
+منافع | تغيير كلمة المرور - منافع للتمويل,32
+ErrorViewController,31
+PlayCoreDialogWrapperActivity,30
+منافع | إعادة تعيين كلمة المرور - منافع للتمويل,30
+PHPickerViewController,29
+منافع - النفقات الرأسمالية,29
+"Manafa | فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",28
+منافع - دعوة صديق,28
+منافع - تمويل الضمان الإيجاري,27
+Debt Platform - Processes,26
+منافع | المدونة - منافع للتمويل,26
+LicenseActivity,25
+منافع - منافع وأرامكو تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,25
+Manafa | تواصل معنا - منافع للتمويل,24
+Settings,24
+منصة الدين - شركة الاسس الاولى للمقاولات,24
+منصة الدين - شركة مرامر للمقاولات شركة مساهمة سعودية مقفلة,23
+منافع - الأهداف الذكية,22
+منصة الدين - قائمة التواصل,22
+Manafa - Blog - Manafa Financing,21
+Manafa | Blog - Manafa Financing,21
+SheetConversationHeaderViewController,21
+منصة الدين - شركة عبدالعزيز احمد بن حميد للتطوير والاستثمار العقاري,20
+Manafa | Supply Chain,19
+منافع - برنامج الولاء,19
+Manafa | Funders,17
+منافع | الجهات التمويلية,17
+Manafa | Terms of Use - Manafa Financing,16
+MediaPreviewerViewController,16
+QLItemPresenterViewController,16
+Manafa - Your Growth Partner,15
+Manafa - تواصل معنا - منافع للتمويل,15
+Manafa | Careers,15
+Manafa | For Financing,15
+منافع | الموردين,15
+Debt Platform - Explore,14
+Manafa | Register Finaning Student Account - Manafa Financing,14
+منافع - منافع وأرامكو تليد وبنك المنشآت الصغيرة والمتوسطة يطلقون حلولاً تمويلية رقمية,14
+IntercomPreviewActivity,13
+Manafa | FAQs on Debt Crowdfunding for Companies,13
+منافع - تحديث المنتجات • الربع الثالث 2026,13
+منصة الدين - تعديل التذكرة,13
+منصة الدين - شركة الاعمال التطويريه المحدودة,13
+Manafa | Change Password - Manafa Financing,12
+Manafa | Suppliers,12
+Manafa - Salaries,11
+TOCropViewController,11
+منافع - تجهيز النتيجة,11
+Manafa - Supply Chain,10
+Manafa | Manafa in Numbers,10
+Manafa | Salaries,10
+منافع - دليلك إلى التصنيف الائتماني,10
+منافع - ما هو التمويل الجماعي بالدين؟ ولماذا منافع؟,10
+منافع - نقترح لك هذي الاستراتيجة بناء على إجابتك,10
+GIFPickerViewController,9
+Manafa - Buyers,9
+منافع | شروط الاستخدام - منافع للتمويل,9
+منافع | للتمويل,9
+Debt platform – شركة واعدة للاستثمار,8
+Debt platform – مؤسسة نواهض الانشاءات للمقاولات,8
+Manafa - Funders,8
+Manafa | Funding Calculator,8
+SHSheetRemoteCustomViewController,8
+منافع - سجل رقم جوالك عشان نحفظ استراتجيتك,8
+منافع - منافع و«الشركة السعودية للكهرباء» تعلنان عن تعاون لإطلاق برنامج تمويل سلاسل الإمداد,8
+منافع | الرواتب,8
+منافع | تمويل رأس المال العامل,8
+منصة الدين - شركة الساهر الامني للحراسات الامنية شركة شخص واحد,8
+Debt platform – شركة قسمة السعودية للصيانة شركة شخص واحد,7
+UCropActivity,7
+Debt platform – شركة الاسس الاولى للمقاولات,6
+Manafa - A Fintech Platform for Debt Crowdfunding,6
+Manafa - Invoice Financing for Companies Up to 7.5 Million SAR,6
+Manafa | Reset Password - Manafa Financing,6
+financingTitle - checkoutPayment.title,6
+منافع | التمويل العقاري,6
+منافع | شريكك للنمو,6
+منصة الدين - شركة حلول تلاد المتكاملة,6
+IntercomArticleSearchActivity,5
+Manafa - Register Borrower Account - Manafa Financing,5
+Manafa - Register Finaning Student Account - Manafa Financing,5
+"Manafa - فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",5
+Manafa | Invoice Financing for Companies Up to 7.5 Million SAR,5
+Manafa | Purchase Order,5
+financingTitle - indexPageTitle,5
+منافع | الوظائف,5
+Create a new account,4
+Debt Platform - New account,4
+Debt Platform - Personal Page,4
+Debt platform – شركة الساهر الامني للحراسات الامنية شركة شخص واحد,4
+Manafa - Aramco Taleed,4
+Manafa - Complete your payment,4
+Manafa - Smart Goals,4
+Manafa | Manafa and Aramco Announce Collaboration to Launch Supply Chain Finance Program,4
+منافع - إيضاحات القوائم المالية,4
+منافع - دور منافع في القطاع العقاري,4
+منافع | تحديث المنتجات • الربع الثالث 2026,4
+منافع | تمويل فواتير للشركات يصل إلى 7.5 مليون ريال,4
+منصة الدين - شركة ايدي ورك المحدودة,4
+منصة الدين - شركة عبدالرحمن علي عبدالرحمن التركي للتجارة والمقاولات,4
+Debt platform – Contact list,3
+Manafa - Careers,3
+Manafa - FAQs on Debt Crowdfunding for Companies,3
+Manafa | Analytics,3
+Manafa | Buyers,3
+Manafa | Capex,3
+Manafa | Manafa and Saudi Electricity Company Announce Collaboration to Launch Supply Chain Finance Program,3
+"Manafa | Manafa, Aramco Taleed, and SME Bank launch Digital Funding Solutions",3
+Manafa | Prices,3
+Manafa | Privacy policy,3
+Manafa | Real estate Financing,3
+Manafa | SME Bank,3
+Manafa | Working Capital Financing,3
+Manafa | تمويل خطابات الضمان للشركات والمشاريع والمنافسات,3
+بيب,3
+منافع - الاستثمار في منافع لايتطلب خبرة,3
+منافع - خصّص تجربتك مع منافع,3
+منافع - قاعدة 50/30/20,3
+منافع - كم دخلك الشهري؟,3
+منافع - مدة الاستثمار,3
+منافع - مين منافع؟,3
+منافع | أرامكو تليد,3
+منافع | أسئلة شائعة عن التمويل الجماعي بالدين للشركات,3
+منافع | النفقات الرأسمالية,3
+منافع | بنك المنشآت الصغيرة والمتوسطة,3
+منافع | تواصل معنا - منافع للتمويل,3
+"منافع | فرص استثمارية قصيرة الأجل تبدأ من 1,000 ريال",3
+منافع | مقترض,3
+منافع | منصة تقنية مالية للتمويل الجماعي بالدين,3
+منصة الديون,3
+منصة الديون – الاستثمارات,3
+CKSMSComposeController,2
+Debt platform – Edit ticket,2
+Debt platform – شركة شبكات المستقبل للاتصالات,2
+Manafa - Change Password - Manafa Financing,2
+Manafa - Manafa in Numbers,2
+Manafa - Rental Guarantee Financing,2
+Manafa - Terms of Use - Manafa Financing,2
+Manafa | Aramco Taleed,2
+Manafa | Investment Opportunities with Accurate Credit Ratings,2
+Manafa | Loyalty Program,2
+financingTitle,2
+أداء,2
+منافع - القوائم المالية، لغة المنشآت الموحدة!,2
+منافع - رأي المراجع الخارجي,2
+منافع - ما هي قائمة المركز المالي؟,2
+منافع | سلاسل الإمداد,2
+CAMImagePickerCameraViewController,1
+ChromeCustomTabsActivity,1
+ChromeCustomTabsActivitySingleInstance,1
+ICMContentModalViewController,1
+InAppBrowserActivity,1
+IntercomBubbleActivity,1
+IntercomNoteActivity,1
+IntercomPostActivity,1
+IntercomSheetActivity,1
+IntercomSurveyActivity,1
+LightBoxActivity,1
+Manafa - Suppliers,1
+PUPickerUnavailableViewController,1
+TrustedWebActivity,1
+TrustedWebActivitySingleInstance,1
+UIViewController,1
+WebViewActivity,1
+financingTitle - privacyPolicyText,1
+منافع - أي عبارة تعكس شخصيتك؟,1
+منافع - تحديث المنتجات • الربع الثاني 2026,1
+منافع | أمر الشراء,1
+
+# How are active users trending?
+# Start date: 20261104
+# End date: 20261110
+Nth day,30 days,7 days,1 day
+0000,66752,22022,4423
+0001,64148,21829,4048
+0002,63139,21749,3527
+0003,61812,21246,3144
+0004,61762,20060,5242
+0005,61911,19246,4548
+0006,61345,18878,4487
+
+#  
+# Start date: 20261104
+# End date: 20261110
+Nth day,DAU / MAU,DAU / WAU,WAU / MAU
+0000,0.06626018696069032,0.20084460993551903,0.3299077181208054
+0001,0.06310407183388414,0.18544138531311558,0.34029120159630855
+0002,0.05586087837944852,0.16216837555749689,0.3444622182803022
+0003,0.05086390992040381,0.14798079638520192,0.34371966608425547
+0004,0.08487419448852045,0.2613160518444666,0.32479518150318964
+0005,0.07346028977080002,0.23630884339603034,0.31086559738980146
+0006,0.07314369549270519,0.23768407670304056,0.30773494172304183

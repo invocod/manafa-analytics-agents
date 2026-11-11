@@ -9,7 +9,7 @@
     {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
     {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"},
     {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export", "status": "resolved", "resolved": "2026-11-11 — iOS file provided; SDK integrated", "resolution_note": "earlier drop simply omitted iOS"},
-    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "confirming_check": "GA4 explore Recipe B (context/ga4-explore-recipes.md): event x stream x platform, event count vs total users — awaiting export"},
+    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "stability_check_2026-11-11": "gap steady across periods (Singular/GA4, prior 15d -> week Nov 4-10): reg 0.65->0.60, kyc 0.53->0.53, dep 0.98->1.05 — a persistent structural gap, not a recent break. Investments 0.96->0.84 for the week, likely the 1-day window offset (Singular ends Nov 9; Mon/Tue volumes ~1,000/day) + trailing-72h; recheck with matched dates, no alert","confirming_check": "GA4 explore Recipe B (context/ga4-explore-recipes.md): event x stream x platform, event count vs total users — awaiting export"},
     {"id": "tqa-008", "found": "2026-11-11", "severity": "low", "what": "App Install event zero Oct 20-29, live from Oct 30 (7) ramping Nov 2-3 (318->855) — install tracking enabled mid-window (filed by analytics-anomaly an-001)", "status": "open", "confirming_check": "what changed in Singular config / app release Oct 30-Nov 2; install baselines valid from Nov 3"}
   ],
   "baselines": {
@@ -21,7 +21,7 @@
     "claim_ratio_singular_vs_ga4": {"investment_completed": 0.92, "registration_completed": 0.63, "kyc_completed": 0.53, "deposit_success": 1.00, "note": "full platform coverage incl. iOS, windows offset 1 day"}
   },
   "source_status_last_run": {
-    "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview.csv (event x count; still no event x date x platform)",
+    "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview (Oct20-Nov10 archived as _20261020-20261110; Nov4-10 week as _20261104-20261110 and current Engagement_overview.csv). Still no platform split — Explore recipes A/B awaited",
     "singular_csv": "fresh — web+android row-level logs Oct19-Nov9 (raw kept local, aggregate committed); iOS missing",
     "google_ads_csv": "awaiting first drop in data/exports/google-ads/",
     "meta": "not configured",
