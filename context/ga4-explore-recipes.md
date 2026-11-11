@@ -81,3 +81,27 @@ Expected from the 2026-11-11 investigation: web direct of about 18–38%, and Si
 This is Recipe B with `Date` as the first row dimension and no `Stream name`. It gives per-platform daily series. That unlocks per-platform anomaly bands (analytics-anomaly) and the 72-hour exclusion at platform level.
 
 Export as `explore-events-daily-x-platform-<start>-<end>.csv`.
+
+---
+
+## Recipe D — Parameter completeness on key events (PDPL-safe)
+
+**Question:** do the key events carry the parameters we rely on, and do the money events carry a value?
+
+This recipe exports **counts only, never parameter values**, so personal data can't leak even if a parameter is misused.
+
+1. Copy the table at Admin → Data display → **Custom definitions**: name, scope and event parameter for each dimension and metric. Names only, no values. Save it as `ga4-custom-definitions.csv`.
+2. **Explore**, then **Blank**. Name the exploration `params health`. Use the same date range as the other recipes.
+   - Tab 1 `baseline`: Rows `Event name`. Values `Event count`, `Total users`, `Event value`. Filter: Event name matches regex `^(registration_completed|kyc_completed|deposit_success|investment_completed|deposit_started|investment_started)$`
+   - Tabs 2…n: duplicate tab 1 once per custom dimension registered for these events. In each copy, add a filter on `<that dimension>` exactly matches `(not set)`, then rename the tab after the dimension.
+3. Export each tab as `explore-params-<tab name>-<start>-<end>.csv`.
+
+**How the loop reads it:** `(not set)` share = the tab's event count ÷ the baseline event count.
+
+| Result | Verdict |
+|---|---|
+| A parameter that should always be present is `(not set)` on more than 5% of a key event | Investigate |
+| `Event value` is 0 on deposit_success or investment_completed | No value is sent, so revenue reporting is blind. File it. |
+| Any parameter you suspect holds personal data (phone, email, national ID, IBAN, names) | Don't export it. Tell the GA4 owner. That is a PDPL issue, not a loop finding. |
+
+Parameters that aren't registered as custom definitions can't be seen in Explore at all. A full audit comes with the BigQuery `event_params` export.
