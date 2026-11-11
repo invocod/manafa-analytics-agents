@@ -41,7 +41,8 @@ Snapshots make week-over-week deltas exact — never recompute last week from a 
 ```
 📅 Manafa weekly marketing review — week <ww>
 Measurement: ✅ clean / ⚠️ <tracking-qa headline>
-| Funnel | This wk | Last wk | Plan | Δ |
+GA4 (analytics)    | Metric | This wk | Last wk | Δ |   ← GA4 numbers only
+Singular (attribution) | Funnel by source | This wk | Last wk | Δ |   ← Singular numbers only
 Biggest movers: ⬆ <stage: what, why we think, owner> / ⬇ <same>
 Attribution headline: <one line from the readout>
 Paid calls: <account: CALL> …

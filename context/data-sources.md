@@ -2,18 +2,24 @@
 
 **Current reality (updated 2026-11-11): three sources — GA4, Google Ads, Singular — all via CSV exports dropped into `data/exports/`. BigQuery integration is planned and will become the backend source of truth when it lands.**
 
-## Interim ledger rule
+## Source roles (until BigQuery)
 
-The north star stays: backend events (`registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed`) define conversion counts. Until BigQuery exposes them directly, the **interim ledger is the GA4 key events** — they are server-fired from Laravel (the "P5" move), so GA4's copy is the closest available proxy for backend truth. ⚠️ Assumption to confirm: the Laravel-fired events land in GA4 via Measurement Protocol; if they also land somewhere closer to the backend, prefer that.
+The north star stays: backend events (`registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed`) define conversion counts. Until BigQuery exposes them directly, **no tool stands in for the backend**. Each source is reported in its own section with its own numbers (user preference, 2026-11-11):
 
-Hierarchy until BigQuery: **GA4 key events (interim ledger) > Singular (app-side explanation) > Google Ads (claims)**. Google Ads never redefines counts; Singular vs GA4 disagreements get explained, not averaged.
+| Source | Role | Reported as |
+|---|---|---|
+| GA4 | Product analytics: sessions, users, engagement, events across web and apps | GA4 section |
+| Singular | Attribution: app installs and conversions by network/campaign, plus web campaign tracking | Singular section |
+| Google Ads | Platform claims and spend | Its own section (weekly-ads-check) |
+
+Rules: never sum, blend or ratio across sources in a stat. Cross-source comparisons happen only inside tracking-QA as data-quality checks, and their output is an issue, not a number. Known GA4 caveat: registration/KYC (and login, withdrawal_completed, passcode_enabled, bank_account_added) look double-counted in the apps (tqa-007). Flag it in the GA4 section; don't replace the number with Singular's.
 
 ## Sources
 
-### 1. GA4 — CSV export (interim ledger + web analytics)
+### 1. GA4 — CSV export (product analytics, web + apps)
 - Drop into: **`data/exports/ga4/`** — e.g. `ga4-2026-11-11.csv`
 - Useful exports (any subset; loops adapt to the columns present and say what they couldn't check):
-  - Daily key-event counts by event name (the ledger — most important)
+  - Daily key-event counts by event name (most important)
   - Sessions by session source/medium/campaign (UTM audit + channel checks)
   - Sessions/key events by default channel group (Unassigned share)
 - Platform splits (source/medium × platform, events × stream × platform) need GA4 Explore. Step-by-step setups are in `context/ga4-explore-recipes.md`.

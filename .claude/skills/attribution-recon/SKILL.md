@@ -7,7 +7,8 @@ description: "Weekly attribution reconciliation: backend events as the one conve
 
 Answer "which channels actually drive registrations, deposits, investments?" without letting any platform grade its own homework. Read `CLAUDE.md` and `context/` first; state in `state/attribution-recon.json` + `.log`.
 
-> **Interim data (until BigQuery):** the ledger (step 1) is the GA4 key-event counts from `data/exports/ga4/`; claims come from Singular (`data/exports/singular/`) and Google Ads (`data/exports/google-ads/`). Meta/TikTok/Snapchat are not configured — leave their columns out rather than empty. Every readout footnotes that the ledger is the GA4 interim proxy, not the backend itself.
+> **Source separation (2026-11-11):** until BigQuery, there is no cross-tool ledger. Report Singular attribution and GA4 source/medium in separate sections with their own counts; never compute "claims vs ledger" across GA4 and Singular (that comparison is tracking-QA's, as an issue). Google Ads claims are compared against Singular for app campaigns and against GA4 for web campaigns, each within its own section.
+> **Interim data (until BigQuery):** previously the ledger (step 1) was the GA4 key-event counts from `data/exports/ga4/`; claims come from Singular (`data/exports/singular/`) and Google Ads (`data/exports/google-ads/`). Meta/TikTok/Snapchat are not configured — leave their columns out rather than empty. Every readout footnotes that the ledger is the GA4 interim proxy, not the backend itself.
 
 | Part | Spec |
 |---|---|

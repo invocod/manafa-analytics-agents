@@ -14,7 +14,7 @@ Manafa is a Saudi investment/crowdfunding platform (CMA-regulated). The marketin
 
 These events were deliberately moved server-side ("fire on confirmed success, not the submit click"). Platform-side numbers (GA4, Google Ads, Meta, TikTok, Snapchat, Singular) are *explanations of where those conversions came from* — they never redefine how many there were.
 
-**Interim ledger (until BigQuery lands):** direct backend access doesn't exist yet. The working ledger is the **GA4 key events** — server-fired from Laravel, so the closest proxy to backend truth — read from CSV exports in `data/exports/ga4/`. Active sources today: GA4, Singular, Google Ads (all CSV; details and hierarchy in `context/data-sources.md`). Every report that says "backend" means this interim ledger until BigQuery replaces it, and says so in a footnote.
+**Interim data (until BigQuery lands):** direct backend access doesn't exist yet. Active sources are GA4, Singular and Google Ads, all CSV (details in `context/data-sources.md`). There is **no single interim ledger**: GA4 and Singular each report their own counts in their own section (see "Source separation" below). When BigQuery lands, backend counts get their own section and become the conversion truth.
 
 ## Operating rules (apply to every loop)
 
@@ -23,6 +23,12 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 2. **Never sum across platforms.** If Google and Meta both claim a conversion, that is one conversion with two claimants. De-dupe against the backend total.
 3. **Report first-touch and last-touch side by side** for anything with a long consideration window (deposits, investments). The gap between them is the insight, not an error.
 4. **Read directional agreement, not absolute match.** If every source says paid search is up and Snapchat is down, trust the trend even when no two absolute numbers match.
+
+### Source separation (user preference, 2026-11-11 — applies to every loop and report)
+- **GA4 = product analytics** (sessions, users, engagement, events, on-site/in-app behaviour across web and apps). **Singular = attribution** (mobile app installs and conversions by network/campaign, plus web campaign tracking).
+- Report them in **separate sections, each with only its own numbers**, and label every figure with its source. Never add, average, blend or divide one tool's number by the other's in a stat, tile, chart or table. Never use one tool to "correct" or explain away the other's figure.
+- Cross-tool comparison is allowed **only inside tracking-QA as a data-quality check**. Its output is an issue (filed in `state/tracking-qa.json`, shown in the "Tracking health" section), never a reported stat.
+- Where a loop skill below says "interim ledger" or "GA4 vs Singular receipt", read it through this rule: each tool's count stands in its own section; the comparison belongs to tracking-QA only.
 
 ### Discrepancy verdicts (from conversion-tracking)
 - A 10–30% gap between GA4 and Google Ads (or backend vs platform) is **normal** — different counting, attribution windows, and date basis. Do not alert on it.
@@ -64,4 +70,4 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 
 Loop output goes to **Slack** (channel in `context/data-sources.md`) and is archived as markdown under `reports/`. Slack messages follow each skill's output format: lead with the verdict, keep it under ~30 lines, link nothing that requires a login to read, never include PII. If Slack is unreachable, still write the report file and commit it — the report is the deliverable, Slack is the delivery.
 
-**Presentation layer (user preference, 2026-11-11):** the primary human-facing view is the **Manafa Marketing Pulse dashboard** — https://claude.ai/artifact/Cu1WtFSKbL2DLzhCxSJRz3. After a run that changes the numbers, refresh it: regenerate the aggregate CSVs, upload them as assets to that artifact, update the `datasets/*` docs (`source.url`, `updated`) and keep the takeaway sentence, week tiles and issue board current (the page follows the Data type's one-writer rules — read its reference docs before editing `files/index.html`). Markdown reports remain the audit trail, not the presentation.
+**Presentation layer (user preference, 2026-11-11):** the primary human-facing view is the **Manafa Marketing Pulse dashboard** — https://claude.ai/artifact/Cu1WtFSKbL2DLzhCxSJRz3. After a run that changes the numbers, refresh it: regenerate the aggregate CSVs, upload them as assets to that artifact, update the `datasets/*` docs (`source.url`, `updated`) and keep the takeaway sentence, both source sections (GA4, Singular) and the tracking-health issue board current — never merge the two source sections (the page follows the Data type's one-writer rules — read its reference docs before editing `files/index.html`). Markdown reports remain the audit trail, not the presentation.
