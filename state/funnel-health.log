@@ -1,0 +1,4 @@
+2026-11-11T07:40Z  checked=1364_cohort_registrants  acted=1  note="first run, true user cohorts via custom user id (100% coverage); lag measured (dep p90 4.7d -> 7d window adopted); no weekly regression; structural leak found: web kyc_7d 25.8% vs ios 92.8% / android 86.9%; fx-01 proposed (web->KYC handoff); signup-flow step skipped (tqa-008)"
+  decision: 7-day observation window adopted for all cohort rates (was unmeasured)
+  decision: fx-01 staged for approval — no further funnel proposals on the KYC step until it resolves
+  learning-proposed: "The funnel's binding constraint is platform (web vs app KYC), not channel" (1 run; needs 2nd window or product confirmation)

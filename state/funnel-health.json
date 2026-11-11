@@ -1,0 +1,22 @@
+{
+  "loop": "funnel-health",
+  "cursor": "2026-W45",
+  "cursor_note": "Cohorts through registrants of Nov 2 have closed 7d windows; Nov 3-9 registrants pending on deposit/investment.",
+  "observation_window_days": 7,
+  "window_basis": "measured 2026-11-11: dep p90=4.7d, inv p90=6.7d among converters (21d data, right-censored)",
+  "baselines": {
+    "reg_to_kyc_7d": 0.681,
+    "reg_to_deposit_7d": 0.083,
+    "reg_to_investment_7d": 0.038,
+    "kyc_7d_by_platform": {"web": 0.258, "ios": 0.928, "android": 0.869},
+    "weekly_cohorts": {"2026-W43": {"n": 597, "kyc": 0.71, "dep": 0.069}, "2026-W44": {"n": 662, "kyc": 0.68, "dep": 0.094}, "2026-W45": {"n": 555, "kyc": 0.672, "dep": 0.074}}
+  },
+  "proposed_fixes": [
+    {"id": "fx-01", "step": "web registration -> KYC handoff", "status": "proposed-awaiting-approval", "proposed": "2026-11-11",
+     "metric": "weekly-cohort kyc_7d for web registrants", "baseline": "0.24-0.37", "success": ">=0.50 for 2 consecutive cohorts", "guardrail": "app kyc_7d >= 0.85",
+     "open_question": "does a web KYC path exist? (product to confirm — settles the hypothesis)"}
+  ],
+  "in_flight": [],
+  "skipped": ["sessions->registration_started step (event tracked only since Nov 2, tqa-008)"],
+  "context_update_proposed": "reg->first-conversion observation window = 7 days (replaces 'unmeasured/conservative 30d' in context/manafa-marketing.md) — needs approval"
+}
