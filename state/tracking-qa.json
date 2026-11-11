@@ -3,14 +3,90 @@
   "cursor": "2026-11-10",
   "cursor_note": "UTM audit covers the 2026-10-20..2026-11-10 GA4 snapshot. Heartbeat/receipt checks have never run — their first run should NOT skip this window.",
   "open_issues": [
-    {"id": "tqa-001", "found": "2026-11-11", "severity": "low", "what": "direct/(none) = 78.9% of GA4 sessions — investigated 2026-11-11: mostly structural (74% of sessions are app sessions, which GA4 labels direct); web-only direct ~18-38% of web sessions (Singular: 38.5% of web sessions carry no source)", "status": "open", "downgraded": "high->low 2026-11-11", "confirming_check": "GA4 explore Recipe A (context/ga4-explore-recipes.md) — awaiting export", "remaining_action": "report web and app separately; recoverable web direct handled by tqa-002/003/004"},
-    {"id": "tqa-002", "found": "2026-11-11", "severity": "med", "what": "paid social invisible in GA4 web but confirmed in app via Singular (ios: tiktok 208, snapchat 160 registrations) — fix web tagging; use Singular as app-acquisition record", "status": "open", "confirming_check": "platform spend vs Singular-attributed conversions for same window"},
-    {"id": "tqa-003", "found": "2026-11-11", "severity": "med", "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes", "status": "open"},
-    {"id": "tqa-004", "found": "2026-11-11", "severity": "med", "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)", "status": "open"},
-    {"id": "tqa-005", "found": "2026-11-11", "severity": "med", "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs", "status": "open"},
-    {"id": "tqa-006", "found": "2026-11-11", "severity": "high", "what": "no iOS data in Singular export", "status": "resolved", "resolved": "2026-11-11 — iOS file provided; SDK integrated", "resolution_note": "earlier drop simply omitted iOS"},
-    {"id": "tqa-007", "found": "2026-11-11", "severity": "med", "what": "registrations (63%) and kyc (53%) fire more in GA4 than Singular; deposits reconcile exactly (100%), investments 92% — identity events suspect, money events clean", "status": "open", "stability_check_2026-11-11": "gap steady across periods (Singular/GA4, prior 15d -> week Nov 4-10): reg 0.65->0.60, kyc 0.53->0.53, dep 0.98->1.05 — a persistent structural gap, not a recent break. Investments 0.96->0.84 for the week, likely the 1-day window offset (Singular ends Nov 9; Mon/Tue volumes ~1,000/day) + trailing-72h; recheck with matched dates, no alert","confirming_check": "GA4 explore Recipe B (context/ga4-explore-recipes.md): event x stream x platform, event count vs total users — awaiting export"},
-    {"id": "tqa-008", "found": "2026-11-11", "severity": "low", "what": "App Install event zero Oct 20-29, live from Oct 30 (7) ramping Nov 2-3 (318->855) — install tracking enabled mid-window (filed by analytics-anomaly an-001)", "status": "open", "confirming_check": "what changed in Singular config / app release Oct 30-Nov 2; install baselines valid from Nov 3"}
+    {
+      "id": "tqa-001",
+      "found": "2026-11-11",
+      "severity": "low",
+      "what": "direct/(none) = 78.9% of GA4 sessions — investigated 2026-11-11: mostly structural (74% of sessions are app sessions, which GA4 labels direct); web-only direct ~18-38% of web sessions (Singular: 38.5% of web sessions carry no source)",
+      "status": "open",
+      "downgraded": "high->low 2026-11-11",
+      "confirming_check": "GA4 explore Recipe A (context/ga4-explore-recipes.md) — awaiting export",
+      "remaining_action": "report web and app separately; recoverable web direct handled by tqa-002/003/004"
+    },
+    {
+      "id": "tqa-002",
+      "found": "2026-11-11",
+      "severity": "med",
+      "what": "paid social invisible in GA4 web but confirmed in app via Singular (ios: tiktok 208, snapchat 160 registrations) — fix web tagging; use Singular as app-acquisition record",
+      "status": "open",
+      "confirming_check": "platform spend vs Singular-attributed conversions for same window"
+    },
+    {
+      "id": "tqa-003",
+      "found": "2026-11-11",
+      "severity": "med",
+      "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes",
+      "status": "open"
+    },
+    {
+      "id": "tqa-004",
+      "found": "2026-11-11",
+      "severity": "med",
+      "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)",
+      "status": "open"
+    },
+    {
+      "id": "tqa-005",
+      "found": "2026-11-11",
+      "severity": "med",
+      "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs",
+      "status": "open"
+    },
+    {
+      "id": "tqa-006",
+      "found": "2026-11-11",
+      "severity": "high",
+      "what": "no iOS data in Singular export",
+      "status": "resolved",
+      "resolved": "2026-11-11 — iOS file provided; SDK integrated",
+      "resolution_note": "earlier drop simply omitted iOS"
+    },
+    {
+      "id": "tqa-007",
+      "found": "2026-11-11",
+      "severity": "high",
+      "what": "registration_completed, kyc_completed (and login_completed, withdrawal_completed, passcode_enabled, bank_account_added) fit an app-side double-fire in GA4: GA4 = 2x Singular app + 1x Singular web within -3.5..+9.4%, vs -37..-50% with no doubling. GA4-internal: withdrawal_completed 6,795 > withdrawal_started 3,703 (~2x withdrawal_settled); kyc_completed 2,960 > kyc_started 1,744. Money events (deposit_success, investment_completed, withdrawal_settled) not doubled. Impact: interim ledger overstates reg ~1.6x, kyc ~1.9x; Google Ads may be bidding on doubled app registrations if it imports this event",
+      "status": "open",
+      "stability_check_2026-11-11": "gap steady across periods (Singular/GA4, prior 15d -> week Nov 4-10): reg 0.65->0.60, kyc 0.53->0.53, dep 0.98->1.05 — a persistent structural gap, not a recent break. Investments 0.96->0.84 for the week, likely the 1-day window offset (Singular ends Nov 9; Mon/Tue volumes ~1,000/day) + trailing-72h; recheck with matched dates, no alert",
+      "confirming_check": "GA4 explore Recipe B (event x stream x platform; event count vs total users) — awaiting export",
+      "upgraded": "med->high 2026-11-11 (event health check)",
+      "escalated": "2026-11-11 to user (Slack channel not yet created)",
+      "interim_handling": "until confirmed, quote registrations/KYC from Singular (or GA4 web + Singular app); GA4 money events unaffected"
+    },
+    {
+      "id": "tqa-008",
+      "found": "2026-11-11",
+      "severity": "low",
+      "what": "App Install event zero Oct 20-29, live from Oct 30 (7) ramping Nov 2-3 (318->855) — install tracking enabled mid-window (filed by analytics-anomaly an-001) | 2026-11-11 event health: same release window also redefined deposit_started (GA4 per-day -62% while deposit_success -24%; started->success 0.18->0.31), screen_view +60%/day, and Singular began receiving *_started events Nov 2 — trends in these events across Nov 1-3 are breaks, not behaviour",
+      "status": "open",
+      "confirming_check": "what changed in Singular config / app release Oct 30-Nov 2; install baselines valid from Nov 3"
+    },
+    {
+      "id": "tqa-009",
+      "found": "2026-11-11",
+      "severity": "low",
+      "what": "two event-naming schemes: 31 legacy Title_Case events (1.8% of volume) duplicate snake_case ones (Logged_in/login_completed, Investment_Made/investment_completed, Deposit_Successful/deposit_success, KYC_Completion/kyc_completed); declining — likely old app versions. Defects: Withdrawal_Click == Withdrawal_Success counts exactly (407/407, 82/82); typos Wakalla_ vs wakala_, Unfavorite_Opportunity_ trailing underscore; metric-like names prompt_display_rate, vote_distribution_percentage",
+      "status": "open",
+      "confirming_check": "event name x app version (Explore) — legacy names should be confined to old versions"
+    },
+    {
+      "id": "tqa-010",
+      "found": "2026-11-11",
+      "severity": "low",
+      "what": "key events total 57,805 (iOS 31,791, Android 13,843, web 12,171) = 2.4x the four funnel events (23,947) — extra events are marked as key events, so 'Key events' in channel reports is not a funnel count",
+      "status": "open",
+      "confirming_check": "Admin > Events: list of events marked as key events"
+    }
   ],
   "baselines": {
     "direct_share_sessions": 0.789,
@@ -18,7 +94,14 @@
     "distinct_source_medium": 799,
     "unassigned_share": null,
     "ledger_daily_oct20_nov09": "data/exports/singular/singular-aggregate-2026-11-11.csv (web+android; seeds weekday bands)",
-    "claim_ratio_singular_vs_ga4": {"investment_completed": 0.92, "registration_completed": 0.63, "kyc_completed": 0.53, "deposit_success": 1.00, "note": "full platform coverage incl. iOS, windows offset 1 day"}
+    "claim_ratio_singular_vs_ga4": {
+      "investment_completed": 0.92,
+      "registration_completed": 0.63,
+      "kyc_completed": 0.53,
+      "deposit_success": 1.0,
+      "note": "full platform coverage incl. iOS, windows offset 1 day"
+    },
+    "claim_ratio_note_2026-11-11": "identity events fit app x2 double-fire model; compare reg/kyc against Singular until tqa-007 is fixed"
   },
   "source_status_last_run": {
     "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview (Oct20-Nov10 archived as _20261020-20261110; Nov4-10 week as _20261104-20261110 and current Engagement_overview.csv). Still no platform split — Explore recipes A/B awaited",
