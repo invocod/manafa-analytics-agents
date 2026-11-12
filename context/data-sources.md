@@ -23,6 +23,7 @@ Rules: never sum, blend or ratio across sources in a stat. Cross-source comparis
   - Sessions by session source/medium/campaign (UTM audit + channel checks)
   - Sessions/key events by default channel group (Unassigned share)
 - Platform splits (source/medium × platform, events × stream × platform) need GA4 Explore. Step-by-step setups are in `context/ga4-explore-recipes.md`.
+- Key-event list (Admin → Data display → Events: names marked as key events, with counting method) feeds tracking-QA check 7. The standard it's checked against is `context/playbooks/ga4-event-standards.md`.
 - Include as much history as convenient (8+ weeks makes the weekday bands real). Date, dimension columns, metric columns — the loop reads whatever shape GA4's export produces; keep the header row.
 - Later: GA4 Data API (`GA4_SERVICE_ACCOUNT_JSON` + `GA4_PROPERTY_ID`) or the GA4→BigQuery export replaces the manual drop.
 
@@ -34,6 +35,11 @@ Rules: never sum, blend or ratio across sources in a stat. Cross-source comparis
 ### 3. Google Ads — CSV export (claims + spend)
 - Drop into: **`data/exports/google-ads/`** — e.g. `google-ads-2026-11-11.csv`
 - Useful columns: date, campaign, cost, impressions, clicks, conversions, conversion action.
+- Exports the loops ask for, in priority order:
+  1. **Conversion actions:** Goals → Conversions → Summary, all actions (tracking-QA check 6, `context/playbooks/google-ads-conversion-audit.md`).
+  2. **Campaigns × conversion action × day**, last 8 weeks (weekly-ads-check).
+  3. **Search terms**, unfiltered, last closed week (query-mining loop, Phase 1).
+- Read with `context/playbooks/reading-google-ads-data.md` and `ads-audit-guardrails.md`.
 
 ### 4. BigQuery (planned — becomes the source of truth)
 - When integrated, backend events are queried directly (aggregates only) and replace the GA4 interim ledger. The loops' "backend" references then point here. Access via the BigQuery connector / service account; update this file and `CLAUDE.md`'s interim note when it lands.

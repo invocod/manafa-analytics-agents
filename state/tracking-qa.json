@@ -61,7 +61,8 @@
       "confirming_check": "GA4 explore Recipe B (event x stream x platform; event count vs total users) — awaiting export",
       "upgraded": "med->high 2026-11-11 (event health check)",
       "escalated": "2026-11-11 to user (Slack channel not yet created)",
-      "interim_handling": "until confirmed, quote registrations/KYC from Singular (or GA4 web + Singular app); GA4 money events unaffected"
+      "interim_handling": "GA4 section shows GA4's own registration/KYC counts flagged with tqa-007; Singular section shows Singular's own counts. Never substitute or blend one for the other (source-separation rule, 2026-11-11; supersedes the earlier 'quote from Singular' note). GA4 money events unaffected",
+      "bidding_impact_check": "chk-06-ads-conversion-actions"
     },
     {
       "id": "tqa-008",
@@ -85,7 +86,7 @@
       "severity": "low",
       "what": "key events total 57,805 (iOS 31,791, Android 13,843, web 12,171) = 2.4x the four funnel events (23,947) — extra events are marked as key events, so 'Key events' in channel reports is not a funnel count",
       "status": "open",
-      "confirming_check": "Admin > Events: list of events marked as key events"
+      "confirming_check": "chk-07-ga4-key-events (Admin > Events: list of events marked as key events)"
     }
   ],
   "baselines": {
@@ -111,5 +112,33 @@
     "tiktok": "not configured",
     "snapchat": "not configured",
     "backend_bigquery": "planned — not integrated yet"
-  }
+  },
+  "pending_checks": [
+    {
+      "id": "chk-06-ads-conversion-actions",
+      "added": "2026-11-12",
+      "playbook": "context/playbooks/google-ads-conversion-audit.md",
+      "status": "unknown — awaiting export",
+      "needs": [
+        "Google Ads Goals > Conversions > Summary (all actions, CSV)",
+        "campaigns segmented by conversion action, last 4 closed weeks",
+        "campaign goal settings (screenshot ok)"
+      ],
+      "why_now": "all platforms bid on registration_completed; if Google Ads takes it from GA4 as Primary, bidding learns from app registrations GA4 likely double-counts (tqa-007). Not filed as an issue until the export shows it."
+    },
+    {
+      "id": "chk-07-ga4-key-events",
+      "added": "2026-11-12",
+      "playbook": "context/playbooks/ga4-event-standards.md",
+      "status": "unknown — awaiting key-event list",
+      "needs": [
+        "GA4 Admin > Data display > Events/Key events: names marked as key events + counting method"
+      ],
+      "confirms": [
+        "tqa-010",
+        "tqa-009 (naming regressions)",
+        "tqa-007 (completion > start)"
+      ]
+    }
+  ]
 }

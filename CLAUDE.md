@@ -61,6 +61,8 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 | Product & funnel context | `context/manafa-marketing.md` |
 | Data sources, credentials, access | `context/data-sources.md` |
 | UTM naming convention | `context/utm-convention.md` |
+| Playbooks (Google Ads reading, audit guardrails, Search, conversion-action audit, GA4 event standards) | `context/playbooks/` |
+| Upstream skill provenance and versions | `context/upstream-skills.md` |
 | Loop skills (one per loop) | `.claude/skills/<loop-name>/SKILL.md` |
 | Loop state + run logs | `state/<loop-name>.json`, `state/<loop-name>.log` |
 | Manual CSV exports drop zone | `data/exports/` |
