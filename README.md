@@ -41,8 +41,13 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 
 ## Roadmap status
 
-- **Phase 0 (lock down), 2026-11-16:** raw Singular row-level CSVs deleted (PDPL); `marketing_mart` SQL written + validated (admin to create dataset, authorize views, create `marketing-bi-agent` service account, see `sql/marketing_mart/README.md`); GitHub remote pending.
-- Phase 1: rebuild loops on the mart (SQL library, metric definitions, re-baseline). Phase 2: raw GA4 export, backfills, Singular + social spend into BigQuery. Phase 3: new loops, scheduling, dashboard on the mart.
+Mode now: **local, on demand, read-only BigQuery** (loops run from the Claude project chat with this folder connected; vetted queries in `sql/readonly/`).
+
+- **Phase 0 (lock down), done 2026-11-16:** raw Singular row-level CSVs deleted (PDPL); read-only query library `sql/readonly/` validated on live data; loop skills renamed `bi-*`.
+- **Phase 1 (rebuild on BigQuery):** metric definitions + one ledger per metric, rewrite the 7 skills on `sql/readonly/`, re-baseline from `gold` history, first BigQuery tracking-health run.
+- **Phase 2 (data gaps):** raw GA4 export + transfer backfills + Singular/social spend into BigQuery (me-central2), requested from the data/GCP team.
+- **Phase 3 (new loops):** campaign ROI, creator tracking, cohort payback, search-query mining.
+- **Deploy (when mature):** GitHub remote, `marketing_mart` dataset + `marketing-bi-agent` service account (`sql/marketing_mart/README.md`), scheduled routines, dashboard on the mart.
 
 ## Running a loop manually
 

@@ -20,7 +20,7 @@ GA4, Singular and Google Ads CSV drops under `data/exports/` are no longer read.
 | Google Ads (claims + spend) | `google_ads.p_ads_CampaignStats_3343082801`, `p_ads_CampaignConversionStats_…`, `p_ads_Campaign_…` (customer 3343082801) | Data Transfer; 2026-11-07 → 2026-11-15; cost in `metrics_cost_micros` |
 | Singular | — not in BigQuery yet → **not configured** (ask for the Singular → BigQuery export in me-central2) | |
 
-- **Preferred query surface: `marketing_mart` views** (`sql/marketing_mart/`, admin runbook in its README). Status: SQL validated 2026-11-16, dataset awaiting admin creation.
+- **Query surface now: `sql/readonly/*.sql`** (read-only SELECTs, validated 2026-11-16). Access is read-only, so the `marketing_mart` dataset (`sql/marketing_mart/`) is deferred to the deploy phase.
 - **Not for marketing loops:** `stg_staging_financing` (staging env), `curated_v1`, `gold_prod_snapshot`, `*_test`, `*_poc`, `*_scratch`, `sama_mart`, `silver` (contains raw customer tables, so don't query it).
 - **Open items at connect:** (1) GA4 and Google Ads transfers hold ~10 days, so request a backfill (8+ weeks) for baselines. (2) The raw GA4 event export (`analytics_413046941`) is not in me-central2; confirm whether it exists and create it in me-central2 if needed. (3) The backend replica lags ~3–4 days (fits the 72-hour rule, but check before each run). (4) Singular → BigQuery is still pending. (5) CSVs are retired (user decision, 2026-11-16). Loops read BigQuery only.
 

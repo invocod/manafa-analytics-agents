@@ -4,7 +4,7 @@
 BigQuery user can reach `silver`, `manafa_financing` and other datasets that hold customer data. PDPL/SAMA compliance
 should be enforced by permissions, not by instructions.
 
-**Status (2026-11-16):** SQL written and every view body validated read-only against live data. The dataset is **not created yet**:
+**Status (2026-11-16): DEFERRED to the deploy phase.** Amir has read-only BigQuery access; until deployment, loops use the identical logic as read-only queries in `sql/readonly/`. Original status: SQL written and every view body validated read-only against live data. The dataset is **not created yet**:
 Amir's account lacks `bigquery.datasets.create`. A GCP admin runs the steps below once.
 
 All objects stay in **`me-central2` (Saudi Arabia)**. Do not create anything in another region.
