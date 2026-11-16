@@ -39,6 +39,11 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 - [ ] Singular → BigQuery export (me-central2) so attribution is covered again
 - [ ] First run of each loop: dry run — it sets its watermark and baselines, acts on nothing
 
+## Roadmap status
+
+- **Phase 0 (lock down), 2026-11-16:** raw Singular row-level CSVs deleted (PDPL); `marketing_mart` SQL written + validated (admin to create dataset, authorize views, create `marketing-bi-agent` service account, see `sql/marketing_mart/README.md`); GitHub remote pending.
+- Phase 1: rebuild loops on the mart (SQL library, metric definitions, re-baseline). Phase 2: raw GA4 export, backfills, Singular + social spend into BigQuery. Phase 3: new loops, scheduling, dashboard on the mart.
+
 ## Running a loop manually
 
 Open this repo in Claude Code and ask: *"Run the tracking-qa loop for last week"* — the skill, context, and state do the rest. Same body, no automation: perfectly valid while proving a loop out.
