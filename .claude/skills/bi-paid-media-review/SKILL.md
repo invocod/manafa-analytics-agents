@@ -1,11 +1,11 @@
 ---
-name: weekly-ads-check
+name: bi-paid-media-review
 description: "Weekly paid-media review across Google Ads, Meta, TikTok, Snapchat (from BigQuery): fixed-order check of spend → traffic → conversions → creative → landing → tracking, ending in exactly one call per account: HOLD, FIX, TEST, or INVESTIGATE. Stages plans; never touches live accounts."
 ---
 
 # Weekly Ads-Check Loop
 
-Make the weekly account review end in one decision per account. Read `CLAUDE.md`, `context/manafa-marketing.md` (targets, floors, spend cap) first; state in `state/weekly-ads-check.json` + `.log`.
+Make the weekly account review end in one decision per account. Read `CLAUDE.md`, `context/manafa-marketing.md` (targets, floors, spend cap) first; state in `state/bi-paid-media-review.json` + `.log`.
 
 > **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 

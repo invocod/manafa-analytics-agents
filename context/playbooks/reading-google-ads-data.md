@@ -1,6 +1,6 @@
 # Reading Google Ads data without false conclusions (Manafa)
 
-**Used by:** weekly-ads-check, paid-search query mining (Phase 1), campaign-postmortem. Load before analysing or reporting any Google Ads export.
+**Used by:** bi-paid-media-review, paid-search query mining (Phase 1), bi-campaign-health. Load before analysing or reporting any Google Ads export.
 
 Adapted from `ads/references/reading-google-ads-data.md` in coreyhaines31/marketingskills (MIT). Provenance in `context/upstream-skills.md`.
 

@@ -78,7 +78,7 @@ Expected from the 2026-11-11 investigation: web direct of about 18–38%, and Si
 
 ## Recipe C (optional) — Daily key events × platform
 
-This is Recipe B with `Date` as the first row dimension and no `Stream name`. It gives per-platform daily series. That unlocks per-platform anomaly bands (analytics-anomaly) and the 72-hour exclusion at platform level.
+This is Recipe B with `Date` as the first row dimension and no `Stream name`. It gives per-platform daily series. That unlocks per-platform anomaly bands (bi-daily-kpi-watch) and the 72-hour exclusion at platform level.
 
 Export as `explore-events-daily-x-platform-<start>-<end>.csv`.
 

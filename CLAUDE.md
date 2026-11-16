@@ -29,7 +29,7 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 ### Source separation (user preference, 2026-11-11 — applies to every loop and report)
 - **GA4 = product analytics** (sessions, users, engagement, events, on-site/in-app behaviour across web and apps). **Singular = attribution** (mobile app installs and conversions by network/campaign, plus web campaign tracking).
 - Report them in **separate sections, each with only its own numbers**, and label every figure with its source. Never add, average, blend or divide one tool's number by the other's in a stat, tile, chart or table. Never use one tool to "correct" or explain away the other's figure.
-- Cross-tool comparison is allowed **only inside tracking-QA as a data-quality check**. Its output is an issue (filed in `state/tracking-qa.json`, shown in the "Tracking health" section), never a reported stat.
+- Cross-tool comparison is allowed **only inside tracking-QA as a data-quality check**. Its output is an issue (filed in `state/bi-tracking-health.json`, shown in the "Tracking health" section), never a reported stat.
 - Where a loop skill below says "interim ledger" or "GA4 vs Singular receipt", read it through this rule (and the BigQuery-only rule above): each tool's count stands in its own section; the comparison belongs to tracking-QA only.
 
 ### Discrepancy verdicts (from conversion-tracking)

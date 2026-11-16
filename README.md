@@ -8,21 +8,21 @@ Built from four skills in [coreyhaines31/marketingskills](https://github.com/cor
 
 | Loop | Cadence | What it does |
 |---|---|---|
-| [tracking-qa](.claude/skills/tracking-qa/SKILL.md) | Mon weekly | Events fire, UTMs follow convention, platform counts inside verdict bands |
-| [attribution-recon](.claude/skills/attribution-recon/SKILL.md) | Mon weekly | Backend ledger vs Singular/GA4/platform claims; FT vs LT side by side |
-| [weekly-ads-check](.claude/skills/weekly-ads-check/SKILL.md) | Mon weekly | One HOLD/FIX/TEST/INVESTIGATE call per ad account |
-| [weekly-marketing-review](.claude/skills/weekly-marketing-review/SKILL.md) | Mon weekly (last) | The heartbeat digest synthesizing everything |
-| [analytics-anomaly](.claude/skills/analytics-anomaly/SKILL.md) | daily | Band checks on key metrics; silent when healthy |
-| [funnel-health](.claude/skills/funnel-health/SKILL.md) | Tue weekly | Signup + activation funnel leaks, one fix proposal |
-| [campaign-postmortem](.claude/skills/campaign-postmortem/SKILL.md) | on campaign end | Results vs goals, lessons, reusable assets |
+| [bi-tracking-health](.claude/skills/bi-tracking-health/SKILL.md) | Mon weekly | Events fire, UTMs follow convention, platform counts inside verdict bands |
+| [bi-channel-attribution](.claude/skills/bi-channel-attribution/SKILL.md) | Mon weekly | Backend ledger vs Singular/GA4/platform claims; FT vs LT side by side |
+| [bi-paid-media-review](.claude/skills/bi-paid-media-review/SKILL.md) | Mon weekly | One HOLD/FIX/TEST/INVESTIGATE call per ad account |
+| [bi-weekly-exec-digest](.claude/skills/bi-weekly-exec-digest/SKILL.md) | Mon weekly (last) | The heartbeat digest synthesizing everything |
+| [bi-daily-kpi-watch](.claude/skills/bi-daily-kpi-watch/SKILL.md) | daily | Band checks on key metrics; silent when healthy |
+| [bi-investor-funnel](.claude/skills/bi-investor-funnel/SKILL.md) | Tue weekly | Signup + activation funnel leaks, one fix proposal |
+| [bi-campaign-health](.claude/skills/bi-campaign-health/SKILL.md) | on campaign end | Results vs goals, lessons, reusable assets |
 
 Global rules every loop follows: [CLAUDE.md](CLAUDE.md). Product context and targets: [context/](context/).
 
 ## Adoption order (don't enable everything at once)
 
-1. **Phase 1 — trust the data**: `tracking-qa` + `weekly-marketing-review`. Run 2–3 weeks, fix what QA finds.
-2. **Phase 2 — attribution + anomaly**: enable `attribution-recon` and `analytics-anomaly` (anomaly bands need ~8 weeks of history to be quiet; expect noise at first).
-3. **Phase 3 — action loops**: `funnel-health`, `weekly-ads-check`, `campaign-postmortem` on demand.
+1. **Phase 1 — trust the data**: `bi-tracking-health` + `bi-weekly-exec-digest`. Run 2–3 weeks, fix what QA finds.
+2. **Phase 2 — attribution + anomaly**: enable `bi-channel-attribution` and `bi-daily-kpi-watch` (anomaly bands need ~8 weeks of history to be quiet; expect noise at first).
+3. **Phase 3 — action loops**: `bi-investor-funnel`, `bi-paid-media-review`, `bi-campaign-health` on demand.
 
 A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 
@@ -32,7 +32,7 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 - [x] Data sources set (2026-11-11): **GA4 + Singular + Google Ads via CSV drops** into `data/exports/ga4|singular|google-ads/`; GA4 key events serve as the interim conversion ledger until **BigQuery** integration lands and becomes backend truth
 - [ ] Create `#marketing-loops` in Slack and invite the team
 - [x] BigQuery connected (2026-11-16): `databases-472111`, me-central2 (Saudi) only. Backend ledger + GA4 + Google Ads transfers. Remaining work: backfill the transfers, validate backend counts in tracking-QA, Singular → BigQuery
-- [ ] Open items the first runs will settle: reg→deposit lag (funnel-health measures p75), GA4 custom channel group existence (tracking-qa checks)
+- [ ] Open items the first runs will settle: reg→deposit lag (bi-investor-funnel measures p75), GA4 custom channel group existence (bi-tracking-health checks)
 - [ ] (When scheduling) attach the BigQuery connector (project `databases-472111`) to each routine
 - [ ] Attach the **Slack connector** to each routine at claude.ai/code/routines (give it the marketing channel)
 - [x] ~~Weekly CSV drops~~ retired 2026-11-16: BigQuery is the only source
@@ -46,7 +46,7 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 
 ## Running a loop manually
 
-Open this repo in Claude Code and ask: *"Run the tracking-qa loop for last week"* — the skill, context, and state do the rest. Same body, no automation: perfectly valid while proving a loop out.
+Open this repo in Claude Code and ask: *"Run the bi-tracking-health loop for last week"* — the skill, context, and state do the rest. Same body, no automation: perfectly valid while proving a loop out.
 
 ## Scheduling (when ready — currently run manually)
 
@@ -54,14 +54,14 @@ Cloud routines need this repo pushed to GitHub first. Then create one routine pe
 
 | Loop | Riyadh time | Cron (UTC) | Phase |
 |---|---|---|---|
-| tracking-qa | Mon 07:00 | `0 4 * * 1` | 1 — enable first |
-| weekly-marketing-review | Mon 09:00 | `0 6 * * 1` | 1 — enable first |
-| attribution-recon | Mon 08:00 | `0 5 * * 1` | 2 — create paused |
-| analytics-anomaly | daily 08:00 | `0 5 * * *` | 2 — create paused |
-| weekly-ads-check | Mon 08:00 | `0 5 * * 1` | 3 — create paused |
-| funnel-health | Tue 08:00 | `0 5 * * 2` | 3 — create paused |
+| bi-tracking-health | Mon 07:00 | `0 4 * * 1` | 1 — enable first |
+| bi-weekly-exec-digest | Mon 09:00 | `0 6 * * 1` | 1 — enable first |
+| bi-channel-attribution | Mon 08:00 | `0 5 * * 1` | 2 — create paused |
+| bi-daily-kpi-watch | daily 08:00 | `0 5 * * *` | 2 — create paused |
+| bi-paid-media-review | Mon 08:00 | `0 5 * * 1` | 3 — create paused |
+| bi-investor-funnel | Tue 08:00 | `0 5 * * 2` | 3 — create paused |
 
-campaign-postmortem has no cron — run it on demand.
+bi-campaign-health has no cron — run it on demand.
 
 ## Routine prompt template (what each schedule sends)
 

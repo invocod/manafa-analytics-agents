@@ -1,0 +1,43 @@
+{
+  "loop": "bi-weekly-exec-digest",
+  "cursor": "2026-W45",
+  "snapshots": {
+    "2026-W44": {
+      "sessions": 29519,
+      "reg": 678,
+      "kyc": 539,
+      "dep": 853,
+      "inv": 3226,
+      "spend_sar": null,
+      "note": "contains salary-days surge Oct 26-28"
+    },
+    "2026-W45": {
+      "sessions": 23274,
+      "reg": 556,
+      "kyc": 452,
+      "dep": 592,
+      "inv": 4007,
+      "spend_sar": null
+    }
+  },
+  "watch_items": [
+    {
+      "metric": "deposits",
+      "note": "W45 -31% vs salary-inflated W44 — if W46 < ~600 without offering explanation, route to bi-investor-funnel",
+      "review_on": "2026-W46"
+    }
+  ],
+  "pending_learnings": [
+    {
+      "candidate": "GA4 alone cannot evaluate app acquisition (paid social 0.18% of GA4 sessions vs 21% of Singular registrations)",
+      "windows_seen": 1,
+      "needs": "2nd window + human approval"
+    }
+  ],
+  "excluded_from_wow": [
+    "App Install",
+    "investment_started",
+    "registration_started — tracked only since ~2026-11-02 (tqa-008)"
+  ],
+  "renamed_from": "weekly-marketing-review (2026-11-16)"
+}

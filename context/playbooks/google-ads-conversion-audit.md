@@ -1,6 +1,6 @@
 # Google Ads conversion-action audit (Manafa)
 
-**Used by:** tracking-QA check 6, weekly-ads-check (tracking step). **Read-only:** the agent reads exports and recommends. It never edits conversion actions, goals or tags.
+**Used by:** tracking-QA check 6, bi-paid-media-review (tracking step). **Read-only:** the agent reads exports and recommends. It never edits conversion actions, goals or tags.
 
 Adapted from `conversion-tracking/references/google-ads.md` (Part B) and `discrepancies.md` in coreyhaines31/marketingskills (MIT). Provenance in `context/upstream-skills.md`. Kept: the parts that apply to an app-first investment platform. Dropped: from-zero tag setup, e-commerce refunds, phone calls, EEA consent specifics.
 
@@ -27,7 +27,7 @@ Aggregate settings only. No user lists, no customer match files.
 | 2 | Is any Primary registration or KYC action sourced from GA4 (web import or Firebase/GA4 app)? | No, or tqa-007 has been fixed and confirmed. | GA4's app registrations and KYC are doubled (tqa-007). Recommend Singular (app) or the native web tag as Primary and the GA4 version Secondary until tqa-007 is closed. |
 | 3 | Status of every Primary action | "Recording conversions". | **Unverified** = never fired. **Misconfigured** = worked, now stopped (most urgent). **Tag inactive / Inactive** = stopped on a date: ask what deployed that day. **No recent / Awaiting conversions** = check whether campaigns are running before suspecting the tag. |
 | 4 | Count setting | Registration and KYC: **One**. Deposit and investment: decide with the business (One = first deposit only, Every = every deposit) and record the choice in `context/manafa-marketing.md`. | Registration counted Every inflates on retries and duplicate fires. |
-| 5 | Windows and model | Click window covers the registration → deposit lag (unmeasured; funnel-health will measure it). | A window shorter than the lag drops real conversions. Flag it, don't guess the lag. |
+| 5 | Windows and model | Click window covers the registration → deposit lag (unmeasured; bi-investor-funnel will measure it). | A window shorter than the lag drops real conversions. Flag it, don't guess the lag. |
 | 6 | Campaign goals | Each campaign optimizes on the action it is meant to. | A campaign on custom goals that excludes the Primary registration action, or includes an "other" action, gets misreported conversions. |
 | 7 | Conversion mix per campaign (from input 2) | Each campaign's conversions come from the expected action. | "Conversions" mixing page-view-style actions with registrations is misleading. Report by action, never as one number. |
 

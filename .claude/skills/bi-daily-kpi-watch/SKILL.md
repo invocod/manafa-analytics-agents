@@ -1,11 +1,11 @@
 ---
-name: analytics-anomaly
+name: bi-daily-kpi-watch
 description: "Daily anomaly watch on Manafa's key metrics (sessions, registrations, deposits, investments, spend). Alerts only when a metric breaks its expected band and the break isn't a known cause or tracking artifact. Silence means healthy."
 ---
 
 # Analytics-Anomaly Loop
 
-Catch anything breaking — good or bad — before it runs for days. Read `CLAUDE.md` and `context/` first; state in `state/analytics-anomaly.json` + `.log`.
+Catch anything breaking — good or bad — before it runs for days. Read `CLAUDE.md` and `context/` first; state in `state/bi-daily-kpi-watch.json` + `.log`.
 
 > **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
@@ -23,7 +23,7 @@ Catch anything breaking — good or bad — before it runs for days. Read `CLAUD
 2. **Band check per metric**: compare against the same weekday over the trailing 8 weeks (median ± 3×MAD, computed from row-level data — compute, don't eyeball). Also flag exactly-zero on any backend event regardless of bands.
 3. **Classify each breach**: real event vs tracking artifact. Artifact tells: one source moved while others held (GA4 dropped but backend steady = tracking, not demand); a single channel went to zero (tagging/integration); everything moved together (real demand or an outage).
 4. **Known-cause check**: offerings calendar (a hot offering spikes investments — expected shape, not an anomaly), Ramadan/Eid/National Day, salary days, campaign launches, deploys. A breach with a named known cause is logged, not alerted.
-5. **Route**: tracking artifact → tracking-qa loop (file into its open issues); funnel move → funnel-health; spend/platform move → weekly-ads-check; genuine demand shift → weekly review flag.
+5. **Route**: tracking artifact → bi-tracking-health loop (file into its open issues); funnel move → bi-investor-funnel; spend/platform move → bi-paid-media-review; genuine demand shift → weekly review flag.
 
 ## Self-check
 

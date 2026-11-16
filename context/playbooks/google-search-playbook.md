@@ -1,6 +1,6 @@
 # Google Search playbook (Manafa)
 
-**Used by:** weekly-ads-check, paid-search query mining (Phase 1). Operating rules for reading and advising on Manafa's Google Search campaigns. The agent recommends; a named human changes the account.
+**Used by:** bi-paid-media-review, paid-search query mining (Phase 1). Operating rules for reading and advising on Manafa's Google Search campaigns. The agent recommends; a named human changes the account.
 
 Adapted from `ads/references/google-search-playbook.md` in coreyhaines31/marketingskills (MIT), itself adapted from practitioner playbooks. The upstream version is written for B2B SaaS; SaaS benchmarks, CRM/SQL language and PMax-for-B2B advice were removed. Provenance in `context/upstream-skills.md`.
 

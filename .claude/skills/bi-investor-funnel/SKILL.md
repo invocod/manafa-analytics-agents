@@ -1,11 +1,11 @@
 ---
-name: funnel-health
+name: bi-investor-funnel
 description: "Weekly funnel loop combining signup-funnel-leak and onboarding drop-off: step-by-step conversion from visit → registration → KYC → deposit → investment, regression detection vs baseline, one prioritized fix proposal with a measurement plan."
 ---
 
 # Funnel-Health Loop
 
-Find the biggest leak between first visit and first investment, every week. Read `CLAUDE.md` and `context/` first; state in `state/funnel-health.json` + `.log`.
+Find the biggest leak between first visit and first investment, every week. Read `CLAUDE.md` and `context/` first; state in `state/bi-investor-funnel.json` + `.log`.
 
 > **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
@@ -24,7 +24,7 @@ Find the biggest leak between first visit and first investment, every week. Read
    - Activation flow: `registration_completed` → KYC/account opened → `deposit_success` → `investment_completed` (backend)
 2. **Matched observation windows** (non-negotiable): a registration cohort still inside the typical registration→deposit lag (see `context/manafa-marketing.md`) is **pending**, not failed. Only closed cohorts enter rates. State which cohort weeks each rate uses.
 3. **Compare each step** to its trailing 8-week baseline (same cohort definition). Flag regressions beyond normal variance; check deploy/campaign timing against the regression date.
-4. **Rule out tracking breakage first** (cross-check backend vs GA4 at the regressed step; consult tracking-qa's open issues) before declaring a real drop.
+4. **Rule out tracking breakage first** (cross-check backend vs GA4 at the regressed step; consult bi-tracking-health's open issues) before declaring a real drop.
 5. **Diagnose the worst leak**: segment the regressed step by device, channel, new-vs-returning, offering availability. Separate facts from hypotheses.
 6. **Propose exactly one fix or experiment**: what to change, expected effect, how to measure it (metric, cohort, window, success threshold). Check state so you don't re-propose something already staged, or touch a step with a fix still in its measurement window.
 

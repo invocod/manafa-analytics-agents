@@ -15,9 +15,9 @@ This agent adapts material from [coreyhaines31/marketingskills](https://github.c
 | Local file | Upstream source | Upstream version |
 |---|---|---|
 | `CLAUDE.md` operating rules, all `.claude/skills/*` loop structure | `marketing-loops` (+ `references/loop-template.md`, `loop-state.md`, `loop-guardrails.md`) | 1.8.4 |
-| `CLAUDE.md` source-of-truth and reconciliation rules; `attribution-recon` | `attribution` | 1.1.9 |
-| `CLAUDE.md` data discipline; `analytics-anomaly`, `funnel-health` | `analytics` | 2.2.5 |
-| `CLAUDE.md` discrepancy verdicts; `tracking-qa` | `conversion-tracking` | 1.0.6 |
+| `CLAUDE.md` source-of-truth and reconciliation rules; `bi-channel-attribution` | `attribution` | 1.1.9 |
+| `CLAUDE.md` data discipline; `bi-daily-kpi-watch`, `bi-investor-funnel` | `analytics` | 2.2.5 |
+| `CLAUDE.md` discrepancy verdicts; `bi-tracking-health` | `conversion-tracking` | 1.0.6 |
 | `context/playbooks/google-ads-conversion-audit.md` | `conversion-tracking/references/google-ads.md` (Part B) + `discrepancies.md` | 1.0.6 |
 | `context/playbooks/reading-google-ads-data.md` | `ads/references/reading-google-ads-data.md` | 2.7.5 |
 | `context/playbooks/ads-audit-guardrails.md` | `ads/references/audit-guardrails.md` | 2.7.5 |
@@ -37,7 +37,7 @@ The four base skills were first adapted on 2026-11-10/11 from an earlier upstrea
 | Phase | Upstream source | Use |
 |---|---|---|
 | 1 | `marketing-loops` loop catalog: paid-search query mining | New weekly loop, staged negatives only |
-| 2 | `ab-testing` (+ `references/sample-size-guide.md`) | Measurement plans for fx-01 and funnel-health proposals |
+| 2 | `ab-testing` (+ `references/sample-size-guide.md`) | Measurement plans for fx-01 and bi-investor-funnel proposals |
 | 2 | Loop catalog: landing-page regression | GA4 page-path driven loop |
 | 3 | `attribution/references/measurement-paradigms.md`, `ads/references/payback-period.md` | Incrementality and payback, after BigQuery |
 

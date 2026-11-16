@@ -1,6 +1,6 @@
 # Ad account audits and recommendation guardrails (Manafa)
 
-**Used by:** weekly-ads-check, tracking-QA (Google Ads checks), campaign-postmortem. Load before grading an account, quoting a benchmark, or recommending any change to a running campaign.
+**Used by:** bi-paid-media-review, tracking-QA (Google Ads checks), bi-campaign-health. Load before grading an account, quoting a benchmark, or recommending any change to a running campaign.
 
 Adapted from `ads/references/audit-guardrails.md` in coreyhaines31/marketingskills (MIT), which credits claude-ads by Daniel Agrici (MIT) and Marek Dąbrowski's paid-ads operator guide. Provenance in `context/upstream-skills.md`.
 

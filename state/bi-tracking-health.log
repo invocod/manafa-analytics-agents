@@ -9,7 +9,7 @@
 2026-11-10T21:20Z  checked=3_singular_logs+ga4  acted=3  note="iOS singular file landed; receipt re-run full coverage: deposit 100%, investment 92% (reconcile), registration 63%, kyc 53% (investigate); tqa-006 resolved; tqa-007 narrowed to identity events; tqa-002 downgraded high->med (paid social confirmed in app: ios tiktok 208 + snapchat 160 registrations)"
   decision: money events (deposit/investment) are trustworthy across both tools; identity events (registration/kyc) need the GA4 event x platform explore before any loop treats GA4's counts as ledger
   decision: Singular is the system of record for app acquisition; GA4 alone understates paid social
-2026-11-10T22:10Z  checked=cross-filed  acted=1  note="tqa-008 filed by analytics-anomaly: App Install tracking started mid-window (Oct 30); confirm cause with app/Singular config"
+2026-11-10T22:10Z  checked=cross-filed  acted=1  note="tqa-008 filed by bi-daily-kpi-watch: App Install tracking started mid-window (Oct 30); confirm cause with app/Singular config"
 2026-11-11T08:20Z  checked=82088_singular_sessions+ga4_retention  acted=1  note="tqa-001 investigated: GA4 82,200 vs Singular 82,088 sessions (same traffic); 74.3% are app sessions, structurally direct in GA4; web-only direct bounded 18.4-36.2%, Singular shows 38.5% of web sessions with no source; 66% of DAU returning; downgraded high->low"
   decision: stop quoting the blended 79% — channel analysis uses web-only GA4 views; app acquisition uses Singular
 2026-11-11T10:16Z  checked=ga4_week_nov04-10_vs_singular  acted=0  note="gap stability: reg 0.65->0.60, kyc 0.53->0.53, dep 0.98->1.05 (steady; tqa-007 is structural, not new); inv 0.96->0.84 likely 1-day offset, no alert; file has no platform split — recipes A/B still awaited"

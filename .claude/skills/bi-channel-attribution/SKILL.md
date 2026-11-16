@@ -1,11 +1,11 @@
 ---
-name: attribution-recon
+name: bi-channel-attribution
 description: "Weekly attribution reconciliation: backend events as the one conversion ledger, Singular vs GA4 vs ad-platform claims explained against it, first-touch and last-touch side by side, honest allocation with confidence levels. Never sums across platforms, never forces numbers to tie out."
 ---
 
 # Attribution Reconciliation Loop
 
-Answer "which channels actually drive registrations, deposits, investments?" without letting any platform grade its own homework. Read `CLAUDE.md` and `context/` first; state in `state/attribution-recon.json` + `.log`.
+Answer "which channels actually drive registrations, deposits, investments?" without letting any platform grade its own homework. Read `CLAUDE.md` and `context/` first; state in `state/bi-channel-attribution.json` + `.log`.
 
 > **Source separation (2026-11-11):** until BigQuery, there is no cross-tool ledger. Report Singular attribution and GA4 source/medium in separate sections with their own counts; never compute "claims vs ledger" across GA4 and Singular (that comparison is tracking-QA's, as an issue). Google Ads claims are compared against Singular for app campaigns and against GA4 for web campaigns, each within its own section.
 > **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
