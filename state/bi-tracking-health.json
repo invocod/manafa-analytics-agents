@@ -245,5 +245,12 @@
       ]
     }
   ],
-  "renamed_from": "tracking-qa (2026-11-16)"
+  "renamed_from": "tracking-qa (2026-11-16)",
+  "inbox": [
+    {
+      "from": "bi-investor-funnel",
+      "date": "2026-11-16",
+      "note": "iOS investment_completed payment_method changed 'opportunities.ewallet' -> 'wallet' between W43 and W44 cohorts: payload change, check against Event Standard v2.1 params"
+    }
+  ]
 }

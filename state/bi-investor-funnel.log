@@ -3,3 +3,5 @@
   decision: fx-01 staged for approval — no further funnel proposals on the KYC step until it resolves
   learning-proposed: "The funnel's binding constraint is platform (web vs app KYC), not channel" (1 run; needs 2nd window or product confirmation)
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-16T16:37Z  checked=21_cohort_rows(W40-W46)  acted=1  note="no new data since re-baseline (data_end 11-11); W44 7d early read: iOS dep 14.6% / inv 7.4% above range (Apple Pay first deposits 42 vs ~23/wk); web+android in range; worst leak still web KYC (fx-01 staged)"
+  decision: no new fix (fx-01 pending); watch wf-01 until W44 closes on 14d

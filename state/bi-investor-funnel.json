@@ -150,5 +150,36 @@
       }
     },
     "kyc_note": "kyc_completed is a cohort step only; event counts include ~63% existing profiles"
-  }
+  },
+  "last_run": "run-20261116-1635",
+  "early_read_7d": {
+    "cohort": "2026-10-26",
+    "web": {
+      "kyc": 0.3,
+      "dep": 0.022,
+      "inv": 0.011,
+      "n": 277
+    },
+    "ios": {
+      "kyc": 0.897,
+      "dep": 0.146,
+      "inv": 0.074,
+      "n": 349
+    },
+    "android": {
+      "kyc": 0.853,
+      "dep": 0.049,
+      "inv": 0.039,
+      "n": 102
+    }
+  },
+  "watch_items": [
+    {
+      "id": "wf-01",
+      "added": "2026-11-16",
+      "metric": "iOS deposit/investment 7d",
+      "note": "W44 iOS dep 14.6% vs 9.0-9.8%, inv 7.4% vs 3.6-5.9%; driver Apple Pay first deposits (42 vs ~23/wk). Confirm on 14d when data reaches 2026-11-15; ask product what shipped on iOS late Oct",
+      "review_on": "next run with data_end >= 2026-11-15"
+    }
+  ]
 }
