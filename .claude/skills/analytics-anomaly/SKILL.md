@@ -7,7 +7,7 @@ description: "Daily anomaly watch on Manafa's key metrics (sessions, registratio
 
 Catch anything breaking — good or bad — before it runs for days. Read `CLAUDE.md` and `context/` first; state in `state/analytics-anomaly.json` + `.log`.
 
-> **Interim data (until BigQuery):** daily metrics come from the GA4 CSV (`data/exports/ga4/` — sessions + key events, the interim ledger) and Singular CSV (installs); spend only from a fresh Google Ads CSV. Daily cadence only makes sense once exports arrive daily or via API/BigQuery — on weekly drops, this loop runs weekly on the freshest data and says which days it covered.
+> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
 | Part | Spec |
 |---|---|

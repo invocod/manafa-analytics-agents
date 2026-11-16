@@ -5,6 +5,8 @@ description: "The Monday heartbeat: full-funnel pulse of Manafa's AARRR metrics 
 
 # Weekly Marketing Review Loop
 
+> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
+
 The standing full-funnel pulse — nothing drifts unnoticed. This loop is the **synthesizer**: it runs after tracking-qa, attribution-recon, and weekly-ads-check and folds their verdicts into one page. Read `CLAUDE.md` and `context/` first; state in `state/weekly-marketing-review.json` + `.log`.
 
 | Part | Spec |

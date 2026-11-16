@@ -7,7 +7,7 @@ description: "Weekly tracking-QA loop: verify Manafa's key events fire, UTMs fol
 
 Keep the measurement layer trustworthy. Read `CLAUDE.md` and `context/` first; state lives in `state/tracking-qa.json` + `.log`.
 
-> **Interim data (until BigQuery):** all checks read CSVs — GA4 (`data/exports/ga4/`, the interim ledger), Singular, Google Ads. "Backend counts" below means the GA4 key-event counts. The backend-vs-GA4 receipt check is suspended (GA4 can't audit itself); the receipt checks that remain are **GA4 vs Singular** and **GA4 vs Google Ads claims**. Checks whose columns aren't in the dropped CSVs are reported "not covered", never guessed.
+> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
 | Part | Spec |
 |---|---|

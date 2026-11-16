@@ -1,4 +1,6 @@
-# CSV exports drop zone
+# RETIRED: CSV exports drop zone (ignored since 2026-11-16)
+
+> BigQuery (`databases-472111`, me-central2) is the only source of truth. Loops never read these files; they are kept for history only. Don't add new drops.
 
 Loops read the freshest file per source; anything older than 8 days is **stale**, a folder with no file at all is **not configured**.
 

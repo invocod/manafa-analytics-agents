@@ -33,9 +33,10 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 - [ ] Create `#marketing-loops` in Slack and invite the team
 - [x] BigQuery connected (2026-11-16): `databases-472111`, me-central2 (Saudi) only. Backend ledger + GA4 + Google Ads transfers. Remaining work: backfill the transfers, validate backend counts in tracking-QA, Singular → BigQuery
 - [ ] Open items the first runs will settle: reg→deposit lag (funnel-health measures p75), GA4 custom channel group existence (tracking-qa checks)
-- [ ] (When moving to APIs/scheduling) secrets on the Claude cloud environment: `GA4_SERVICE_ACCOUNT_JSON`, `GA4_PROPERTY_ID`, `SINGULAR_API_KEY`, or BigQuery credentials
+- [ ] (When scheduling) attach the BigQuery connector (project `databases-472111`) to each routine
 - [ ] Attach the **Slack connector** to each routine at claude.ai/code/routines (give it the marketing channel)
-- [ ] Weekly: drop fresh GA4/Singular/Google Ads CSVs into `data/exports/` and push (see its README)
+- [x] ~~Weekly CSV drops~~ retired 2026-11-16: BigQuery is the only source
+- [ ] Singular → BigQuery export (me-central2) so attribution is covered again
 - [ ] First run of each loop: dry run — it sets its watermark and baselines, acts on nothing
 
 ## Running a loop manually

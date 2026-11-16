@@ -7,7 +7,7 @@ description: "Weekly funnel loop combining signup-funnel-leak and onboarding dro
 
 Find the biggest leak between first visit and first investment, every week. Read `CLAUDE.md` and `context/` first; state in `state/funnel-health.json` + `.log`.
 
-> **Interim data (until BigQuery):** funnel steps come from the GA4 CSV (sessions + `registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed` counts — the interim ledger) and Singular for the app-install step. Without user-level cohorts, step rates are period-over-period count ratios, not true cohort rates — label them as such; true cohorting starts with BigQuery.
+> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
 | Part | Spec |
 |---|---|

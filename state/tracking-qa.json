@@ -121,14 +121,15 @@
     "claim_ratio_note_2026-11-11": "identity events fit app x2 double-fire model; compare reg/kyc against Singular until tqa-007 is fixed"
   },
   "source_status_last_run": {
-    "ga4_csv": "fresh — Reports_snapshot.csv + Engagement_overview (Oct20-Nov10 archived as _20261020-20261110; Nov4-10 week as _20261104-20261110 and current Engagement_overview.csv). Still no platform split — Explore recipes A/B awaited",
-    "singular_csv": "fresh — web+android row-level logs Oct19-Nov9 (raw kept local, aggregate committed); iOS missing",
-    "google_ads_csv": "awaiting first drop in data/exports/google-ads/",
+    "ga4_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
+    "singular_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
+    "google_ads_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
     "meta": "not configured",
     "tiktok": "not configured",
     "snapchat": "not configured",
-    "backend_bigquery": "connected 2026-11-16: databases-472111 / me-central2. mi_analytics_events replica through 2026-11-12; GA4+Google Ads transfers from 2026-11-06/07. Not yet validated by a QA run",
-    "ga4_event_standard": "v2.1 (2026-10-27) loaded 2026-11-12 from user; machine-readable copy context/ga4-event-standard-v2.1.csv"
+    "backend_bigquery": "sole source of truth since 2026-11-16: databases-472111 / me-central2. mi_analytics_events replica through 2026-11-12; GA4+Google Ads transfers from 2026-11-06/07. First BigQuery QA run pending",
+    "ga4_event_standard": "v2.1 (2026-10-27) loaded 2026-11-12 from user; machine-readable copy context/ga4-event-standard-v2.1.csv",
+    "singular": "not configured until it lands in BigQuery (me-central2)"
   },
   "pending_checks": [
     {

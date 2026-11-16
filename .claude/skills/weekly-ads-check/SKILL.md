@@ -1,13 +1,13 @@
 ---
 name: weekly-ads-check
-description: "Weekly paid-media review across Google Ads, Meta, TikTok, Snapchat (from CSV exports): fixed-order check of spend → traffic → conversions → creative → landing → tracking, ending in exactly one call per account: HOLD, FIX, TEST, or INVESTIGATE. Stages plans; never touches live accounts."
+description: "Weekly paid-media review across Google Ads, Meta, TikTok, Snapchat (from BigQuery): fixed-order check of spend → traffic → conversions → creative → landing → tracking, ending in exactly one call per account: HOLD, FIX, TEST, or INVESTIGATE. Stages plans; never touches live accounts."
 ---
 
 # Weekly Ads-Check Loop
 
 Make the weekly account review end in one decision per account. Read `CLAUDE.md`, `context/manafa-marketing.md` (targets, floors, spend cap) first; state in `state/weekly-ads-check.json` + `.log`.
 
-> **Interim data (until BigQuery):** the only active account is **Google Ads** (`data/exports/google-ads/`); "backend-verified conversions" means the GA4 interim ledger (`data/exports/ga4/`). Meta/TikTok/Snapchat appear in the report only as "not configured". Landing-page and creative checks run only on what the CSV columns support.
+> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
 
 | Part | Spec |
 |---|---|
@@ -21,7 +21,7 @@ Make the weekly account review end in one decision per account. Read `CLAUDE.md`
 
 1. Read targets, hard floors, conversion definitions from `context/manafa-marketing.md`; read fresh exports from `data/exports/<platform>/`.
 2. Per account, check **in this fixed order**: spend & pacing → traffic (clicks, CPC, CTR, CPM) → conversions (CVR, CPA vs backend-verified conversions — platform-claimed CPA and backend CPA side by side) → creative fatigue (frequency, CTR vs its peak) → landing pages (do campaign URLs resolve, with correct UTMs per the convention) → tracking (platform conversions vs backend, verdict bands from `CLAUDE.md`).
-3. Compute from the row-level CSVs (compute, don't eyeball); compare each metric to its trailing 6–8 week range from state snapshots.
+3. Compute from BigQuery aggregate queries (compute, don't eyeball); compare each metric to its trailing 6–8 week range from state snapshots.
 4. For each mover: facts vs hypotheses vs missing data, explicitly separated.
 5. **End with exactly one call per account**: HOLD (no change) / FIX (known, named issue — staged plan attached) / TEST (hypothesis worth spend — brief attached) / INVESTIGATE (the data can't be trusted yet — name the one check that would settle it).
 
