@@ -1,65 +1,347 @@
 {
   "loop": "bi-daily-kpi-watch",
-  "cursor": "2026-11-09",
+  "cursor": "2026-11-11",
   "cursor_note": "Latest complete Riyadh day checked. Bands provisional (3 weeks of history; loop wants 8).",
   "active_anomalies": [
     {
       "id": "an-001",
       "metric": "app_install:all",
       "since": "2026-10-30",
-      "status": "routed-to-tracking-qa",
+      "status": "routed-to-tracking-qa | closed 2026-11-16: CSV-era anomaly, superseded",
       "read": "tracking artifact — install event started being recorded ~Oct 30-Nov 2; baselines valid from 2026-11-03",
       "filed_as": "tqa-008"
     }
   ],
-  "baselines_riyadh_daily": {
-    "registration_completed": {
-      "median": 86,
-      "band": [
-        55,
-        118
-      ]
+  "renamed_from": "analytics-anomaly (2026-11-16)",
+  "csv_era": {
+    "baselines_riyadh_daily": {
+      "registration_completed": {
+        "median": 86,
+        "band": [
+          55,
+          118
+        ]
+      },
+      "kyc_completed": {
+        "median": 74,
+        "band": [
+          55,
+          94
+        ]
+      },
+      "deposit_success": {
+        "median": 92,
+        "band": [
+          20,
+          164
+        ]
+      },
+      "investment_completed": {
+        "median": 574,
+        "band": [
+          0,
+          1171
+        ],
+        "note": "offering-driven spikes are expected shape"
+      },
+      "sessions_singular": {
+        "median": 3517,
+        "band": [
+          1140,
+          6066
+        ]
+      },
+      "app_install": {
+        "note": "baseline only from 2026-11-03 (see an-001)"
+      }
     },
-    "kyc_completed": {
-      "median": 74,
-      "band": [
-        55,
-        94
-      ]
+    "known_causes_applied": [
+      "offering launch ~Oct 22",
+      "salary days Oct 25-28"
+    ],
+    "sources_skipped": [
+      "spend (no google-ads export)",
+      "GA4 daily-by-channel (export lacks the breakdown)"
+    ]
+  },
+  "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them).",
+  "bands": {
+    "method": "same weekday, median ± max(3×1.4826×MAD, 30% of median) — floor applied because 5-6 points/weekday make MAD unstable; PROVISIONAL until 8 points",
+    "backend": {
+      "registration_completed": {
+        "Mon": {
+          "median": 116.5,
+          "band": [
+            82,
+            151
+          ],
+          "n": 6
+        },
+        "Tue": {
+          "median": 102.0,
+          "band": [
+            40,
+            164
+          ],
+          "n": 6
+        },
+        "Wed": {
+          "median": 102.5,
+          "band": [
+            29,
+            176
+          ],
+          "n": 6
+        },
+        "Thu": {
+          "median": 98,
+          "band": [
+            69,
+            127
+          ],
+          "n": 5
+        },
+        "Fri": {
+          "median": 96.5,
+          "band": [
+            61,
+            132
+          ],
+          "n": 6
+        },
+        "Sat": {
+          "median": 96.5,
+          "band": [
+            68,
+            125
+          ],
+          "n": 6
+        },
+        "Sun": {
+          "median": 105.0,
+          "band": [
+            25,
+            185
+          ],
+          "n": 6
+        }
+      },
+      "kyc_completed": {
+        "Mon": {
+          "median": 168.5,
+          "band": [
+            60,
+            277
+          ],
+          "n": 6
+        },
+        "Tue": {
+          "median": 156.0,
+          "band": [
+            80,
+            232
+          ],
+          "n": 6
+        },
+        "Wed": {
+          "median": 168.5,
+          "band": [
+            31,
+            306
+          ],
+          "n": 6
+        },
+        "Thu": {
+          "median": 141,
+          "band": [
+            99,
+            183
+          ],
+          "n": 5
+        },
+        "Fri": {
+          "median": 144.5,
+          "band": [
+            100,
+            189
+          ],
+          "n": 6
+        },
+        "Sat": {
+          "median": 145.5,
+          "band": [
+            48,
+            243
+          ],
+          "n": 6
+        },
+        "Sun": {
+          "median": 160.0,
+          "band": [
+            98,
+            222
+          ],
+          "n": 6
+        }
+      },
+      "deposit_success": {
+        "Mon": {
+          "median": 119.0,
+          "band": [
+            14,
+            224
+          ],
+          "n": 6
+        },
+        "Tue": {
+          "median": 107.5,
+          "band": [
+            3,
+            212
+          ],
+          "n": 6
+        },
+        "Wed": {
+          "median": 86.0,
+          "band": [
+            13,
+            159
+          ],
+          "n": 6
+        },
+        "Thu": {
+          "median": 98,
+          "band": [
+            31,
+            165
+          ],
+          "n": 5
+        },
+        "Fri": {
+          "median": 63.5,
+          "band": [
+            23,
+            104
+          ],
+          "n": 6
+        },
+        "Sat": {
+          "median": 56.0,
+          "band": [
+            0,
+            129
+          ],
+          "n": 6
+        },
+        "Sun": {
+          "median": 100.5,
+          "band": [
+            70,
+            131
+          ],
+          "n": 6
+        }
+      },
+      "investment_completed": {
+        "Mon": {
+          "median": 862.5,
+          "band": [
+            0,
+            2844
+          ],
+          "n": 6
+        },
+        "Tue": {
+          "median": 1025.5,
+          "band": [
+            0,
+            2831
+          ],
+          "n": 6
+        },
+        "Wed": {
+          "median": 844.0,
+          "band": [
+            0,
+            1787
+          ],
+          "n": 6
+        },
+        "Thu": {
+          "median": 1387,
+          "band": [
+            0,
+            4656
+          ],
+          "n": 5
+        },
+        "Fri": {
+          "median": 333.5,
+          "band": [
+            0,
+            818
+          ],
+          "n": 6
+        },
+        "Sat": {
+          "median": 141.5,
+          "band": [
+            0,
+            319
+          ],
+          "n": 6
+        },
+        "Sun": {
+          "median": 855.5,
+          "band": [
+            457,
+            1254
+          ],
+          "n": 6
+        }
+      }
     },
-    "deposit_success": {
-      "median": 92,
-      "band": [
-        20,
-        164
-      ]
+    "ga4_sessions_daily": {
+      "values": {
+        "2026-11-06": 5022,
+        "2026-11-07": 4187,
+        "2026-11-08": 7484,
+        "2026-11-09": 6573,
+        "2026-11-10": 6588,
+        "2026-11-11": 6008,
+        "2026-11-12": 6312,
+        "2026-11-13": 3603,
+        "2026-11-14": 3849,
+        "2026-11-15": 8813
+      },
+      "note": "10 days only; bands need backfill (Phase 2)"
     },
-    "investment_completed": {
-      "median": 574,
-      "band": [
-        0,
-        1171
-      ],
-      "note": "offering-driven spikes are expected shape"
-    },
-    "sessions_singular": {
-      "median": 3517,
-      "band": [
-        1140,
-        6066
-      ]
-    },
-    "app_install": {
-      "note": "baseline only from 2026-11-03 (see an-001)"
+    "gads_spend_sar_daily": {
+      "values": {
+        "2026-11-07": 1209.95,
+        "2026-11-08": 1084.89,
+        "2026-11-09": 1114.17,
+        "2026-11-10": 1102.05,
+        "2026-11-11": 1112.33,
+        "2026-11-12": 1115.82,
+        "2026-11-13": 816.45,
+        "2026-11-14": 982.62,
+        "2026-11-15": 1319.74
+      },
+      "note": "9 days only; pacing ~1.1k SAR/day weekdays"
     }
   },
-  "known_causes_applied": [
-    "offering launch ~Oct 22",
-    "salary days Oct 25-28"
-  ],
-  "sources_skipped": [
-    "spend (no google-ads export)",
-    "GA4 daily-by-channel (export lacks the breakdown)"
-  ],
-  "renamed_from": "analytics-anomaly (2026-11-16)"
+  "watch_items": [
+    {
+      "metric": "registration_completed",
+      "day": "2026-11-09 (Mon)",
+      "value": 74,
+      "band": [
+        82,
+        151
+      ],
+      "status": "watch, not alerted: provisional bands (6 points); a Monday at 64 occurred 2026-10-12",
+      "review_on": "next run"
+    }
+  ]
 }

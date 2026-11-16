@@ -1,47 +1,38 @@
 ---
 name: bi-campaign-health
-description: "Event-based campaign postmortem: when a Manafa campaign (offering launch, promo, seasonal push) concludes, capture results vs goals, lessons, and reusable assets so each campaign compounds. One postmortem per campaign, triggered manually or by the weekly review noticing a campaign ended."
+description: "Campaign health and postmortem: when a Manafa campaign (offering launch, promo, seasonal or creator push) concludes, measure results vs goals on backend data, capture lessons and reusable assets. On demand (/bi-campaign-health <campaign>) or when the digest notices a campaign ended."
 ---
 
 # Campaign-Health Loop
 
-> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
-
-Capture what a finished campaign actually taught us. Event-based — run on demand (`/bi-campaign-health <campaign>`) or when the weekly review notices a campaign/offering push concluded. Read `CLAUDE.md` and `context/` first; state in `state/bi-campaign-health.json` + `.log`.
+Make each campaign teach the next one. State: `state/bi-campaign-health.json` + `.log`.
 
 | Part | Spec |
 |---|---|
-| **Check cadence** | On campaign end (event-based; no cron) |
-| **Acts when** | A campaign concluded that has no postmortem in state |
-| **Purpose** | Results, lessons, reusable assets — so campaigns compound instead of repeating |
-| **Stop / bail-out** | No concluded campaign → skip. Campaign still inside its conversion lag → wait (set a reminder date in state) rather than judging early. |
-| **Output** | Postmortem doc in `reports/postmortems/<campaign>.md` + Slack summary + proposed learnings |
+| **Cadence** | On demand / on campaign end |
+| **Acts when** | A concluded campaign has no postmortem in state |
+| **Stop / bail-out** | Inside its conversion lag (14d after end) → set a ready date in state and wait. |
+| **Output** | `reports/postmortems/<campaign>.md` + summary + proposed learnings |
+
+## Before every run (all bi-* loops)
+
+1. Read `CLAUDE.md`, `context/metrics.md` and this loop's `state/<loop>.json`.
+2. Run `sql/readonly/source_freshness.sql`. Use only complete days: the backend replica's newest day is usually partial, and the trailing 72 hours are never judged. A source older than 8 days is **stale**: report "stale data — <source>", do not advance the cursor, halt if it is a required source.
+3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
+4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
+5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
 
 ## Loop body
 
-1. **Define the campaign window and goals** (from the brief if one exists; otherwise reconstruct from `utm_campaign` values and ask for goals in the output's open questions).
-2. **Pull final results vs goals** over the full window + the conversion-lag tail: spend (exports), traffic (GA4 by the campaign's UTMs), backend conversions attributed to the campaign (first-touch and last-touch, side by side — per `CLAUDE.md` the backend count is the ledger).
-3. **Compute efficiency** with matched windows: full-window spend over full-window+lag conversions, stated explicitly.
-4. **What worked / what didn't / why** — conclusions must be supported by the data; separate correlation from cause, and say which is which. Hindsight narrative is the named failure mode.
-5. **Save reusable assets**: winning creative angles, copy, audiences, UTM patterns — listed with their evidence.
-6. **Feed forward**: experiment ideas → weekly review backlog; lessons that will still hold next quarter → proposed Learnings rows for `context/manafa-marketing.md` (human-approved, never auto-written).
+1. **Define window and goals** (brief if one exists; otherwise reconstruct from campaign names/UTMs and ask for goals in open questions).
+2. **Results over window + 14-day lag tail**: spend (Google Ads; other platforms not configured), GA4 traffic by the campaign's UTMs, backend conversions attributed to the campaign via `acquisition_campaign` / `last_campaign` (state attribution coverage, tqa-014).
+3. **Efficiency** with matched windows: full-window spend ÷ full-window+lag backend conversions; state it explicitly.
+4. **Worked / didn't / why**, supported by data; correlation vs cause labelled. Compare to a matched non-campaign baseline period.
+5. **Reusable assets** with evidence; **feed forward** experiments and proposed Learnings (human-approved).
 
-## Self-check
-
-Is the window closed including conversion lag? Are "wins" above what the channel's baseline would have produced anyway (compare to a matched non-campaign period)? One postmortem per campaign — check state.
-
-## State
-
-```json
-{"completed": ["ramadan-2026"], "pending_lag": [{"campaign": "sukuk-x-launch", "ready_on": "2026-12-01"}]}
+## Output
 ```
-
-## Output format
-
-```
-🧾 Postmortem — <campaign>
-Goal: … → Result: … (vs goal: hit/miss by __)
-Spend X SAR → reg A / dep B / inv C (backend; FT vs LT: …)
-Worked: … (evidence) | Didn't: … (evidence) | Unknown: …
-Reusable: … | Proposed learnings: … | Open questions: …
+🧾 Campaign health — <campaign>
+Goal → Result | Spend X → reg A / dep B / inv C (backend; attributed coverage _%)
+Worked … | Didn't … | Unknown … | Reusable … | Proposed learnings … | Open questions …
 ```

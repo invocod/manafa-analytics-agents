@@ -1,0 +1,23 @@
+{
+  "loop": "bi-paid-media-review",
+  "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them).",
+  "cursor": null,
+  "accounts": {
+    "google_ads": {
+      "customer": "3343082801",
+      "name": "Manafa Debt Crowdfunding",
+      "currency": "SAR"
+    }
+  },
+  "weekly_snapshots": {
+    "google_ads": {
+      "2026-W46": {
+        "spend_sar": 7563.18,
+        "campaigns": 3
+      }
+    }
+  },
+  "calls": [],
+  "staged_fixes": [],
+  "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)"
+}

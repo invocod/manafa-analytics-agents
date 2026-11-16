@@ -1,48 +1,42 @@
 ---
 name: bi-daily-kpi-watch
-description: "Daily anomaly watch on Manafa's key metrics (sessions, registrations, deposits, investments, spend). Alerts only when a metric breaks its expected band and the break isn't a known cause or tracking artifact. Silence means healthy."
+description: "Daily KPI watch on production backend events, GA4 sessions and Google Ads spend: alerts only when a metric leaves its same-weekday band and the break isn't a known cause or tracking artifact. Silence means healthy."
 ---
 
-# Analytics-Anomaly Loop
+# Daily KPI-Watch Loop
 
-Catch anything breaking — good or bad — before it runs for days. Read `CLAUDE.md` and `context/` first; state in `state/bi-daily-kpi-watch.json` + `.log`.
-
-> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
+Catch breaks before they run for days. State: `state/bi-daily-kpi-watch.json` + `.log`.
 
 | Part | Spec |
 |---|---|
-| **Check cadence** | Daily (morning, Riyadh time) |
-| **Acts when** | A tracked metric leaves its expected band (beyond normal variance for that weekday) |
-| **Purpose** | Early detection; route to the right owner/loop |
-| **Stop / bail-out** | All in-band → silent (log only, no Slack post). **Revenue (deposit/investment) or spend anomaly → escalate immediately.** |
-| **Output** | An anomaly alert with owner routing, or nothing |
+| **Cadence** | Daily (on demand while local; scheduled after deploy) |
+| **Acts when** | A metric leaves its same-weekday band, or a backend event reads zero |
+| **Stop / bail-out** | All in band → silent (log only). Money event or spend anomaly → escalate immediately. Bands need 8 same-weekday points; until then they're provisional and alerts say so. |
+| **Output** | An alert with owner routing, or nothing |
+
+## Before every run (all bi-* loops)
+
+1. Read `CLAUDE.md`, `context/metrics.md` and this loop's `state/<loop>.json`.
+2. Run `sql/readonly/source_freshness.sql`. Use only complete days: the backend replica's newest day is usually partial, and the trailing 72 hours are never judged. A source older than 8 days is **stale**: report "stale data — <source>", do not advance the cursor, halt if it is a required source.
+3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
+4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
+5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
 
 ## Loop body
 
-1. **Pull yesterday** (complete day, Riyadh tz): GA4 sessions (total + top 5 channels), backend `registration_completed`, `deposit_success`, `investment_completed`. Spend per platform only if a fresh export exists — never estimate spend.
-2. **Band check per metric**: compare against the same weekday over the trailing 8 weeks (median ± 3×MAD, computed from row-level data — compute, don't eyeball). Also flag exactly-zero on any backend event regardless of bands.
-3. **Classify each breach**: real event vs tracking artifact. Artifact tells: one source moved while others held (GA4 dropped but backend steady = tracking, not demand); a single channel went to zero (tagging/integration); everything moved together (real demand or an outage).
-4. **Known-cause check**: offerings calendar (a hot offering spikes investments — expected shape, not an anomaly), Ramadan/Eid/National Day, salary days, campaign launches, deploys. A breach with a named known cause is logged, not alerted.
-5. **Route**: tracking artifact → bi-tracking-health loop (file into its open issues); funnel move → bi-investor-funnel; spend/platform move → bi-paid-media-review; genuine demand shift → weekly review flag.
+1. **Latest complete day** per source (freshness query). Backend: registration, deposit, investment (counts; deposit amount per currency). GA4: sessions total + top channel groups. Google Ads: spend.
+2. **Band check**: same weekday, trailing weeks from state (median ± 3×MAD; history from 2026-10-02 for backend, from first transfer day for GA4/Ads). Exact zero on a backend event = flag regardless.
+3. **Classify**: real vs tracking artifact. One source moved while the backend held = tracking. A single channel at zero = tagging. Everything moved together = demand or outage.
+4. **Known causes**: offerings (investment spikes are expected), Ramadan/Eid/National Day/Founding Day, salary days (~25th–28th), campaign launches, deploys. Note "possibly offering-driven" without asserting it.
+5. **Route**: tracking → bi-tracking-health issue; funnel → bi-investor-funnel; spend → bi-paid-media-review; demand → weekly digest.
 
-## Self-check
+## State
+`{"cursor": "<last day checked>", "bands": {...}, "active_anomalies": [{"id": "an-00x", "metric": "...", "since": "...", "status": "alerted"}]}`
+Alert an ongoing anomaly once; post ✅ when it returns in band for 2+ days.
 
-Is yesterday actually complete in every source (GA4 intraday lag)? If a source is late, compare only the sources that are complete and say which were skipped. Never alert on a metric whose source was stale.
-
-## State (dedupe is the whole game)
-
-```json
-{"cursor": "2026-11-10", "active_anomalies": [{"id": "an-034", "metric": "sessions:snapchat", "since": "2026-11-08", "status": "alerted"}]}
+## Output (only when out of band)
 ```
-
-An ongoing anomaly is alerted **once**, then updated silently in state until it resolves (post a ✅ resolution note when it returns in-band after 2+ days). Never re-alert the same ongoing anomaly daily.
-
-## Slack output (only when something's out of band)
-
-```
-⚠️ Anomaly — <date>
-<metric>: <value> vs expected <band> (same-weekday, 8w)
-Read: real / tracking artifact / unknown — evidence
-Known causes ruled out: <list>
-Routed to: <owner/loop>
+⚠️ KPI watch — <date>
+<metric>: <value> vs expected <band> (same weekday, n weeks)
+Read: real / tracking artifact / unknown — evidence | Known causes ruled out: … | Routed to: …
 ```

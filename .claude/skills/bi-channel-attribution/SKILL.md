@@ -1,51 +1,45 @@
 ---
 name: bi-channel-attribution
-description: "Weekly attribution reconciliation: backend events as the one conversion ledger, Singular vs GA4 vs ad-platform claims explained against it, first-touch and last-touch side by side, honest allocation with confidence levels. Never sums across platforms, never forces numbers to tie out."
+description: "Weekly channel-attribution loop: production backend conversions as the ledger, GA4 first-touch vs last-touch channel mix and Google Ads claims each in their own section, honest allocation only where backend attribution exists. Never sums or blends sources."
 ---
 
-# Attribution Reconciliation Loop
+# Channel-Attribution Loop
 
-Answer "which channels actually drive registrations, deposits, investments?" without letting any platform grade its own homework. Read `CLAUDE.md` and `context/` first; state in `state/bi-channel-attribution.json` + `.log`.
-
-> **Source separation (2026-11-11):** until BigQuery, there is no cross-tool ledger. Report Singular attribution and GA4 source/medium in separate sections with their own counts; never compute "claims vs ledger" across GA4 and Singular (that comparison is tracking-QA's, as an issue). Google Ads claims are compared against Singular for app campaigns and against GA4 for web campaigns, each within its own section.
-> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
+Answer "which channels drive registrations, deposits, investments?" without letting any platform grade its own homework. State: `state/bi-channel-attribution.json` + `.log`.
 
 | Part | Spec |
 |---|---|
-| **Check cadence** | Weekly (Monday, after tracking-QA; skip if tracking-QA escalated — reconciliation on broken tracking is fiction) |
-| **Acts when** | Always produces the readout; flags channels where sources *disagree in direction* or a claim ratio broke its usual band |
-| **Purpose** | One defensible, consistent read of channel performance for budget decisions |
-| **Stop / bail-out** | A required source stale/unreachable → publish with that column marked "stale", never extrapolate. Never turn a platform-vs-GA gap into a credit multiplier. |
-| **Output** | Attribution readout (format below) to Slack + `reports/` |
+| **Cadence** | Weekly (Monday, after bi-tracking-health; skip if it escalated on attribution or ledger) |
+| **Acts when** | Always produces the readout; flags channels where sources disagree in direction or a claim ratio leaves its band |
+| **Stop / bail-out** | Never allocate more conversions than the ledger holds. Never turn a platform-vs-backend gap into a credit multiplier. |
+| **Output** | Attribution readout (format below) |
+
+## Before every run (all bi-* loops)
+
+1. Read `CLAUDE.md`, `context/metrics.md` and this loop's `state/<loop>.json`.
+2. Run `sql/readonly/source_freshness.sql`. Use only complete days: the backend replica's newest day is usually partial, and the trailing 72 hours are never judged. A source older than 8 days is **stale**: report "stale data — <source>", do not advance the cursor, halt if it is a required source.
+3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
+4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
+5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
 
 ## Loop body
 
-1. **Ledger first.** Last closed week (Mon–Sun, excluding trailing 72h): backend counts of `registration_completed`, `deposit_success`, `investment_completed`. This row is *the* conversion count.
-2. **Claims table.** For the same window, same conversion definition: GA4 key events by channel, Singular conversions by source, each ad platform's claimed conversions (from exports). Note each source's attribution window — differences explain gaps, so name them.
-3. **De-dupe and explain.** Sum of claims vs ledger: report "platforms claim N, backend verified M". The delta = over-claiming + view-through + untracked. Never allocate more conversions than the ledger holds.
-4. **First-touch vs last-touch side by side** (GA4 first-user vs session scope; Singular install-source vs event-session). The gap per channel is the insight — a channel strong on first-touch and weak on last-touch is creating demand others close (expect this for creators/Snapchat).
-5. **Blind-spot read.** Direct + branded-search share: if large and growing, the likely story is working top-of-funnel that tracking can't see (creators, word of mouth, AI assistants) — confirm direction with the custom channels before concluding. Flag, don't guess.
-6. **Trend verdicts.** Per channel: ⬆/➡/⬇ only where sources *agree in direction*; "disputed" where they don't. Recommendations ride on direction + ledger, never on one platform's absolute claim.
+1. **Ledger** (`weekly_kpis.sql`): last closed week's registrations, deposits, investments (count; amounts per currency).
+2. **Backend attribution** (`backend_events_daily.sql`, `acquisition_*` and `last_*` fields): report coverage first (share of each event carrying a source). While coverage is low (tqa-014), report "attributed share = X%" and **do not** extrapolate the rest.
+3. **GA4 section** (own numbers only): sessions and engaged sessions by channel group; first-user (`ga4_user_acquisition_daily`) vs session (`ga4_traffic_daily`) side by side. GA4 conversion counts for doubled events (tqa-007) are not used.
+4. **Google Ads section** (own numbers only): spend, clicks, claimed conversions per action; "platform claims N" next to the ledger, never instead of it.
+5. **First-touch vs last-touch gap** per channel: the gap is the insight (demand creation vs closing).
+6. **Blind spots**: direct + unassigned share and trend; flag, don't guess.
+7. **Trend verdicts** ⬆/➡/⬇ only where sources agree in direction; otherwise "disputed".
 
-## Self-check
-
-Same window, same conversion event, same time zone in every column? Any column inside its conversion lag? Did a tracking-QA issue touch a channel this week (if so, mark that channel "measurement suspect")?
-
-## State
-
-```json
-{"cursor": "<last week reconciled>", "claim_ratio_bands": {"meta_vs_backend_reg": [1.1, 1.6]}, "weekly_snapshots": "reports/"}
+## Output
 ```
-
-Claim-ratio bands learn over time: after 4+ weeks, a platform's claims/backend ratio has a normal band; alert only when it leaves the band.
-
-## Output format (Slack summary + full readout in `reports/`)
-
-```
-🧭 Attribution readout — week <ww>
-Ledger (backend): reg X | dep Y | inv Z  (platforms claim: N reg — gap normal/⚠)
-| Channel | Backend-attributed | GA4 LT | GA4 FT | Singular | Platform claim | Read |
-Disputed: <channels where sources disagree in direction>
-Blind spots: direct+branded = __% (trend)
-Recommendation: <allocation call with confidence: high/med/low> — for human decision, not auto-applied
+🧭 Attribution — week <ww>
+Ledger (backend): reg X | dep Y | inv Z   (attributed coverage: reg a% / dep b% / inv c%)
+Backend-attributed by source: …   (only the attributed share)
+GA4: first-touch vs last-touch by channel …
+Google Ads: spend S, claimed conv by action …
+Disputed: … | Blind spots: direct+unassigned = __%
+Recommendation: <with confidence high/med/low> — for human decision
+Not covered: Singular, Meta, TikTok, Snapchat
 ```

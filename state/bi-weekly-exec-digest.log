@@ -1,3 +1,4 @@
 2026-11-10T22:30Z  checked=W45_vs_W44  acted=1  note="first digest; funnel WoW computed from Singular (GA4 lacks weekly split); deposits -31% flagged as salary-week base effect (watch, not act); investments +24% offering-shaped; ads-check stale (no export); 2 experiment briefs surfaced"
   decision: deposits watch item set — re-evaluate W46 before any routing to bi-investor-funnel
   decision: *_started and App Install excluded from all WoW math until baselines mature (tqa-008)
+2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"

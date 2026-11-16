@@ -2,3 +2,4 @@
   decision: no budget-shift recommendation issued — blocked on google-ads export + reg->deposit lag measurement
   decision: claim-ratio bands initialized; reg/kyc band encodes tqa-007 until resolved
   learning-proposed: "GA4 alone cannot evaluate app acquisition — paid social is 0.18% of GA4 sessions but 21% of Singular-attributed registrations" (1 window; needs a 2nd run before promotion)
+2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"

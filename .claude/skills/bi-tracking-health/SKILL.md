@@ -1,49 +1,46 @@
 ---
 name: bi-tracking-health
-description: "Weekly tracking-QA loop: verify Manafa's key events fire, UTMs follow the convention, GA4 channel grouping works, and backend-vs-platform conversion counts stay inside normal bands. Run weekly, and on deploy or campaign launch. Every other loop depends on this one."
+description: "Weekly tracking-health loop: backend event heartbeat, backend-vs-GA4 and backend-vs-Google-Ads receipt, delivery health, UTM and channel audit, Google Ads conversion actions, GA4 naming vs Event Standard v2.1. Runs first every week; every other loop depends on it."
 ---
 
-# Tracking-QA Loop
+# Tracking-Health Loop
 
-Keep the measurement layer trustworthy. Read `CLAUDE.md` and `context/` first; state lives in `state/bi-tracking-health.json` + `.log`.
-
-> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
+Keep the measurement layer trustworthy. State: `state/bi-tracking-health.json` + `.log`.
 
 | Part | Spec |
 |---|---|
-| **Check cadence** | Weekly (Monday, before the weekly review), and on deploy / campaign launch |
-| **Acts when** | Events missing/misfiring, UTMs violating the convention, conversions failing to attribute, or a backend-vs-platform gap outside verdict bands |
-| **Purpose** | Every other loop is blind if this one fails |
-| **Stop / bail-out** | All healthy → log "clean", post nothing except a one-line ✅ in the weekly review. **A broken backend conversion event escalates to Slack immediately.** Recommend fixes only — never change tracking config. |
-| **Output** | Tracking-QA report: prioritized fixes, each marked Observed/Reported/Inferred |
+| **Cadence** | Weekly (Monday, first), and on deploy / campaign launch |
+| **Acts when** | An event is missing/zero/out of band, a receipt ratio leaves its baseline band, delivery degradation steps up, UTMs break the convention, or naming drifts from the standard |
+| **Stop / bail-out** | Healthy → log "clean", one ✅ line in the weekly digest. **A broken backend conversion event or a corrupted ledger escalates immediately.** Recommend only; never change tracking config. |
+| **Output** | Report with prioritized issues, each marked Observed / Reported / Inferred |
+
+## Before every run (all bi-* loops)
+
+1. Read `CLAUDE.md`, `context/metrics.md` and this loop's `state/<loop>.json`.
+2. Run `sql/readonly/source_freshness.sql`. Use only complete days: the backend replica's newest day is usually partial, and the trailing 72 hours are never judged. A source older than 8 days is **stale**: report "stale data — <source>", do not advance the cursor, halt if it is a required source.
+3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
+4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
+5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
 
 ## Loop body
 
-1. **Backend events heartbeat.** Pull daily counts of `registration_completed`, `kyc_completed`, `deposit_success`, `investment_completed` for the last 14 days (excluding trailing 72h). Flag: any day at exactly zero, or a day outside ±3σ of the same weekday's trailing 8-week values. Zero on a revenue event = escalate now.
-2. **Platform receipt check.** Compare last closed week's backend counts against what GA4 key events and each fresh ad-platform export report for the same window. Apply the verdict rules in `CLAUDE.md`: 10–30% gap normal; >40%, zero, direction flip, or a stable gap suddenly changing = INVESTIGATE. A tag firing is not a conversion arriving — check the destination's number, not the send.
-3. **UTM audit.** Pull last week's GA4 sessions by source/medium/campaign. Flag: values not in `context/utm-convention.md` (case variants, separators, duplicate spellings), anything in **Unassigned** above 5% of sessions (name the top offending source/mediums), and any UTM value containing `@`, digits-only strings 9+ long, or anything PII-shaped — escalate PII in UTMs immediately.
-4. **Channel-group check.** Verify `creator`, `newsletter`, `podcast`, `community` mediums land in their custom channels, not Unassigned; verify Snapchat traffic is arriving tagged.
-5. **Diff against open issues** in state; update existing issues rather than re-filing. New issues get an id, severity, owner suggestion, and the single next check that would confirm the fix.
-6. **Google Ads conversion actions** (playbook: `context/playbooks/google-ads-conversion-audit.md`). Input: the Goals → Conversions → Summary export plus campaigns segmented by conversion action (`data/exports/google-ads/`). Check: exactly one Primary per real-world action (registration, KYC, deposit, investment); no GA4-sourced registration or KYC action set to Primary while tqa-007 is open; every Primary action "Recording conversions"; count One for registration and KYC; campaign goals pointing at the intended action. Each check ends Pass / Fail / Unknown / N/A; report coverage separately from health (`context/playbooks/ads-audit-guardrails.md`). No export = Unknown, logged as such, never an issue.
-7. **GA4 key events and naming** (playbook: `context/playbooks/ga4-event-standards.md`). Input: the key-event list from GA4 Admin (names and counting method, typed into the state file or exported), plus the latest event-name export, checked against the team's standard `context/ga4-event-standard-v2.1.csv`. Check: live key events = the standard's 10 key events (tqa-010); renames done and legacy/Remove-list names gone (tqa-009); every live name present in the standard (tqa-011); counting method per event; any new non-snake_case or misspelled event name since the last run (tqa-009); no completion event exceeding its start event (tqa-007 signature).
-
-Record the result of checks 6–7 under `pending_checks` in state while their inputs are missing, so each run knows what it is still waiting for.
+1. **Backend heartbeat** (`backend_events_daily.sql`): daily registration, kyc, deposit, investment for the last complete 14 days. Flag zero days and days outside the same-weekday band (method in `context/metrics.md`; bands in `state/bi-daily-kpi-watch.json`, history from 2026-10-02). Zero on a money event = escalate.
+2. **Receipt: backend vs GA4** (`backend_events_daily` + `event_delivery_health_daily` + `ga4_events_daily`), same closed days: GA4 count ÷ backend sends that succeeded, per event. Compare to `baselines.bigquery_*.ga4_over_backend_sent_ok`. A ratio moving > ±0.15 from baseline, a new event near 2.0, or a money event leaving 0.95–1.05 = issue.
+3. **Delivery health** (`event_delivery_health_daily.sql`): degraded share per platform × vendor, weekly. A step change of > 10 points, or a new `degraded_reason`, = issue.
+4. **Ledger integrity**: production events vs any secondary layer someone reports from (currently `gold`, tqa-012). Re-check the tqa-012 signature weekly until resolved.
+5. **UTM audit** (`ga4_traffic_daily.sql`, full last week): values outside `context/utm-convention.md` (case, separators, mediums), Unassigned share vs baseline, deep-link names as source, localhost/preview/debug referrers, PII-shaped values (`@`, 9+ digits) = escalate.
+6. **Channel groups**: custom mediums (creator, newsletter, podcast, community, referral-program) land in their channels; paid social arrives tagged.
+7. **Google Ads conversion actions** (`gads_conversions_daily.sql`; playbook `context/playbooks/google-ads-conversion-audit.md`): which actions count in Conversions (Primary), whether a GA4-imported action that GA4 doubles (tqa-007) is bidding, whether the intended action (registration) exists. Primary flags not in the transfer = Unknown, not a failure.
+8. **GA4 naming** (`ga4_events_daily.sql` vs `context/ga4-event-standard-v2.1.csv`; playbook `ga4-event-standards.md`): share of standard / legacy / Remove-list / not-in-standard events; completion > start signatures.
+9. **Diff against open issues**: update existing issues (append `update_<date>`), never re-file. New issues get id, severity, owner suggestion, and the single next check that would confirm the fix.
 
 ## Self-check
+Expected change (deploy, campaign end, intended rename)? Same days and timezone on both sides of every ratio? Unknown ≠ failure.
 
-Before flagging: is it truly broken, or an expected change (campaign ended, offering closed, deploy renamed an event intentionally)? Confirm against the known-causes calendar and last run's baseline. An unknown (couldn't check) is reported as unknown — it never counts as a failure.
-
-## State
-
-```json
-{"cursor": "<last audited week>", "open_issues": [{"id": "tqa-012", "found": "...", "severity": "high", "status": "open"}], "baselines": {"unassigned_share": 0.04}}
+## Slack / chat output
 ```
-
-## Slack output format
-
-```
-🔍 Tracking-QA — week <ww>
+🔍 Tracking health — week <ww>
 Verdict: CLEAN | ISSUES (n) | 🚨 ESCALATION
-• [severity] finding — evidence (Observed/Inferred) — suggested fix — owner
-Data gaps: <sources stale/unreachable>
+• [sev] finding — evidence (O/R/I) — suggested fix — owner
+Not covered: <sources>
 ```

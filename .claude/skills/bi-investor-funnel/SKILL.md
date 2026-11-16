@@ -1,51 +1,47 @@
 ---
 name: bi-investor-funnel
-description: "Weekly funnel loop combining signup-funnel-leak and onboarding drop-off: step-by-step conversion from visit → registration → KYC → deposit → investment, regression detection vs baseline, one prioritized fix proposal with a measurement plan."
+description: "Weekly investor-funnel loop on production backend cohorts: registration → identity/KYC → first deposit → first investment by registration week and platform, regression vs baseline on closed cohorts only, one prioritized fix with a measurement plan."
 ---
 
-# Funnel-Health Loop
+# Investor-Funnel Loop
 
-Find the biggest leak between first visit and first investment, every week. Read `CLAUDE.md` and `context/` first; state in `state/bi-investor-funnel.json` + `.log`.
-
-> **Data (2026-11-16): BigQuery only** (`databases-472111`, `me-central2`; see `CLAUDE.md` and `context/data-sources.md`). Backend counts = `manafa_financing.mi_analytics_events`; GA4 = `GA4` dataset; Google Ads = `google_ads` dataset; investor cohorts = `gold.fact_investor_journey`. CSV exports in `data/exports/` are ignored. Anything this skill mentions that isn't in BigQuery (Singular, Meta, TikTok, Snapchat) is "not configured". Read older "interim"/"CSV" wording below through this rule.
+Find the biggest leak between registration and first investment. State: `state/bi-investor-funnel.json` + `.log`.
 
 | Part | Spec |
 |---|---|
-| **Check cadence** | Weekly (Tuesday — after Monday's tracking-QA confirms the data is trustworthy) |
-| **Acts when** | A funnel step regresses vs its baseline, or a step's drop-off exceeds its historical band |
-| **Purpose** | Keep signup converting as the site changes; find the worst activation leak |
-| **Stop / bail-out** | Sample too small for a step → widen the window to 2–4 weeks or skip that step, and say so. No regression and no test-worthy idea → log "healthy", no post. |
-| **Output** | One prioritized fix/experiment brief with a measurement plan |
+| **Cadence** | Weekly (Tuesday, after bi-tracking-health) |
+| **Acts when** | A closed cohort's step rate leaves its baseline band, or a platform gap widens |
+| **Stop / bail-out** | bi-tracking-health escalated on a funnel event → mark the step "measurement suspect" and don't diagnose it. < 200 cohort entrants on a step → widen to 2–4 weeks or skip. Nothing new → log "healthy". |
+| **Output** | Funnel table + one fix/experiment brief with a measurement plan |
+
+## Before every run (all bi-* loops)
+
+1. Read `CLAUDE.md`, `context/metrics.md` and this loop's `state/<loop>.json`.
+2. Run `sql/readonly/source_freshness.sql`. Use only complete days: the backend replica's newest day is usually partial, and the trailing 72 hours are never judged. A source older than 8 days is **stale**: report "stale data — <source>", do not advance the cursor, halt if it is a required source.
+3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
+4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
+5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
 
 ## Loop body
 
-1. **Pull step-by-step conversion** for the last closed week, cohorted by entry week, Riyadh tz:
-   - Signup flow: sessions → signup started → `registration_completed` (GA4 funnel + backend count as denominator check)
-   - Activation flow: `registration_completed` → KYC/account opened → `deposit_success` → `investment_completed` (backend)
-2. **Matched observation windows** (non-negotiable): a registration cohort still inside the typical registration→deposit lag (see `context/manafa-marketing.md`) is **pending**, not failed. Only closed cohorts enter rates. State which cohort weeks each rate uses.
-3. **Compare each step** to its trailing 8-week baseline (same cohort definition). Flag regressions beyond normal variance; check deploy/campaign timing against the regression date.
-4. **Rule out tracking breakage first** (cross-check backend vs GA4 at the regressed step; consult bi-tracking-health's open issues) before declaring a real drop.
-5. **Diagnose the worst leak**: segment the regressed step by device, channel, new-vs-returning, offering availability. Separate facts from hypotheses.
-6. **Propose exactly one fix or experiment**: what to change, expected effect, how to measure it (metric, cohort, window, success threshold). Check state so you don't re-propose something already staged, or touch a step with a fix still in its measurement window.
+1. **Pull cohorts** (`investor_funnel_cohorts_prod.sql`): by `cohort_week` × `reg_platform`. Standard window **14 days** (closed when `cohort_age_days >= 20`); 7d early read (closed at >= 13). Open cohorts are **pending**.
+2. **Rates**: kyc, deposit, investment within the window ÷ registrations, per platform and total. Never use `kyc_completed` event counts as a funnel step (63% are existing users); cohort only.
+3. **Compare** each closed cohort to the trailing baseline in state (median and range of prior closed cohorts, same platform). Flag moves outside the range or 3-cohort runs in one direction.
+4. **Rule out tracking first**: check bi-tracking-health open issues touching the step (e.g. tqa-013 for web).
+5. **Diagnose the worst leak**: split by platform (and by first-investment vs auto-invest where relevant). Separate facts / hypotheses / missing data. Offering availability can depress investment rates: note "possibly offering-driven" without asserting it.
+6. **Propose exactly one fix or experiment** with metric, cohort, window, success threshold and guardrail. Don't re-propose a staged fix; measure a shipped fix before touching its step again.
 
 ## Self-check
+Only closed cohorts in rates? Same window everywhere? Enough entrants? Offering-mix effect?
 
-Enough users through each step this week for the rate to be meaningful? (Rule of thumb: flag nothing on <200 cohort entrants at the step without widening the window.) Is the "regression" an offering-mix effect — low investment conversion because no attractive offering was open?
+## Output
+```
+🩺 Investor funnel — cohorts closed through <week> (14d window)
+| Step | Rate | Baseline | Δ | web / iOS / Android |
+Worst leak: <step> — facts / hypotheses / missing data
+Proposed fix: <one> — measure: <metric, cohort, window, threshold, guardrail>
+Pending cohorts: <weeks>
+```
 
 ## State
-
-```json
-{"cursor": "<last cohort week closed>", "baselines": {"reg_to_deposit": 0.0}, "proposed_fixes": [{"id": "fx-07", "step": "kyc", "status": "staged", "measure_until": "2026-12-01"}], "in_flight": []}
-```
-
-Measure a shipped fix's effect before re-touching its step.
-
-## Slack output
-
-```
-🩺 Funnel health — week <ww>
-| Step | Rate (closed cohorts) | Baseline | Δ |
-Worst leak: <step> — facts / hypotheses / missing data
-Proposed fix: <one> — measurement plan: <metric, window, threshold>
-Pending cohorts excluded: <weeks>
-```
+`{"cursor": "<last closed cohort week>", "baselines": {...}, "proposed_fixes": [...], "in_flight": []}`

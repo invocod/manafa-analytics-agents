@@ -1,28 +1,53 @@
 {
   "loop": "bi-channel-attribution",
-  "cursor": "2026-11-09",
+  "cursor": "2026-W45",
   "cursor_note": "First readout covers Oct 20 - Nov 9 baseline window. Next run: weekly (last closed Mon-Sun week).",
-  "claim_ratio_bands": {
-    "singular_vs_ga4": {
-      "deposit_success": 1.0,
-      "investment_completed": 0.92,
-      "registration_completed": 0.63,
-      "kyc_completed": 0.53
+  "weekly_snapshots": "reports/2026/W46/attribution-readout-2026-11-11.md",
+  "renamed_from": "attribution-recon (2026-11-16)",
+  "csv_era": {
+    "claim_ratio_bands": {
+      "singular_vs_ga4": {
+        "deposit_success": 1.0,
+        "investment_completed": 0.92,
+        "registration_completed": 0.63,
+        "kyc_completed": 0.53
+      },
+      "band_tolerance": 0.1,
+      "note": "reg/kyc ratios encode the open tqa-007 discrepancy — alert on drift from these values, not on the values themselves"
     },
-    "band_tolerance": 0.1,
-    "note": "reg/kyc ratios encode the open tqa-007 discrepancy — alert on drift from these values, not on the values themselves"
+    "channel_baseline_registrations": {
+      "organic_unattributed": 0.57,
+      "google_ads": 0.19,
+      "tiktok_ads": 0.13,
+      "snapchat_ads": 0.08
+    },
+    "known_gaps": [
+      "google-ads export missing (platform over-claim check pending)",
+      "FT-vs-LT on conversions needs GA4 key-event-by-channel export or BigQuery",
+      "reg->deposit lag unmeasured (blocks cohort ROI)"
+    ]
   },
-  "channel_baseline_registrations": {
-    "organic_unattributed": 0.57,
-    "google_ads": 0.19,
-    "tiktok_ads": 0.13,
-    "snapchat_ads": 0.08
+  "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them).",
+  "baselines": {
+    "backend_source_coverage": {
+      "registration_completed": [
+        0.041,
+        0.059
+      ],
+      "deposit_success": [
+        0.01,
+        0.018
+      ],
+      "investment_completed": [
+        0.009,
+        0.017
+      ],
+      "note": "share of events with attribution.acquisition_source, W41-W45 (tqa-014)"
+    }
   },
   "known_gaps": [
-    "google-ads export missing (platform over-claim check pending)",
-    "FT-vs-LT on conversions needs GA4 key-event-by-channel export or BigQuery",
-    "reg->deposit lag unmeasured (blocks cohort ROI)"
-  ],
-  "weekly_snapshots": "reports/2026/W46/attribution-readout-2026-11-11.md",
-  "renamed_from": "attribution-recon (2026-11-16)"
+    "backend attribution coverage ~5% reg / ~1% money events (tqa-014)",
+    "Singular/Meta/TikTok/Snapchat not in BigQuery",
+    "GA4 doubles reg/kyc (tqa-007): GA4 conversions unusable as ledger"
+  ]
 }
