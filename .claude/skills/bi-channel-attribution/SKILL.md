@@ -21,6 +21,7 @@ Answer "which channels drive registrations, deposits, investments?" without lett
 3. BigQuery only (`databases-472111`, me-central2), read-only (`execute_sql_readonly`). Build numbers from `context/metrics.md` definitions and `sql/readonly/` queries; aggregated output only. `gold`/`silver`/`curated`/`reporting`/`dashboard_views`/`sama_mart` are suspended (tqa-012).
 4. Not in BigQuery = **not configured** (Singular, Meta, TikTok, Snapchat, GA4 platform split). Name them under "Not covered"; never estimate them.
 5. After the run: write the report to `reports/<yyyy>/W<ww>/`, update state, append one log line (plus `decision:` lines), commit.
+6. Report the run live to the Command Center exactly as `docs/command-center.md` says: statuses and steps as they actually happen, never estimated.
 
 ## Loop body
 

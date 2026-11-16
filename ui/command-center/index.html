@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manafa BI Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout idea: fixed operations shell (sidebar + status bar), each view is a dense grid of panels; the Agent Command Center centres an orchestration map above live cards. Dark-first, single theme. */
+:root{
+  --bg:#0a0f1e;          /* deep navy */
+  --surface:#111830;     /* dark slate panels */
+  --surface-2:#172040;   /* raised */
+  --line:#232d4f;        /* low-contrast borders */
+  --text:#e6e9f5;
+  --muted:#8b93b0;
+  --brand:#293AE0;       /* Manafa blue */
+  --brand-2:#3A9AF4;     /* bright blue / cyan accent */
+  --purple:#5746C6;
+  --ok:#22c38e; --warn:#f2b136; --err:#ef5a5a; --idle:#5b6485;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 var(--font-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--brand-2)}
+:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+h2{font-size:15px;font-weight:600}
+h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.mono{font-family:var(--font-mono);font-size:12px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+/* Shell */
+.app{display:grid;grid-template-columns:auto 1fr;height:100%}
+.side{width:236px;background:#0c1226;border-right:1px solid var(--line);display:flex;flex-direction:column;transition:width .22s ease;overflow:hidden}
+.side.collapsed{width:64px}
+.brand{display:flex;align-items:center;gap:10px;padding:16px;height:60px;border-bottom:1px solid var(--line);white-space:nowrap}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--purple));display:grid;place-items:center;font-weight:700;flex:none}
+.nav{padding:10px 8px;display:flex;flex-direction:column;gap:2px;flex:1}
+.nav a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:8px;color:var(--muted);text-decoration:none;white-space:nowrap;position:relative}
+.nav a:hover{background:var(--surface);color:var(--text)}
+.nav a.on{background:var(--surface-2);color:var(--text)}
+.nav a.on::before{content:"";position:absolute;left:-8px;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--brand-2)}
+.nav .badge{margin-left:auto}
+.side-foot{padding:10px 8px;border-top:1px solid var(--line)}
+.main{display:flex;flex-direction:column;min-width:0;height:100%}
+.top{height:60px;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line);background:rgba(10,15,30,.85);backdrop-filter:blur(8px);flex:none}
+.top .grow{flex:1}
+.menu-btn{display:none}
+.content{flex:1;overflow:auto;padding:20px 24px 40px}
+.view{animation:viewIn .28s ease both}
+@keyframes viewIn{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Primitives */
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:#34406b;background:var(--surface-2)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:#3445ee}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:4px 9px;font-size:12px}
+.icon-btn{border:1px solid transparent;background:transparent;border-radius:8px;padding:6px;cursor:pointer;display:inline-grid;place-items:center;color:var(--muted);position:relative}
+.icon-btn:hover{background:var(--surface);color:var(--text)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--idle);flex:none}
+.badge{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
+.panel{background:linear-gradient(180deg,var(--surface),#0f1630);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel-h{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.panel-h .grow{flex:1}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.span2{grid-column:span 2}
+.page-h{display:flex;align-items:flex-end;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.page-h .grow{flex:1}
+.page-h p{margin:4px 0 0;color:var(--muted);max-width:75ch}
+.src{font-size:11px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.src b{font-weight:500;color:#aab2cf}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:6px 11px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--surface-2);color:var(--text)}
+.seg button+button{border-left:1px solid var(--line)}
+.note{border:1px dashed #34406b;border-radius:8px;padding:10px 12px;color:var(--muted);font-size:12.5px}
+.note.warn{border-color:rgba(242,177,54,.45);color:#e9cf96}
+.note.err{border-color:rgba(239,90,90,.5);color:#f2b1b1}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;white-space:nowrap}
+tr.rowlink{cursor:pointer}
+tr.rowlink:hover td{background:rgba(58,154,244,.05)}
+.tablewrap{overflow-x:auto}
+.skel{background:linear-gradient(90deg,#141c38 0%,#1b2549 50%,#141c38 100%);background-size:200% 100%;animation:sh 1.4s linear infinite;border-radius:6px}
+@keyframes sh{to{background-position:-200% 0}}
+input[type=date],select,input[type=text],input[type=search]{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+
+/* KPI */
+.kpi{display:flex;flex-direction:column;gap:6px;transition:transform .18s ease,border-color .18s ease}
+.kpi:hover{transform:translateY(-2px);border-color:#34406b}
+.kpi .row{display:flex;align-items:center;gap:8px}
+.kpi .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(41,58,224,.18);color:#9fb0ff;flex:none}
+.kpi .val{font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.kpi .unit{font-size:13px;color:var(--muted);font-weight:500;margin-left:4px}
+.delta{font-size:12px;display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:6px}
+.delta.up{color:var(--ok);background:rgba(34,195,142,.1)}
+.delta.down{color:var(--err);background:rgba(239,90,90,.1)}
+.delta.flat{color:var(--muted);background:var(--surface-2)}
+.spark{height:34px;width:100%}
+.chart-box{position:relative;height:260px}
+.chart-box.sm{height:200px}
+
+/* Status visuals */
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.st .dot{position:relative}
+.st-idle .dot{background:var(--idle)}
+.st-queued .dot{background:#9aa3c7}
+.st-initializing .dot,.st-running .dot,.st-processing .dot,.st-analyzing .dot{background:var(--brand-2)}
+.st-waiting .dot{background:var(--purple)}
+.st-completed .dot{background:var(--ok)}
+.st-failed .dot{background:var(--err)}
+.st-cancelled .dot{background:#6b7280}
+.st-running,.st-processing,.st-analyzing,.st-initializing{border-color:rgba(58,154,244,.45);color:#cfe6ff}
+.st-completed{border-color:rgba(34,195,142,.4);color:#bdf3df}
+.st-failed{border-color:rgba(239,90,90,.5);color:#ffc9c9}
+.st-waiting{border-color:rgba(87,70,198,.6);color:#d5cffb}
+.pulse .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid currentColor;opacity:.5;animation:pl 1.6s ease-out infinite;color:var(--brand-2)}
+@keyframes pl{from{transform:scale(.6);opacity:.7}to{transform:scale(1.8);opacity:0}}
+
+/* Agent cards */
+.agent{cursor:pointer;position:relative;transition:transform .18s ease,border-color .2s ease,box-shadow .2s ease;display:flex;flex-direction:column;gap:10px}
+.agent:hover{transform:translateY(-2px);border-color:#34406b}
+.agent.active{border-color:rgba(58,154,244,.55);box-shadow:0 0 0 1px rgba(58,154,244,.25),0 8px 28px -12px rgba(58,154,244,.45)}
+.agent.active::after{content:"";position:absolute;inset:-1px;border-radius:var(--r);padding:1px;background:conic-gradient(from var(--a,0deg),transparent 0 70%,var(--brand-2) 85%,transparent 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 3s linear infinite;pointer-events:none}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.agent.done-flash{animation:flash 1.2s ease}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(34,195,142,.6)}100%{box-shadow:0 0 0 14px rgba(34,195,142,0)}}
+.agent .head{display:flex;gap:10px;align-items:flex-start}
+.agent .av{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex:none}
+.agent .meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.agent .meta div{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.agent .meta b{display:block;font-size:13px;font-weight:600}
+.agent .meta span{font-size:11px;color:var(--muted)}
+.bar{height:6px;border-radius:6px;background:#1b2447;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.ok i{background:var(--ok)}
+.bar.err i{background:var(--err)}
+.bar.indet i{width:35%!important;position:absolute;animation:indet 1.3s ease-in-out infinite}
+@keyframes indet{from{left:-35%}to{left:100%}}
+
+/* Orchestration map */
+.orch{height:300px;position:relative}
+.orch svg{width:100%;height:100%}
+.edge{stroke:#2a3560;stroke-width:1.5;fill:none}
+.edge.active{stroke:var(--brand-2);stroke-dasharray:6 6;animation:dash .8s linear infinite}
+.edge.ok{stroke:rgba(34,195,142,.6)}
+.edge.err{stroke:rgba(239,90,90,.7)}
+@keyframes dash{to{stroke-dashoffset:-12}}
+.node rect{fill:var(--surface-2);stroke:#2f3a66;transition:stroke .3s ease,fill .3s ease}
+.node text{fill:var(--text);font:500 11.5px var(--font-body)}
+.node .sub{fill:var(--muted);font-size:10px}
+.node.active rect{stroke:var(--brand-2);fill:#16224a}
+.node.ok rect{stroke:rgba(34,195,142,.7)}
+.node.err rect{stroke:var(--err)}
+.node{cursor:pointer}
+.node.active .ring{animation:pl 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+
+/* Timeline + feed */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:0 0 14px}
+.tl-item .pin{position:absolute;left:-20px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--idle)}
+.tl-item.ok .pin{border-color:var(--ok);background:rgba(34,195,142,.25)}
+.tl-item.run .pin{border-color:var(--brand-2);background:rgba(58,154,244,.25)}
+.tl-item.err .pin{border-color:var(--err);background:rgba(239,90,90,.25)}
+.tl-item.warn .pin{border-color:var(--warn)}
+.feed{height:340px;overflow:auto;font-family:var(--font-mono);font-size:12px;border:1px solid var(--line);border-radius:8px;background:#0b1124;padding:8px}
+.feed .ln{display:grid;grid-template-columns:auto auto 1fr;gap:10px;padding:4px 6px;border-radius:6px;animation:viewIn .25s ease both}
+.feed .ln:hover{background:rgba(255,255,255,.03)}
+.feed .t{color:var(--muted)}
+.feed .ag{color:#9fb0ff}
+.feed .k-error{color:#ffb0b0}
+.feed .k-warning{color:#f3d699}
+.feed .k-step_done,.feed .k-run_done{color:#a8efd4}
+
+/* Drawer + modal */
+.scrim{position:fixed;inset:0;background:rgba(3,6,16,.55);z-index:30;animation:fade .2s ease both}
+@keyframes fade{from{opacity:0}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:#0d1430;border-left:1px solid var(--line);z-index:31;display:flex;flex-direction:column;animation:slide .26s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slide{from{transform:translateX(40px);opacity:0}}
+.drawer .dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.drawer .db{padding:16px 18px;overflow:auto;flex:1}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);padding:0 18px;overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:10px 12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--text);border-bottom-color:var(--brand-2)}
+.modal{position:fixed;left:50%;top:12vh;transform:translateX(-50%);width:min(620px,calc(100% - 32px));background:#0f1734;border:1px solid var(--line);border-radius:12px;z-index:31;animation:pop .22s ease both;max-height:76vh;display:flex;flex-direction:column}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.97)}}
+.modal .mh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.modal .mb{padding:16px 18px;overflow:auto}
+.menu{position:absolute;right:0;top:calc(100% + 6px);background:#0f1734;border:1px solid var(--line);border-radius:10px;min-width:260px;z-index:40;padding:6px;animation:pop2 .16s ease both;box-shadow:0 12px 32px -10px rgba(0,0,0,.6)}
+@keyframes pop2{from{opacity:0;transform:translateY(-4px)}}
+.menu .mi{padding:8px 10px;border-radius:6px;display:block;color:var(--text);text-decoration:none;font-size:13px}
+.menu .mi:hover{background:var(--surface)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+pre.code{background:#0b1124;border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;font:12px/1.5 var(--font-mono);white-space:pre-wrap}
+
+/* Markdown */
+.md{max-width:86ch;line-height:1.6}
+.md h1{font-size:19px;margin:6px 0 10px}
+.md h2{font-size:16px;margin:20px 0 8px}
+.md h3{font-size:13px;margin:16px 0 6px}
+.md table{margin:10px 0;font-size:12.5px}
+.md code{font-family:var(--font-mono);font-size:12px;background:#0b1124;padding:1px 5px;border-radius:4px}
+.md ul{padding-left:20px}
+.label-data,.label-ai{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500}
+.label-data{background:rgba(58,154,244,.14);color:#bfe0ff;border:1px solid rgba(58,154,244,.35)}
+.label-ai{background:rgba(87,70,198,.18);color:#d9d3ff;border:1px solid rgba(87,70,198,.5)}
+.sev-high{border-left:3px solid var(--err)}
+.sev-med{border-left:3px solid var(--warn)}
+.sev-low{border-left:3px solid var(--idle)}
+.issue{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.015);cursor:pointer}
+.issue:hover{border-color:#34406b}
+
+@media (max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:820px){
+  .side{position:fixed;z-index:35;height:100%;left:0;top:0;transform:translateX(-100%);transition:transform .22s ease;width:236px}
+  .side.mobile-open{transform:none}
+  .app{grid-template-columns:1fr}
+  .g4,.g3,.g2{grid-template-columns:1fr}
+  .span2{grid-column:auto}
+  .top{padding:0 12px;gap:8px}
+  .top .hide-sm{display:none}
+  .menu-btn{display:inline-grid}
+  .content{padding:16px}
+  .agent .meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kv{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>
+"use strict";
+const {useState,useEffect,useRef,useMemo,useCallback} = React;
+const html = htm.bind(React.createElement);
+const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------------- constants ---------------- */
+const PROJECT = "databases-472111";
+const BQ_SERVER = "Google Cloud BigQuery";
+const BQ_TOOL = "execute_sql_readonly";
+const NAV = [
+  ["overview","Overview","LayoutDashboard"],
+  ["agents","AI Agent Command Center","Bot"],
+  ["history","Execution History","History"],
+  ["analytics","Analytics Dashboard","ChartLine"],
+  ["quality","Event Quality & Monitoring","ShieldCheck"],
+  ["reports","Reports","FileText"],
+  ["config","Agent Configuration","SlidersHorizontal"],
+  ["system","System Settings","Server"],
+];
+const STATUS = {
+  idle:["Idle","st-idle"], queued:["Queued","st-queued"], initializing:["Initializing","st-initializing pulse"],
+  running:["Running","st-running pulse"], processing:["Processing data","st-processing pulse"], analyzing:["Analyzing","st-analyzing pulse"],
+  waiting:["Waiting for another agent","st-waiting"], completed:["Completed","st-completed"], failed:["Failed","st-failed"], cancelled:["Cancelled","st-cancelled"],
+};
+const ACTIVE = new Set(["initializing","running","processing","analyzing","queued","waiting"]);
+const ACCENTS = ["#3A9AF4","#7f8cff","#22c38e","#f2b136","#c084fc","#5ec8d8","#ef8a5a"];
+
+/* ---------------- icons (lucide) ---------------- */
+function Icon({name,size=16,stroke=1.75,style}){
+  const node = (window.lucide && lucide.icons && (lucide.icons[name] || lucide.icons.Circle)) || null;
+  if(!node) return html`<span style=${{display:"inline-block",width:size,height:size}}></span>`;
+  const kids = (Array.isArray(node) && node[0]==="svg") ? node[2] : node;
+  return html`<svg width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth=${stroke} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style=${style}>
+    ${(kids||[]).map((c,i)=>React.createElement(c[0],{key:i,...c[1]}))}</svg>`;
+}
+
+/* ---------------- formatting ---------------- */
+const nf = new Intl.NumberFormat("en-US");
+const fmtN = v => v==null||isNaN(v) ? "—" : nf.format(Math.round(v));
+const fmtSAR = v => {
+  if(v==null||isNaN(v)) return "—";
+  const a=Math.abs(v); if(a>=1e6) return (v/1e6).toFixed(a>=1e7?1:2)+"M"; if(a>=1e3) return (v/1e3).toFixed(1)+"k"; return nf.format(Math.round(v));
+};
+const pct = (v,d=1) => v==null||isNaN(v) ? "—" : (v*100).toFixed(d)+"%";
+function fmtTs(ts){ if(!ts) return "—"; const d=new Date(ts); if(isNaN(d)) return String(ts);
+  return d.toLocaleString("en-GB",{timeZone:"Asia/Riyadh",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})+" AST"; }
+function fmtDur(ms){ if(ms==null||isNaN(ms)||ms<0) return "—"; const s=Math.round(ms/1000); if(s<60) return s+"s"; const m=Math.floor(s/60); if(m<60) return m+"m "+(s%60)+"s"; return Math.floor(m/60)+"h "+(m%60)+"m"; }
+const dayStr = d => d.toISOString().slice(0,10);
+const addDays = (s,n) => { const d=new Date(s+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return dayStr(d); };
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------------- capability bootstrap ---------------- */
+const caps = {db:undefined, mcp:undefined};
+const capListeners = new Set();
+function onCaps(f){capListeners.add(f); return ()=>capListeners.delete(f);}
+(async()=>{
+  const use = n => (window.claude && claude.use) ? claude.use(n).catch(()=>null) : Promise.resolve(null);
+  const [db,mcp] = await Promise.all([use("db"),use("mcp")]);
+  caps.db = db; caps.mcp = mcp; capListeners.forEach(f=>f());
+})();
+function useCaps(){ const [,t]=useState(0); useEffect(()=>onCaps(()=>t(x=>x+1)),[]); return caps; }
+
+/* ---------------- db hooks (subscribe once) ---------------- */
+function useDbQuery(key, build){
+  const c = useCaps();
+  const [st,setSt] = useState({loading:true, docs:[], err:null, slow:false});
+  useEffect(()=>{
+    if(c.db===undefined) return;
+    if(c.db===null){ setSt({loading:false,docs:[],err:"unavailable",slow:false}); return; }
+    let timer = setTimeout(()=>setSt(s=>({...s,slow:true})),10000);
+    let unsub = ()=>{};
+    try{
+      unsub = build(c.db).onSnapshot(snap=>{
+        if(!snap.metadata || !snap.metadata.fromCache){ clearTimeout(timer); }
+        setSt({loading:false, slow:false, err:null, docs:snap.docs.map(d=>({id:d.id,...d.data()}))});
+      }, e=>{ clearTimeout(timer); setSt(s=>({...s,loading:false,err:e&&e.code||"error"})); });
+    }catch(e){ clearTimeout(timer); setSt({loading:false,docs:[],err:"invalid",slow:false}); }
+    return ()=>{ clearTimeout(timer); unsub(); };
+  },[c.db,key]);
+  return st;
+}
+function useDbDoc(path){
+  const c = useCaps();
+  const [st,setSt] = useState({loading:true,data:null});
+  useEffect(()=>{
+    if(c.db===undefined) return;
+    if(!c.db){ setSt({loading:false,data:null}); return; }
+    let unsub=()=>{};
+    try{ unsub = c.db.doc(path).onSnapshot(s=>setSt({loading:false,data:s.exists?s.data():null}),()=>setSt({loading:false,data:null})); }catch(e){ setSt({loading:false,data:null}); }
+    return ()=>unsub();
+  },[c.db,path]);
+  return st;
+}
+
+/* ---------------- BigQuery (read-only, via viewer's connector) ---------------- */
+const bqStore = new Map(); // key -> {state, subs:Set, unsub}
+function parseBQ(payload){
+  let p = payload;
+  if(typeof p === "string"){ try{ p = JSON.parse(p); }catch(e){ return []; } }
+  if(!p) return [];
+  if(Array.isArray(p)) return p;
+  if(p.rows && p.schema && p.schema.fields){
+    const f = p.schema.fields;
+    return p.rows.map(r=>{ const o={}; (r.f||[]).forEach((c,i)=>{ const fld=f[i]; let v=c.v;
+      if(v!=null && ["INTEGER","INT64","FLOAT","FLOAT64","NUMERIC","BIGNUMERIC"].includes(fld.type)) v=Number(v);
+      o[fld.name]=v; }); return o; });
+  }
+  if(Array.isArray(p.rows)) return p.rows;
+  return [];
+}
+function bqWatch(key, sql){
+  let e = bqStore.get(key);
+  if(e) return e;
+  e = {state:{status:"loading",rows:null,error:null,storedAt:null}, subs:new Set(), unsub:null};
+  bqStore.set(key,e);
+  const set = s => { e.state={...e.state,...s}; e.subs.forEach(f=>f(e.state)); };
+  const start = () => {
+    if(caps.mcp===undefined) return;
+    if(!caps.mcp){ set({status:"nomcp"}); return; }
+    try{
+      e.unsub = caps.mcp.watchTool(BQ_SERVER, BQ_TOOL, {projectId:PROJECT, query:sql}, ev=>{
+        if(ev.type==="data"){
+          const res = ev.result||{};
+          set({status:"ok", rows:parseBQ(res.payload), error:null, storedAt:(res.cache&&res.cache.storedAt)||Date.now()});
+        } else {
+          const code = ev.error && ev.error.code;
+          const deny = ["needs_reauth","server_not_connected","blocked_by_policy","approval_required","not_in_manifest","not_granted","selection_required"].includes(code);
+          set({status: deny ? "denied" : (e.state.rows ? "stale" : "error"), error:ev.error||{code:"upstream_error"}, rows: deny ? null : e.state.rows});
+        }
+      }, {refetchInterval:300000, cache:{staleTime:240000, gcTime:86400000}});
+    }catch(err){ set({status:"error",error:{code:"bad_request",message:String(err)}}); }
+  };
+  if(caps.mcp===undefined) onCaps(start); else start();
+  e.sql = sql;
+  return e;
+}
+function useBQ(key, sql){
+  const e = useMemo(()=>bqWatch(key,sql),[key]);
+  const [s,setS] = useState(e.state);
+  useEffect(()=>{ e.subs.add(setS); setS(e.state); return ()=>e.subs.delete(setS); },[e]);
+  const allow = useCallback(async()=>{
+    try{ const r = await caps.mcp.callTool(BQ_SERVER,BQ_TOOL,{projectId:PROJECT,query:sql}); e.state={status:"ok",rows:parseBQ(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); }
+    catch(err){ e.state={...e.state,error:err}; e.subs.forEach(f=>f(e.state)); }
+  },[e]);
+  return {...s, allow};
+}
+
+/* vetted, aggregated SQL (same logic as sql/readonly/ in the repo) */
+const SQL = {
+fresh:`SELECT 'Backend events (production)' AS source, MAX(DATE(occurred_at,'Asia/Riyadh')) AS latest_date FROM \`databases-472111.manafa_financing.mi_analytics_events\`
+UNION ALL SELECT 'GA4 (transfer)', MAX(DATE(_PARTITIONTIME)) FROM \`databases-472111.GA4.p_ga4_Events_413046941\`
+UNION ALL SELECT 'Google Ads (transfer)', MAX(segments_date) FROM \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\``,
+daily:`SELECT DATE(occurred_at,'Asia/Riyadh') AS d,
+ COUNTIF(event_name='registration_completed') AS reg,
+ COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='web') AS reg_web,
+ COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='ios') AS reg_ios,
+ COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='android') AS reg_android,
+ COUNTIF(event_name='kyc_completed') AS kyc,
+ COUNTIF(event_name='identity_verified') AS idv,
+ COUNTIF(event_name='deposit_success') AS dep,
+ SUM(IF(event_name='deposit_success' AND JSON_VALUE(payload.currency)='SAR', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS dep_sar,
+ SUM(IF(event_name='deposit_success' AND JSON_VALUE(payload.currency)='USD', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS dep_usd,
+ COUNTIF(event_name='investment_completed') AS inv,
+ SUM(IF(event_name='investment_completed' AND JSON_VALUE(payload.currency)='SAR', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS inv_sar,
+ COUNTIF(event_name='investment_completed' AND SAFE_CAST(JSON_VALUE(payload.is_first_investment) AS BOOL)) AS first_inv,
+ COUNTIF(event_name='auto_invest_enabled') AS ai_on
+FROM \`databases-472111.manafa_financing.mi_analytics_events\`
+WHERE DATE(occurred_at,'Asia/Riyadh') >= '2026-10-02'
+GROUP BY 1 ORDER BY 1`,
+cohorts:`WITH ev AS (SELECT profile_id, event_name, DATE(occurred_at,'Asia/Riyadh') d, JSON_VALUE(context.platform) platform
+  FROM \`databases-472111.manafa_financing.mi_analytics_events\`
+  WHERE profile_id IS NOT NULL AND event_name IN ('registration_completed','kyc_completed','deposit_success','investment_completed')),
+de AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) d_end FROM \`databases-472111.manafa_financing.mi_analytics_events\`),
+reg AS (SELECT profile_id, MIN(d) reg_date, ARRAY_AGG(platform ORDER BY d LIMIT 1)[OFFSET(0)] p FROM ev WHERE event_name='registration_completed' GROUP BY 1),
+f AS (SELECT profile_id, MIN(IF(event_name='kyc_completed',d,NULL)) kyc, MIN(IF(event_name='deposit_success',d,NULL)) dep, MIN(IF(event_name='investment_completed',d,NULL)) inv FROM ev GROUP BY 1)
+SELECT DATE_TRUNC(r.reg_date, ISOWEEK) AS cohort_week, r.p AS platform,
+ DATE_DIFF((SELECT d_end FROM de), DATE_TRUNC(r.reg_date, ISOWEEK), DAY) AS age,
+ COUNT(*) AS n,
+ COUNTIF(DATE_DIFF(f.kyc,r.reg_date,DAY) BETWEEN 0 AND 14) AS kyc14,
+ COUNTIF(DATE_DIFF(f.dep,r.reg_date,DAY) BETWEEN 0 AND 14) AS dep14,
+ COUNTIF(DATE_DIFF(f.inv,r.reg_date,DAY) BETWEEN 0 AND 14) AS inv14
+FROM reg r LEFT JOIN f USING(profile_id)
+WHERE r.reg_date >= '2026-10-02' AND r.reg_date <= (SELECT d_end FROM de)
+GROUP BY 1,2,3 ORDER BY 1`,
+ga4:`SELECT DATE(_PARTITIONTIME) AS d, sessionDefaultChannelGroup AS ch, SUM(sessions) AS sessions, SUM(engagedSessions) AS engaged
+FROM \`databases-472111.GA4.p_ga4_TrafficAcquisition_413046941\` GROUP BY 1,2 ORDER BY 1`,
+ads:`SELECT segments_date AS d, SUM(metrics_cost_micros)/1e6 AS spend, SUM(metrics_clicks) AS clicks, SUM(metrics_impressions) AS impr, SUM(metrics_conversions) AS conv
+FROM \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\` GROUP BY 1 ORDER BY 1`,
+delivery:`SELECT DATE_TRUNC(DATE(e.occurred_at,'Asia/Riyadh'),ISOWEEK) AS wk, JSON_VALUE(e.context.platform) AS platform, COUNT(*) AS n,
+ COUNTIF(d.status='degraded') AS degraded
+FROM \`databases-472111.manafa_financing.mi_analytics_event_deliveries\` d
+JOIN \`databases-472111.manafa_financing.mi_analytics_events\` e ON e.id=d.analytics_event_id
+WHERE d.channel='ga4' AND DATE(e.occurred_at,'Asia/Riyadh') >= '2026-10-05'
+GROUP BY 1,2 HAVING n>200 ORDER BY 1`,
+};
+
+/* ---------------- small components ---------------- */
+function Status({s}){ const [l,c]=STATUS[s]||STATUS.idle; return html`<span className=${"st "+c}><span className="dot"></span>${l}</span>`; }
+function Source({children}){ return html`<span className="src"><${Icon} name="Database" size=${12}/> ${children}</span>`; }
+function Skel({h=18,w="100%"}){ return html`<div className="skel" style=${{height:h,width:w}}></div>`; }
+function Count({value,fmt=fmtN}){
+  const [v,setV]=useState(REDUCED||value==null?value:0); const from=useRef(0);
+  useEffect(()=>{ if(value==null||REDUCED){setV(value);return;} const a=from.current||0,b=value,t0=performance.now(),D=700; let raf;
+    const step=t=>{const k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3); setV(a+(b-a)*e); if(k<1) raf=requestAnimationFrame(step); else from.current=b;};
+    raf=requestAnimationFrame(step); return ()=>cancelAnimationFrame(raf); },[value]);
+  return html`<span>${fmt(v)}</span>`;
+}
+function Delta({cur,prev,invert}){
+  if(cur==null||prev==null||prev===0) return html`<span className="delta flat">no prior</span>`;
+  const d=(cur-prev)/prev; const dir=Math.abs(d)<0.005?"flat":(d>0?"up":"down");
+  const cls = invert&&dir!=="flat" ? (dir==="up"?"down":"up") : dir;
+  return html`<span className=${"delta "+cls}><${Icon} name=${dir==="up"?"TrendingUp":dir==="down"?"TrendingDown":"Minus"} size=${12}/>${(d>0?"+":"")+(d*100).toFixed(1)}%</span>`;
+}
+function Spark({data,color="#3A9AF4"}){
+  if(!data||data.length<2) return html`<svg className="spark"></svg>`;
+  const W=200,H=34,max=Math.max(...data,1),min=Math.min(...data,0);
+  const pts=data.map((v,i)=>[i*(W/(data.length-1)), H-3-((v-min)/(max-min||1))*(H-8)]);
+  const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const last=pts[pts.length-1];
+  return html`<svg className="spark" viewBox=${"0 0 "+W+" "+H} preserveAspectRatio="none" aria-hidden="true">
+    <path d=${d+" L"+W+" "+H+" L0 "+H+" Z"} fill=${color} opacity="0.12"/>
+    <path d=${d} fill="none" stroke=${color} strokeWidth="1.6" vectorEffect="non-scaling-stroke" style=${REDUCED?null:{strokeDasharray:600,strokeDashoffset:600,animation:"draw 1s ease forwards"}}/>
+    <circle cx=${last[0]} cy=${last[1]} r="2.6" fill=${color}/></svg>`;
+}
+function BQState({q,label="BigQuery"}){
+  if(q.status==="loading") return html`<div className="grid" style=${{gap:8}}><${Skel} h=${14} w="40%"/><${Skel} h=${120}/></div>`;
+  if(q.status==="nomcp") return html`<div className="note">Live BigQuery data needs this page open in claude.ai, signed in, with the Google Cloud BigQuery connector.</div>`;
+  if(q.status==="denied"){
+    const c=q.error&&q.error.code;
+    const msg = c==="needs_reauth" ? "Your BigQuery connection expired. Reconnect Google Cloud BigQuery in claude.ai Settings → Connectors."
+      : c==="server_not_connected" ? "Add the Google Cloud BigQuery connector in claude.ai Settings → Connectors to see live data."
+      : c==="selection_required" ? "Choose which BigQuery connector this page should use in the claude.ai prompt."
+      : c==="approval_required" ? "This page needs your approval to run read-only BigQuery queries."
+      : c==="not_in_manifest" ? "BigQuery access is turned off for this page in your view."
+      : c==="blocked_by_policy" ? "Your organization's policy blocks this BigQuery tool for you."
+      : "Live BigQuery data isn't available in this view.";
+    return html`<div className="note warn">${msg} ${c==="approval_required"?html`<button className="btn sm" style=${{marginLeft:8}} onClick=${q.allow}>Allow read-only queries</button>`:null}</div>`;
+  }
+  if(q.status==="error") return html`<div className="note err">${label} didn't answer (${esc(q.error&&q.error.code)}). It will retry on the next refresh. ${q.error&&q.error.code==="tool_error"?html`<div className="mono" style=${{marginTop:6}}>${String(q.error.message||"").slice(0,240)}</div>`:null}</div>`;
+  return null;
+}
+function Fresh({q}){ if(!q.storedAt) return null; return html`<span className="src">${q.status==="stale"?"⚠ showing last data · ":""}updated ${fmtTs(q.storedAt)}</span>`; }
+
+/* Chart.js wrapper */
+Chart.defaults.color="#8b93b0"; Chart.defaults.font.family="Inter, system-ui, sans-serif"; Chart.defaults.font.size=11;
+Chart.defaults.borderColor="rgba(35,45,79,.7)";
+if(REDUCED) Chart.defaults.animation=false; else Chart.defaults.animation={duration:700,easing:"easeOutCubic"};
+function ChartC({config,small}){
+  const ref=useRef(null), ch=useRef(null);
+  useEffect(()=>{ if(!ref.current) return; ch.current && ch.current.destroy();
+    ch.current=new Chart(ref.current,{...config,options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{labels:{boxWidth:10,boxHeight:10,usePointStyle:true}},...((config.options||{}).plugins||{})},...(config.options||{}),
+      plugins:{legend:{position:"bottom",labels:{boxWidth:8,boxHeight:8,usePointStyle:true,padding:12}},tooltip:{backgroundColor:"#0f1734",borderColor:"#232d4f",borderWidth:1,padding:10},...((config.options||{}).plugins||{})}}});
+    return ()=>{ ch.current&&ch.current.destroy(); ch.current=null; };
+  },[JSON.stringify(config.data),JSON.stringify(config.options||{})]);
+  return html`<div className=${"chart-box"+(small?" sm":"")}><canvas ref=${ref} role="img" aria-label="chart"></canvas></div>`;
+}
+const gridY = {grid:{color:"rgba(35,45,79,.6)"},border:{display:false},ticks:{maxTicksLimit:5}};
+const gridX = {grid:{display:false},border:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8}};
+
+/* ---------------- markdown (escaped, minimal) ---------------- */
+function mdToHtml(src){
+  const lines=String(src||"").split("\n"); let out=[],i=0,list=false;
+  const inline=s=>esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/\*([^*]+)\*/g,"<em>$1</em>");
+  const closeList=()=>{ if(list){out.push("</ul>");list=false;} };
+  while(i<lines.length){ const l=lines[i];
+    if(/^\|/.test(l)){ closeList(); const rows=[]; while(i<lines.length&&/^\|/.test(lines[i])){ rows.push(lines[i]); i++; }
+      const cells=r=>r.replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
+      const body=rows.filter(r=>!/^\|[\s:|-]+\|?$/.test(r));
+      out.push('<div className="tablewrap"><table><thead><tr>'+cells(body[0]).map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"+body.slice(1).map(r=>"<tr>"+cells(r).map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"); continue; }
+    if(/^```/.test(l)){ closeList(); i++; const b=[]; while(i<lines.length&&!/^```/.test(lines[i])){b.push(lines[i]);i++;} i++; out.push('<pre className="code">'+esc(b.join("\n"))+"</pre>"); continue; }
+    let m;
+    if((m=l.match(/^(#{1,3})\s+(.*)/))){ closeList(); out.push("<h"+m[1].length+">"+inline(m[2])+"</h"+m[1].length+">"); }
+    else if((m=l.match(/^\s*[-*]\s+(.*)/))){ if(!list){out.push("<ul>");list=true;} out.push("<li>"+inline(m[1])+"</li>"); }
+    else if(l.trim()===""){ closeList(); }
+    else { closeList(); out.push("<p>"+inline(l)+"</p>"); }
+    i++; }
+  closeList(); return out.join("");
+}
+
+/* ---------------- run model helpers ---------------- */
+function runDuration(r){ const a=Date.parse(r.started_at), b=r.ended_at?Date.parse(r.ended_at):(ACTIVE.has(r.status)?Date.now():null); return a&&b?b-a:null; }
+function agentStateFrom(runs, agentId){
+  const sorted=[...runs].sort((a,b)=>String(b.started_at).localeCompare(String(a.started_at)));
+  for(const r of sorted){ const a=r.agents&&r.agents[agentId]; if(a) return {run:r, a}; }
+  return null;
+}
+function allEvents(runs){
+  const ev=[]; runs.forEach(r=>(r.events||[]).forEach((e,i)=>ev.push({...e, run_id:r.id, _k:r.id+":"+i})));
+  return ev.sort((a,b)=>String(a.ts).localeCompare(String(b.ts)));
+}
+
+/* ======================================================================
+   App
+   ====================================================================== */
+function useHash(){
+  const get=()=>{ const h=(location.hash||"").replace("#",""); return NAV.some(n=>n[0]===h)?h:"overview"; };
+  const [v,setV]=useState(get());
+  useEffect(()=>{ const f=()=>setV(get()); addEventListener("hashchange",f); return ()=>removeEventListener("hashchange",f); },[]);
+  return v;
+}
+
+function App(){
+  const view = useHash();
+  const [collapsed,setCollapsed]=useState(()=>{ try{return localStorage.getItem("mbi.side")==="1";}catch(e){return false;} });
+  const [mobile,setMobile]=useState(false);
+  const [runOpen,setRunOpen]=useState(false);
+  const [drawer,setDrawer]=useState(null);   // {type:'agent'|'run', id}
+  const runsQ = useDbQuery("runs", db=>db.collection("runs").orderBy("started_at","desc").limit(80));
+  const agentsQ = useDbQuery("agents", db=>db.collection("agents").orderBy("order","asc"));
+  const issuesQ = useDbQuery("issues", db=>db.collection("issues"));
+  const reportsQ = useDbQuery("reports", db=>db.collection("reports").orderBy("created","desc").limit(50));
+  const meta = useDbDoc("meta/system");
+  const fresh = useBQ("fresh", SQL.fresh);
+  const ctx = {runsQ,agentsQ,issuesQ,reportsQ,meta,fresh,openAgent:id=>setDrawer({type:"agent",id}),openRun:id=>setDrawer({type:"run",id}),openRunDialog:()=>setRunOpen(true)};
+  useEffect(()=>{ try{localStorage.setItem("mbi.side",collapsed?"1":"0");}catch(e){} },[collapsed]);
+  useEffect(()=>{ setMobile(false); document.querySelector(".content")&&document.querySelector(".content").scrollTo(0,0); },[view]);
+
+  const openIssues = issuesQ.docs.filter(i=>i.status!=="resolved");
+  const highOpen = openIssues.filter(i=>i.severity==="high").length;
+  const runs = runsQ.docs;
+  const activeRun = runs.find(r=>ACTIVE.has(r.status));
+
+  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,quality:QualityView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
+  return html`<div className="app">
+    <aside className=${"side"+(collapsed?" collapsed":"")+(mobile?" mobile-open":"")} aria-label="Main navigation">
+      <div className="brand"><div className="logo">M</div>${!collapsed&&html`<div><div style=${{fontWeight:600}}>Manafa BI</div><div className="small muted">Command Center</div></div>`}</div>
+      <nav className="nav">
+        ${NAV.map(([id,label,ic])=>html`<a key=${id} href=${"#"+id} className=${view===id?"on":""} title=${collapsed?label:null} aria-current=${view===id?"page":null}>
+          <${Icon} name=${ic} size=${18}/>${!collapsed&&html`<span>${label}</span>`}
+          ${!collapsed&&id==="quality"&&openIssues.length?html`<span className="badge">${openIssues.length}</span>`:null}
+          ${!collapsed&&id==="agents"&&activeRun?html`<span className="badge" style=${{color:"#cfe6ff",borderColor:"rgba(58,154,244,.5)"}}>live</span>`:null}</a>`)}
+      </nav>
+      <div className="side-foot"><button className="btn ghost" style=${{width:"100%",justifyContent:collapsed?"center":"flex-start"}} onClick=${()=>setCollapsed(!collapsed)} aria-label=${collapsed?"Expand sidebar":"Collapse sidebar"}>
+        <${Icon} name=${collapsed?"PanelLeftOpen":"PanelLeftClose"} size=${16}/>${!collapsed&&"Collapse"}</button></div>
+    </aside>
+    <div className="main">
+      <${TopBar} ctx=${ctx} activeRun=${activeRun} highOpen=${highOpen} openIssues=${openIssues} onMenu=${()=>setMobile(!mobile)}/>
+      <main className="content" id="main">
+        <div className="view" key=${view}><${V} ctx=${ctx}/></div>
+      </main>
+    </div>
+    ${runOpen&&html`<${RunDialog} agents=${agentsQ.docs} onClose=${()=>setRunOpen(false)}/>`}
+    ${drawer&&html`<${Drawer} d=${drawer} ctx=${ctx} onClose=${()=>setDrawer(null)}/>`}
+  </div>`;
+}
+
+function TopBar({ctx,activeRun,highOpen,openIssues,onMenu}){
+  const [menu,setMenu]=useState(null);
+  const runs=ctx.runsQ.docs; const last=runs[0];
+  const health = activeRun ? ["Run in progress","var(--brand-2)"] : highOpen ? [`${highOpen} high-severity issue${highOpen>1?"s":""}`,"var(--err)"] : openIssues.length ? ["Issues open","var(--warn)"] : ["Healthy","var(--ok)"];
+  useEffect(()=>{ if(!menu) return; const f=e=>{ if(!e.target.closest(".menu-wrap")) setMenu(null); }; document.addEventListener("click",f); return ()=>document.removeEventListener("click",f); },[menu]);
+  const notes = openIssues.filter(i=>i.severity==="high"||i.escalated).slice(0,6);
+  return html`<header className="top">
+    <button className="icon-btn menu-btn" onClick=${onMenu} aria-label="Open navigation"><${Icon} name="Menu"/></button>
+    <div style=${{fontWeight:600}} className="hide-sm">Manafa Business Intelligence</div>
+    <span className="chip hide-sm" title="Where this system runs"><span className="dot" style=${{background:"var(--brand-2)"}}></span>Local · read-only · me-central2</span>
+    <span className="chip" title="System health"><span className="dot" style=${{background:health[1]}}></span>${health[0]}</span>
+    <div className="grow"></div>
+    <span className="small muted hide-sm">Last execution: ${last?fmtTs(last.started_at):"—"}</span>
+    <div className="menu-wrap" style=${{position:"relative"}}>
+      <button className="icon-btn" aria-label="Notifications" onClick=${e=>{e.stopPropagation();setMenu(menu==="n"?null:"n");}}><${Icon} name="Bell" size=${18}/>
+        ${notes.length?html`<span style=${{position:"absolute",top:3,right:3,width:8,height:8,borderRadius:"50%",background:"var(--err)"}}></span>`:null}</button>
+      ${menu==="n"&&html`<div className="menu">
+        <div className="small muted" style=${{padding:"6px 10px"}}>Escalations and high-severity issues</div>
+        ${notes.length?notes.map(i=>html`<a className="mi" key=${i.id} href="#quality"><b>${i.id}</b> · ${String(i.title||i.what||"").slice(0,90)}</a>`):html`<div className="mi muted">Nothing needs attention.</div>`}</div>`}
+    </div>
+    <div className="menu-wrap" style=${{position:"relative"}}>
+      <button className="icon-btn" aria-label="Profile menu" onClick=${e=>{e.stopPropagation();setMenu(menu==="p"?null:"p");}}>
+        <span style=${{width:28,height:28,borderRadius:"50%",background:"var(--surface-2)",display:"grid",placeItems:"center",border:"1px solid var(--line)"}}><${Icon} name="User" size=${15}/></span></button>
+      ${menu==="p"&&html`<div className="menu">
+        <div className="small muted" style=${{padding:"6px 10px"}}>Signed in through claude.ai. Live data uses your own BigQuery connector, read-only.</div>
+        <a className="mi" href="#config">Agent configuration</a><a className="mi" href="#system">System settings & data sources</a></div>`}
+    </div>
+    <button className="btn primary" onClick=${ctx.openRunDialog}><${Icon} name="Play" size=${15}/><span className="hide-sm">Run Automation</span></button>
+  </header>`;
+}
+
+/* ---------------- Run dialog (truthful) ---------------- */
+function RunDialog({agents,onClose}){
+  const order = agents.length ? agents.map(a=>a.id) : [];
+  const [sel,setSel]=useState(()=>new Set(["bi-tracking-health"]));
+  const [copied,setCopied]=useState(false);
+  useEffect(()=>{ const f=e=>e.key==="Escape"&&onClose(); addEventListener("keydown",f); return ()=>removeEventListener("keydown",f); },[]);
+  const chosen = order.filter(id=>sel.has(id));
+  const prompt = chosen.length ? `Run ${chosen.join(", then ")} for last week. Write live run events to the Command Center as you go.` : "";
+  const copy = async()=>{ try{ await navigator.clipboard.writeText(prompt); setCopied(true); setTimeout(()=>setCopied(false),1800);}catch(e){ setCopied(false); } };
+  return html`<div className="scrim" onClick=${onClose}></div>
+  <div className="modal" role="dialog" aria-modal="true" aria-labelledby="run-h">
+    <div className="mh"><${Icon} name="Play" size=${18}/><h2 id="run-h" style=${{flex:1}}>Run automation</h2><button className="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} name="X"/></button></div>
+    <div className="mb grid" style=${{gap:14}}>
+      <div className="note">The agents run in the <b>Manafa Business Intelligence</b> Claude project with your Mac folder connected. A hosted page can't start them on its own. Pick the loops, copy the instruction and send it in that chat: this page shows each step live as the agent reports it.</div>
+      <div className="grid" style=${{gap:6}}>
+        ${agents.map(a=>html`<label key=${a.id} style=${{display:"flex",gap:10,alignItems:"center",padding:"8px 10px",border:"1px solid var(--line)",borderRadius:8,cursor:"pointer"}}>
+          <input type="checkbox" id=${"pick-"+a.id} checked=${sel.has(a.id)} onChange=${()=>{const s=new Set(sel); s.has(a.id)?s.delete(a.id):s.add(a.id); setSel(s);}}/>
+          <span style=${{flex:1}}><b>${a.label}</b> <span className="mono muted">${a.id}</span><div className="small muted">${a.cadence}</div></span></label>`)}
+        ${!agents.length&&html`<div className="empty">Agent list not loaded yet.</div>`}
+      </div>
+      ${prompt&&html`<pre className="code">${prompt}</pre>`}
+      <div style=${{display:"flex",gap:8,justifyContent:"flex-end"}}>
+        <button className="btn" onClick=${onClose}>Close</button>
+        <button className="btn primary" disabled=${!prompt} onClick=${copy}><${Icon} name=${copied?"Check":"Copy"} size=${15}/>${copied?"Copied":"Copy instruction"}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ======================================================================
+   Overview
+   ====================================================================== */
+const RANGES=[["today","Latest day"],["yesterday","Day before"],["7d","Last 7 days"],["30d","Last 30 days"],["custom","Custom"]];
+function useRange(dailyRows){
+  const [r,setR]=useState("7d"); const [cf,setCf]=useState(""); const [ct,setCt]=useState("");
+  const days = (dailyRows||[]).map(x=>x.d).filter(Boolean);
+  const maxDay = days.length ? days[days.length-1] : null;
+  const end = maxDay ? addDays(maxDay,-1) : null; // newest replica day is partial
+  let from,to;
+  if(end){
+    if(r==="today"){from=to=end;} else if(r==="yesterday"){from=to=addDays(end,-1);}
+    else if(r==="7d"){to=end;from=addDays(end,-6);} else if(r==="30d"){to=end;from=addDays(end,-29);}
+    else {to=ct||end; from=cf||addDays(end,-6);}
+  }
+  const len = from&&to ? Math.round((Date.parse(to)-Date.parse(from))/864e5)+1 : 0;
+  const pFrom = from?addDays(from,-len):null, pTo = from?addDays(from,-1):null;
+  return {r,setR,cf,setCf,ct,setCt,from,to,pFrom,pTo,end,len};
+}
+function sumRange(rows,k,a,b){ let s=0,n=0; (rows||[]).forEach(x=>{ if(x.d>=a&&x.d<=b){ s+=Number(x[k]||0); n++; } }); return n?s:null; }
+function series(rows,k,a,b){ return (rows||[]).filter(x=>x.d>=a&&x.d<=b).map(x=>Number(x[k]||0)); }
+
+function RangeBar({R}){
+  return html`<div style=${{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+    <div className="seg" role="group" aria-label="Date range">${RANGES.map(([k,l])=>html`<button key=${k} className=${R.r===k?"on":""} onClick=${()=>R.setR(k)}>${l}</button>`)}</div>
+    ${R.r==="custom"&&html`<input type="date" id="from" value=${R.cf||R.from||""} max=${R.end||""} onChange=${e=>R.setCf(e.target.value)} aria-label="From"/><input type="date" id="to" value=${R.ct||R.to||""} max=${R.end||""} onChange=${e=>R.setCt(e.target.value)} aria-label="To"/>`}
+  </div>`;
+}
+
+function KPI({icon,label,value,prev,unit,fmt,spark,color,note,src}){
+  return html`<div className="panel kpi">
+    <div className="row"><span className="ic"><${Icon} name=${icon} size=${15}/></span><span className="small muted" style=${{flex:1}}>${label}</span>${value!=null&&prev!==undefined?html`<${Delta} cur=${value} prev=${prev}/>`:null}</div>
+    <div className="val">${value==null?html`<span className="muted" style=${{fontSize:18}}>—</span>`:html`<${Count} value=${value} fmt=${fmt||fmtN}/>`}${unit&&value!=null?html`<span className="unit">${unit}</span>`:null}</div>
+    ${spark?html`<${Spark} data=${spark} color=${color}/>`:null}
+    <div className="small muted">${note||(prev!=null?"vs previous period: "+(fmt||fmtN)(prev)+(unit?" "+unit:""):"")}</div>
+    ${src?html`<${Source}>${src}<//>`:null}
+  </div>`;
+}
+
+function cohortAgg(rows, platformFilter){
+  const closed=(rows||[]).filter(r=>r.age>=20 && (!platformFilter||r.platform===platformFilter));
+  const byW={}; closed.forEach(r=>{ const w=byW[r.cohort_week]||(byW[r.cohort_week]={n:0,kyc14:0,dep14:0,inv14:0}); w.n+=r.n; w.kyc14+=r.kyc14; w.dep14+=r.dep14; w.inv14+=r.inv14; });
+  const weeks=Object.keys(byW).sort();
+  return {weeks, byW};
+}
+
+function Overview({ctx}){
+  const daily = useBQ("daily",SQL.daily), coh = useBQ("cohorts",SQL.cohorts), ga4=useBQ("ga4",SQL.ga4);
+  const rows = daily.rows||[];
+  const R = useRange(rows);
+  const S=(k)=>R.from?sumRange(rows,k,R.from,R.to):null, P=(k)=>R.pFrom?sumRange(rows,k,R.pFrom,R.pTo):null;
+  const spk=(k)=>{ if(!R.from) return null; const a=R.len<7?addDays(R.to,-13):R.from; return series(rows,k,a,R.to); };
+  const C=cohortAgg(coh.rows); const lastW=C.weeks[C.weeks.length-1], prevW=C.weeks[C.weeks.length-2];
+  const conv = lastW? C.byW[lastW].inv14/C.byW[lastW].n : null, convPrev = prevW? C.byW[prevW].inv14/C.byW[prevW].n : null;
+
+  const loading = daily.status==="loading";
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Executive overview</h1>
+      <p>Production backend events are the source of truth for every funnel number here. "Latest day" is the newest complete day in the backend copy${R.end?html` (<b>${R.end}</b>)`:""}; the replica runs about 3–4 days behind.</p></div>
+      <${RangeBar} R=${R}/></div>
+    ${daily.status!=="ok"&&daily.status!=="stale"?html`<div style=${{marginBottom:14}}><${BQState} q=${daily}/></div>`:null}
+    <div className="grid g4" style=${{marginBottom:14}}>
+      ${loading?[1,2,3,4,5,6,7,8].map(i=>html`<div className="panel" key=${i}><${Skel} h=${12} w="50%"/><div style=${{height:10}}></div><${Skel} h=${28} w="60%"/><div style=${{height:10}}></div><${Skel} h=${30}/></div>`):html`
+      <${KPI} icon="UserPlus" label="New registrations" value=${S("reg")} prev=${P("reg")} spark=${spk("reg")} src="backend · registration_completed"/>
+      <${KPI} icon="BadgeCheck" label="KYC completed" value=${S("kyc")} prev=${P("kyc")} spark=${spk("kyc")} color="#7f8cff" note="Includes existing users completing KYC (about 63%)." src="backend · kyc_completed"/>
+      <${KPI} icon="Wallet" label="Successful deposits" value=${S("dep")} prev=${P("dep")} spark=${spk("dep")} color="#22c38e" note=${S("dep_sar")!=null?`${fmtSAR(S("dep_sar"))} SAR · ${fmtSAR(S("dep_usd"))} USD (kept apart)`:""} src="backend · deposit_success"/>
+      <${KPI} icon="Sparkles" label="First investments" value=${S("first_inv")} prev=${P("first_inv")} spark=${spk("first_inv")} color="#f2b136" note="Watch item: flag jumped in W45, under review." src="backend · is_first_investment"/>
+      <${KPI} icon="Repeat" label="Auto-invest enabled" value=${S("ai_on")} prev=${P("ai_on")} spark=${spk("ai_on")} color="#c084fc" src="backend · auto_invest_enabled"/>
+      <${KPI} icon="Percent" label="Registration → first investment" value=${conv} prev=${convPrev} fmt=${v=>pct(v,1)} note=${lastW?`14-day window · closed cohort of ${lastW} vs ${prevW||"—"}`:"Waiting for a closed cohort"} src="backend cohorts"/>
+      <${KPI} icon="Banknote" label="Investment volume" value=${S("inv_sar")} prev=${P("inv_sar")} fmt=${fmtSAR} unit="SAR" spark=${spk("inv_sar")} color="#5ec8d8" src="backend · investment_completed"/>
+      <div className="panel kpi"><div className="row"><span className="ic"><${Icon} name="Users" size=${15}/></span><span className="small muted">Total users</span></div>
+        <div className="val muted" style=${{fontSize:18}}>Not available</div>
+        <div className="small muted">The user total lives in the warehouse layer, which currently shows staging data (tqa-012). It returns once data engineering fixes the source.</div></div>`}
+    </div>
+    <div className="grid g3">
+      <${FunnelPanel} coh=${coh}/>
+      <${PlatformFunnelPanel} coh=${coh}/>
+      <${PlatformDistPanel} daily=${daily} R=${R}/>
+      <div className="span2"><${InvestTrendPanel} daily=${daily} R=${R}/></div>
+      <${ChannelPanel} ga4=${ga4} R=${R}/>
+      <div className="span2"><${AcqTrendPanel} ga4=${ga4}/></div>
+      <${AgentsMini} ctx=${ctx}/>
+    </div>
+  </div>`;
+}
+
+function FunnelPanel({coh}){
+  const C=cohortAgg(coh.rows); const ws=C.weeks.slice(-3);
+  const t=ws.reduce((a,w)=>{const x=C.byW[w]; a.n+=x.n;a.k+=x.kyc14;a.d+=x.dep14;a.i+=x.inv14; return a;},{n:0,k:0,d:0,i:0});
+  return html`<div className="panel"><div className="panel-h"><h2>Registration funnel</h2><span className="grow"></span><span className="label-data">Data</span></div>
+    ${coh.status==="ok"||coh.status==="stale"?(t.n?html`
+      <${ChartC} config=${{type:"bar",data:{labels:["Registered","KYC (14d)","First deposit (14d)","First investment (14d)"],datasets:[{data:[t.n,t.k,t.d,t.i],backgroundColor:["#293AE0","#3A9AF4","#22c38e","#f2b136"],borderRadius:6,barThickness:22}]},
+        options:{indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:c=>c.dataIndex?pct(c.raw/t.n)+" of registrations":""}}},scales:{x:gridY,y:{...gridX,ticks:{autoSkip:false}}}}}}/>
+      <div className="small muted" style=${{marginTop:8}}>Closed cohorts ${ws[0]} to ${ws[ws.length-1]} (${fmtN(t.n)} registrations). Open cohorts are left out, not counted as failures.</div>`
+      :html`<div className="empty">No closed cohort yet.</div>`):html`<${BQState} q=${coh}/>`}
+    <${Source}>backend cohorts · <b>investor_funnel_cohorts_prod</b><//></div>`;
+}
+function PlatformFunnelPanel({coh}){
+  const plats=["web","ios","android"]; const ws=cohortAgg(coh.rows).weeks.slice(-3);
+  const rate=(p,k)=>{ const C=cohortAgg(coh.rows,p); let n=0,v=0; ws.forEach(w=>{ if(C.byW[w]){n+=C.byW[w].n;v+=C.byW[w][k];} }); return n?+(v/n*100).toFixed(1):null; };
+  return html`<div className="panel"><div className="panel-h"><h2>Conversion funnel by platform</h2><span className="grow"></span><span className="label-data">Data</span></div>
+    ${coh.status==="ok"||coh.status==="stale"?html`<${ChartC} config=${{type:"bar",data:{labels:["Web","iOS","Android"],datasets:[
+      {label:"KYC %",data:plats.map(p=>rate(p,"kyc14")),backgroundColor:"#3A9AF4",borderRadius:5},
+      {label:"Deposit %",data:plats.map(p=>rate(p,"dep14")),backgroundColor:"#22c38e",borderRadius:5},
+      {label:"Investment %",data:plats.map(p=>rate(p,"inv14")),backgroundColor:"#f2b136",borderRadius:5}]},
+      options:{scales:{y:{...gridY,ticks:{callback:v=>v+"%"}},x:gridX}}}}/>
+      <div className="small muted" style=${{marginTop:8}}>Within 14 days of registration, last 3 closed cohorts. Web KYC trails the apps (fx-01).</div>`:html`<${BQState} q=${coh}/>`}
+    <${Source}>backend cohorts<//></div>`;
+}
+function PlatformDistPanel({daily,R}){
+  const rows=daily.rows||[]; const v=["reg_web","reg_ios","reg_android"].map(k=>R.from?sumRange(rows,k,R.from,R.to)||0:0);
+  return html`<div className="panel"><div className="panel-h"><h2>Platform distribution</h2><span className="grow"></span><span className="label-data">Data</span></div>
+    ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"doughnut",data:{labels:["Web","iOS","Android"],datasets:[{data:v,backgroundColor:["#3A9AF4","#7f8cff","#22c38e"],borderColor:"#111830",borderWidth:3}]},options:{cutout:"68%",scales:{}}}}/>
+      <div className="small muted" style=${{marginTop:8}}>Registrations by platform, ${R.from} to ${R.to}.</div>`:html`<${BQState} q=${daily}/>`}
+    <${Source}>backend · context.platform<//></div>`;
+}
+function InvestTrendPanel({daily,R}){
+  const rows=(daily.rows||[]).filter(x=>R.end&&x.d<=R.end).slice(-45);
+  return html`<div className="panel"><div className="panel-h"><h2>Investment trends</h2><span className="grow"></span><${Fresh} q=${daily}/><span className="label-data">Data</span></div>
+    ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{data:{labels:rows.map(x=>x.d.slice(5)),datasets:[
+      {type:"bar",label:"Investments",data:rows.map(x=>x.inv),backgroundColor:"rgba(58,154,244,.55)",borderRadius:3,yAxisID:"y"},
+      {type:"line",label:"Volume (SAR)",data:rows.map(x=>x.inv_sar),borderColor:"#f2b136",backgroundColor:"#f2b136",pointRadius:0,tension:.3,yAxisID:"y1"},
+      {type:"line",label:"Registrations",data:rows.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3,yAxisID:"y"}]},
+      options:{scales:{x:gridX,y:{...gridY,position:"left"},y1:{...gridY,position:"right",grid:{display:false},ticks:{callback:v=>fmtSAR(v)}}}}}}/>
+      <div className="small muted" style=${{marginTop:8}}>Daily, last 45 complete days. Offering launches drive the investment spikes; that is the expected shape.</div>`:html`<${BQState} q=${daily}/>`}
+    <${Source}>backend · investment_completed, registration_completed<//></div>`;
+}
+function ga4Range(rows,R){ const days=[...new Set((rows||[]).map(r=>r.d))].sort(); const a=R&&R.from, b=R&&R.to; const inR=days.filter(d=>(!a||d>=a)&&(!b||d<=b)); return inR.length?inR:days.slice(-7); }
+function ChannelPanel({ga4,R}){
+  const rows=ga4.rows||[]; const days=new Set(ga4Range(rows,R)); const by={};
+  rows.filter(r=>days.has(r.d)).forEach(r=>{ const k=r.ch||"(not set)"; const o=by[k]||(by[k]={s:0,e:0}); o.s+=r.sessions; o.e+=r.engaged; });
+  const top=Object.entries(by).sort((a,b)=>b[1].s-a[1].s).slice(0,7);
+  const ds=[...days].sort();
+  return html`<div className="panel"><div className="panel-h"><h2>Channel performance</h2><span className="grow"></span><span className="label-data">GA4</span></div>
+    ${ga4.status==="ok"||ga4.status==="stale"?html`<div className="tablewrap"><table><thead><tr><th>Channel</th><th style=${{textAlign:"right"}}>Sessions</th><th style=${{textAlign:"right"}}>Engaged</th></tr></thead>
+      <tbody>${top.map(([k,v])=>html`<tr key=${k}><td>${k}</td><td style=${{textAlign:"right"}}>${fmtN(v.s)}</td><td style=${{textAlign:"right"}}>${pct(v.e/v.s,0)}</td></tr>`)}</tbody></table></div>
+      <div className="small muted" style=${{marginTop:8}}>${ds[0]} to ${ds[ds.length-1]}. GA4 has no web/app split yet, and app sessions land in Direct or Unassigned (tqa-001).</div>`:html`<${BQState} q=${ga4} label="GA4"/>`}
+    <${Source}>GA4 transfer · session channel group<//></div>`;
+}
+function AcqTrendPanel({ga4}){
+  const rows=ga4.rows||[]; const days=[...new Set(rows.map(r=>r.d))].sort();
+  const tot={}; rows.forEach(r=>tot[r.ch]=(tot[r.ch]||0)+r.sessions);
+  const chs=Object.entries(tot).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
+  return html`<div className="panel"><div className="panel-h"><h2>User acquisition trends</h2><span className="grow"></span><${Fresh} q=${ga4}/><span className="label-data">GA4</span></div>
+    ${ga4.status==="ok"||ga4.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:days.map(d=>d.slice(5)),datasets:chs.map((c,i)=>({label:c,data:days.map(d=>{const r=rows.find(x=>x.d===d&&x.ch===c);return r?r.sessions:0;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i]+"22",fill:i===0,pointRadius:0,tension:.3}))},
+      options:{scales:{x:gridX,y:gridY}}}}/>
+      <div className="small muted" style=${{marginTop:8}}>Sessions by channel group since the GA4 transfer started (${days[0]||"—"}). A backfill is requested for longer history.</div>`:html`<${BQState} q=${ga4} label="GA4"/>`}
+    <${Source}>GA4 transfer<//></div>`;
+}
+function AgentsMini({ctx}){
+  const agents=ctx.agentsQ.docs, runs=ctx.runsQ.docs;
+  return html`<div className="panel"><div className="panel-h"><h2>Agents</h2><span className="grow"></span><a href="#agents" className="small">Open command center</a></div>
+    <div className="grid" style=${{gap:8}}>${agents.map(a=>{ const s=agentStateFrom(runs,a.id); return html`<div key=${a.id} style=${{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick=${()=>ctx.openAgent(a.id)}>
+      <span className="small" style=${{flex:1}}>${a.label}</span><${Status} s=${s?s.a.status:"idle"}/></div>`; })}
+    ${!agents.length&&html`<div className="muted small">No agents loaded.</div>`}</div></div>`;
+}
+
+/* ======================================================================
+   Agent Command Center
+   ====================================================================== */
+function AgentsView({ctx}){
+  const agents=ctx.agentsQ.docs, runs=ctx.runsQ.docs;
+  const active=runs.find(r=>ACTIVE.has(r.status));
+  const [selRun,setSelRun]=useState(null);
+  const run = (selRun && runs.find(r=>r.id===selRun)) || active || runs.find(r=>!r.imported) || runs[0];
+  const prevStatus=useRef({}); const [flash,setFlash]=useState({});
+  useEffect(()=>{ const f={}; agents.forEach(a=>{ const s=agentStateFrom(runs,a.id); const st=s?s.a.status:"idle"; if(prevStatus.current[a.id]&&prevStatus.current[a.id]!=="completed"&&st==="completed") f[a.id]=1; prevStatus.current[a.id]=st; });
+    if(Object.keys(f).length){ setFlash(f); setTimeout(()=>setFlash({}),1300); } },[runs]);
+  if(ctx.agentsQ.loading) return html`<div className="grid g3">${[1,2,3,4,5,6].map(i=>html`<div className="panel" key=${i}><${Skel} h=${120}/></div>`)}</div>`;
+  if(ctx.agentsQ.err) return html`<div className="note err">The agent registry can't be read in this view (${ctx.agentsQ.err}). Open the page in claude.ai while signed in.</div>`;
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>AI Agent Command Center</h1>
+      <p>Seven loop agents, orchestrated by Claude in the Manafa BI project. Every status, step and log line here was written by an agent while it ran. Nothing is simulated: where a step count isn't reported, progress shows as activity without a percentage.</p></div>
+      ${active?html`<span className="chip"><span className="dot" style=${{background:"var(--brand-2)"}}></span>Live run ${active.id}</span>`:html`<span className="chip"><span className="dot"></span>No run in progress</span>`}
+      <button className="btn primary" onClick=${ctx.openRunDialog}><${Icon} name="Play" size=${15}/>Run Automation</button></div>
+    <div className="grid g3" style=${{marginBottom:14}}>
+      <div className="panel span2"><div className="panel-h"><h2>Orchestration</h2><span className="grow"></span><span className="small muted">${run?`Run ${run.id} · ${fmtTs(run.started_at)}`:"No runs yet"}</span></div>
+        <${OrchMap} agents=${agents} run=${run} onPick=${ctx.openAgent}/></div>
+      <div className="panel"><div className="panel-h"><h2>Run summary</h2></div><${RunSummary} run=${run} runs=${runs} onPick=${setSelRun}/></div>
+    </div>
+    <div className="grid g3" style=${{marginBottom:14}}>
+      ${agents.map((a,i)=>html`<${AgentCard} key=${a.id} a=${a} i=${i} st=${agentStateFrom(runs,a.id)} flash=${flash[a.id]} onOpen=${()=>ctx.openAgent(a.id)}/>`)}
+    </div>
+    <div className="grid g2">
+      <div className="panel"><div className="panel-h"><h2>Execution timeline</h2><span className="grow"></span><span className="small muted">${run?run.id:""}</span></div><${Timeline} run=${run} agents=${agents}/></div>
+      <div className="panel"><div className="panel-h"><h2>Live agent activity</h2></div><${Feed} runs=${runs} agents=${agents}/></div>
+    </div>
+  </div>`;
+}
+function OrchMap({agents,run,onPick}){
+  const W=760,H=290, cx=W/2, cy=48;
+  const n=agents.length||1; const cols=Math.min(n,7);
+  const pos=agents.map((a,i)=>({a, x: 30+ (i+0.5)*((W-60)/cols), y: 218}));
+  const stOf=id=>{ const s=run&&run.agents&&run.agents[id]; return s?s.status:"idle"; };
+  const cls=s=>ACTIVE.has(s)&&s!=="queued"&&s!=="waiting"?"active":s==="completed"?"ok":s==="failed"?"err":"";
+  const orchActive = run && ACTIVE.has(run.status);
+  return html`<div className="orch"><svg viewBox=${"0 0 "+W+" "+H} role="img" aria-label="Orchestrator connected to seven agents">
+    ${pos.map(p=>{ const s=stOf(p.a.id); return html`<path key=${"e"+p.a.id} className=${"edge "+cls(s)} d=${`M${cx},${cy+22} C${cx},${cy+110} ${p.x},${p.y-110} ${p.x},${p.y-22}`}/>`; })}
+    <g className=${"node "+(orchActive?"active":run&&run.status==="completed"?"ok":"")} transform=${`translate(${cx-120},${cy-22})`}>
+      <rect width="240" height="44" rx="10"/>
+      <text x="120" y="19" textAnchor="middle">Orchestrator · Claude</text>
+      <text x="120" y="34" textAnchor="middle" className="sub">${run?(STATUS[run.status]||STATUS.idle)[0]+" · "+(run.trigger||"chat"):"Waiting for a run"}</text></g>
+    ${pos.map((p,i)=>{ const s=stOf(p.a.id); const c=cls(s); const w=Math.min(100,(W-60)/cols-8);
+      return html`<g key=${p.a.id} className=${"node "+c} transform=${`translate(${p.x-w/2},${p.y-22})`} onClick=${()=>onPick(p.a.id)} tabIndex="0" role="button" aria-label=${p.a.label+": "+(STATUS[s]||STATUS.idle)[0]} onKeyDown=${e=>e.key==="Enter"&&onPick(p.a.id)}>
+        <rect width=${w} height="44" rx="10"/>
+        ${c==="active"?html`<circle className="ring" cx=${w-10} cy="10" r="4" fill="none" stroke="#3A9AF4" strokeWidth="2"/>`:null}
+        <circle cx=${w-10} cy="10" r="3.5" fill=${c==="active"?"#3A9AF4":c==="ok"?"#22c38e":c==="err"?"#ef5a5a":"#5b6485"}/>
+        <text x=${w/2} y="20" textAnchor="middle">${p.a.short||p.a.label}</text>
+        <text x=${w/2} y="34" textAnchor="middle" className="sub">${(STATUS[s]||STATUS.idle)[0].split(" ")[0]}</text></g>`; })}
+  </svg></div>`;
+}
+function RunSummary({run,runs,onPick}){
+  if(!run) return html`<div className="empty">No runs recorded yet. Use Run Automation to start one.</div>`;
+  const ag=Object.values(run.agents||{}); const ok=ag.filter(x=>x.status==="completed").length, bad=ag.filter(x=>x.status==="failed").length;
+  return html`<div className="grid" style=${{gap:12}}>
+    <dl className="kv"><dt>Status</dt><dd><${Status} s=${run.status}/></dd><dt>Started</dt><dd>${fmtTs(run.started_at)}</dd><dt>Duration</dt><dd>${fmtDur(runDuration(run))}</dd>
+      <dt>Agents</dt><dd>${ag.length} · ${ok} completed${bad?` · ${bad} failed`:""}</dd><dt>Trigger</dt><dd>${run.trigger||"chat"}</dd>
+      ${run.imported?html`<dt>Recording</dt><dd className="small muted">Imported from the run log: no step events were recorded for this run.</dd>`:null}</dl>
+    ${run.summary?html`<div className="small" style=${{borderTop:"1px solid var(--line)",paddingTop:10}}>${run.summary}</div>`:null}
+    <label className="small muted" htmlFor="runpick">Show another run</label>
+    <select id="runpick" value=${run.id} onChange=${e=>onPick(e.target.value)}>${runs.slice(0,30).map(r=>html`<option key=${r.id} value=${r.id}>${r.id} · ${(STATUS[r.status]||STATUS.idle)[0]}</option>`)}</select>
+  </div>`;
+}
+function AgentCard({a,i,st,flash,onOpen}){
+  const s = st ? st.a : null; const status = s ? s.status : "idle";
+  const total=s&&s.steps_total, done=s&&s.steps_done||0;
+  const measurable = !!total; const p = measurable ? Math.min(1,done/total) : null;
+  const isActive = ACTIVE.has(status) && status!=="queued" && status!=="waiting";
+  const started = s&&s.started_at, ended=s&&s.ended_at;
+  const dur = started ? (ended?Date.parse(ended):(isActive?Date.now():null)) - Date.parse(started) : null;
+  const [,tick]=useState(0); useEffect(()=>{ if(!isActive) return; const t=setInterval(()=>tick(x=>x+1),1000); return ()=>clearInterval(t); },[isActive]);
+  const color=ACCENTS[i%ACCENTS.length];
+  return html`<article className=${"panel agent"+(isActive?" active":"")+(flash?" done-flash":"")} onClick=${onOpen} tabIndex="0" onKeyDown=${e=>e.key==="Enter"&&onOpen()} aria-label=${a.label+" details"}>
+    <div className="head"><span className="av" style=${{background:color+"22",color}}><${Icon} name=${a.icon||"Bot"} size=${18}/></span>
+      <div style=${{flex:1,minWidth:0}}><h2>${a.label}</h2><div className="small muted">${a.description}</div></div></div>
+    <div style=${{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}><${Status} s=${status}/>
+      ${s&&s.result?html`<span className=${"st "+(s.result==="success"?"st-completed":s.result==="failure"?"st-failed":"st-waiting")}>${s.result==="success"?"Success":s.result==="failure"?"Failure":"Escalation"}</span>`:null}</div>
+    <div>
+      <div style=${{display:"flex",justifyContent:"space-between",marginBottom:5}} className="small"><span className="muted">${measurable?`Step ${Math.min(done+ (isActive?1:0),total)} of ${total}`:(isActive?"Working · no step count reported":"Progress")}</span><span>${measurable?Math.round(p*100)+"%":"—"}</span></div>
+      <div className=${"bar"+(status==="completed"?" ok":status==="failed"?" err":"")+(!measurable&&isActive?" indet":"")}><i style=${{width:measurable?(p*100)+"%":(isActive?"35%":"0%")}}></i></div>
+    </div>
+    <div className="small" style=${{minHeight:20}}><span className="muted">Current activity: </span>${s&&s.current_step?s.current_step:(status==="idle"?"Not running":s&&s.summary?s.summary:"—")}</div>
+    <div className="meta">
+      <div><span>Started</span><b>${started?fmtTs(started).replace(" AST",""):"—"}</b></div>
+      <div><span>Duration</span><b>${fmtDur(dur)}</b></div>
+      <div><span>Tasks</span><b>${s&&s.tasks_done!=null?`${s.tasks_done} done · ${s.tasks_pending||0} left`:"—"}</b></div>
+    </div>
+    ${st&&st.run.imported?html`<div className="small muted">Last run imported from the run log (no step events).</div>`:null}
+  </article>`;
+}
+function Timeline({run,agents}){
+  if(!run) return html`<div className="empty">No run selected.</div>`;
+  const ev=run.events||[]; const name=id=>(agents.find(a=>a.id===id)||{}).label||id||"Orchestrator";
+  if(!ev.length) return html`<div className="empty">${run.imported?"This run was imported from its run-log line. It has no step events, so there's no timeline to show.":"No events reported yet."}</div>`;
+  const steps=[]; ev.forEach((e,i)=>{ if(e.kind==="step_done"||e.kind==="run_done"||e.kind==="error"||e.kind==="warning"||e.kind==="run_start"||e.kind==="agent_start"||e.kind==="agent_done"){ const start=[...ev.slice(0,i)].reverse().find(x=>x.kind==="step_start"&&x.agent===e.agent&&x.step===e.step); steps.push({...e, dur:start?Date.parse(e.ts)-Date.parse(start.ts):null}); }
+    else if(e.kind==="step_start" && !ev.slice(i+1).some(x=>x.agent===e.agent&&x.step===e.step&&x.kind==="step_done")) steps.push({...e,running:true}); });
+  return html`<div className="tl" style=${{maxHeight:420,overflow:"auto"}}>${steps.map((e,i)=>html`<div key=${i} className=${"tl-item "+(e.kind==="error"?"err":e.kind==="warning"?"warn":e.running?"run":"ok")} style=${{animationDelay:(i*30)+"ms"}}>
+    <span className="pin"></span>
+    <div style=${{display:"flex",gap:8,alignItems:"baseline",flexWrap:"wrap"}}><b className="small">${name(e.agent)}</b><span className="small">${e.step||e.message}</span>${e.running?html`<${Status} s="running"/>`:null}</div>
+    <div className="small muted">${fmtTs(e.ts)}${e.dur!=null?` · ${fmtDur(e.dur)}`:""}${e.step&&e.message&&e.message!==e.step?` · ${e.message}`:""}</div>
+    ${e.output?html`<div className="small" style=${{marginTop:3}}><span className="muted">Output: </span>${e.output}</div>`:null}
+  </div>`)}</div>`;
+}
+function Feed({runs,agents}){
+  const ev=useMemo(()=>allEvents(runs).slice(-250),[runs]);
+  const [paused,setPaused]=useState(false); const box=useRef(null);
+  useEffect(()=>{ if(!paused&&box.current) box.current.scrollTop=box.current.scrollHeight; },[ev.length,paused]);
+  const short=id=>(agents.find(a=>a.id===id)||{}).short||id||"orchestrator";
+  return html`<div>
+    <div style=${{display:"flex",gap:8,marginBottom:8,alignItems:"center"}}><span className="small muted" style=${{flex:1}}>${ev.length} events from recorded runs</span>
+      <button className="btn sm" onClick=${()=>setPaused(!paused)} aria-pressed=${paused}><${Icon} name=${paused?"Play":"Pause"} size=${13}/>${paused?"Resume auto-scroll":"Pause auto-scroll"}</button></div>
+    <div className="feed" ref=${box} role="log" aria-live="polite">
+      ${ev.length?ev.map(e=>html`<div className="ln" key=${e._k}><span className="t">${fmtTs(e.ts).replace(" AST","")}</span><span className="ag">${short(e.agent)}</span><span className=${"k-"+e.kind}>${e.message||e.step}</span></div>`)
+        :html`<div className="empty">No events yet. Events appear here as agents report them.</div>`}
+    </div></div>`;
+}
+
+/* ---------------- Drawer ---------------- */
+function Drawer({d,ctx,onClose}){
+  useEffect(()=>{ const f=e=>e.key==="Escape"&&onClose(); addEventListener("keydown",f); return ()=>removeEventListener("keydown",f); },[]);
+  return html`<div className="scrim" onClick=${onClose}></div><aside className="drawer" role="dialog" aria-modal="true">
+    ${d.type==="agent"?html`<${AgentDrawer} id=${d.id} ctx=${ctx} onClose=${onClose}/>`:html`<${RunDrawer} id=${d.id} ctx=${ctx} onClose=${onClose}/>`}</aside>`;
+}
+function AgentDrawer({id,ctx,onClose}){
+  const a=ctx.agentsQ.docs.find(x=>x.id===id)||{id,label:id}; const st=agentStateFrom(ctx.runsQ.docs,id);
+  const [tab,setTab]=useState("overview"); const s=st?st.a:null; const run=st?st.run:null;
+  const ev=(run&&run.events||[]).filter(e=>e.agent===id);
+  const errs=ev.filter(e=>e.kind==="error"||e.kind==="warning");
+  const hist=ctx.runsQ.docs.filter(r=>r.agents&&r.agents[id]);
+  return html`<div className="dh"><div style=${{flex:1}}><h2>${a.label}</h2><div className="mono muted">${a.id}</div><div style=${{marginTop:8}}><${Status} s=${s?s.status:"idle"}/></div></div><button className="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} name="X"/></button></div>
+    <div className="tabs" role="tablist">${[["overview","Overview"],["activity","Activity"],["io","Input / Output"],["logs","Logs"],["errors","Errors ("+errs.length+")"]].map(([k,l])=>html`<button key=${k} role="tab" aria-selected=${tab===k} className=${tab===k?"on":""} onClick=${()=>setTab(k)}>${l}</button>`)}</div>
+    <div className="db">
+      ${tab==="overview"&&html`<div className="grid" style=${{gap:16}}><p className="muted" style=${{margin:0}}>${a.description}</p>
+        <dl className="kv"><dt>Cadence</dt><dd>${a.cadence||"—"}</dd><dt>Acts when</dt><dd>${a.acts_when||"—"}</dd><dt>Depends on</dt><dd>${(a.depends_on||[]).join(", ")||"—"}</dd>
+          <dt>Last run</dt><dd>${run?run.id:"—"}</dd><dt>Started / ended</dt><dd>${s?fmtTs(s.started_at)+" → "+(s.ended_at?fmtTs(s.ended_at):"running"):"—"}</dd>
+          <dt>Duration</dt><dd>${s&&s.started_at?fmtDur((s.ended_at?Date.parse(s.ended_at):Date.now())-Date.parse(s.started_at)):"—"}</dd>
+          <dt>Progress</dt><dd>${s&&s.steps_total?`${s.steps_done||0} of ${s.steps_total} steps`:"No step count reported"}</dd>
+          <dt>Result</dt><dd>${s&&s.summary||"—"}</dd></dl>
+        <div><h3 style=${{marginBottom:8}}>Run history</h3>${hist.slice(0,8).map(r=>html`<div key=${r.id} style=${{display:"flex",gap:8,padding:"6px 0",borderBottom:"1px solid var(--line)",cursor:"pointer"}} onClick=${()=>ctx.openRun(r.id)}>
+          <span className="mono" style=${{flex:1}}>${r.id}</span><${Status} s=${r.agents[id].status}/></div>`)}${!hist.length&&html`<div className="muted small">No runs yet.</div>`}</div></div>`}
+      ${tab==="activity"&&html`<${Timeline} run=${run?{...run,events:ev}:null} agents=${ctx.agentsQ.docs}/>`}
+      ${tab==="io"&&html`<div className="grid" style=${{gap:14}}>
+        <div><h3 style=${{marginBottom:6}}>Inputs</h3><ul className="small">${(a.inputs||[]).map(x=>html`<li key=${x}><code className="mono">${x}</code></li>`)}</ul></div>
+        <div><h3 style=${{marginBottom:6}}>Outputs</h3><ul className="small">${(a.outputs||[]).map(x=>html`<li key=${x}><code className="mono">${x}</code></li>`)}</ul></div>
+        ${s&&s.outputs?html`<div><h3 style=${{marginBottom:6}}>Last run produced</h3><ul className="small">${s.outputs.map(x=>html`<li key=${x}>${x}</li>`)}</ul></div>`:null}
+        <div className="note small">Only aggregated metrics flow through agents. No personal data, credentials or row-level records are stored or shown.</div></div>`}
+      ${tab==="logs"&&html`<div className="feed" style=${{height:"auto",maxHeight:"60vh"}}>${ev.length?ev.map((e,i)=>html`<div className="ln" key=${i}><span className="t">${fmtTs(e.ts).replace(" AST","")}</span><span className="ag">${e.kind}</span><span>${e.message||e.step}</span></div>`):html`<div className="empty">${run&&run.log?html`<div style=${{textAlign:"left"}}><div className="muted small" style=${{marginBottom:6}}>Run-log line</div><pre className="code">${run.log}</pre></div>`:"No log lines for this agent."}</div>`}</div>`}
+      ${tab==="errors"&&(errs.length?html`<div className="grid" style=${{gap:8}}>${errs.map((e,i)=>html`<div key=${i} className=${"issue "+(e.kind==="error"?"sev-high":"sev-med")}><div className="small muted">${fmtTs(e.ts)} · ${e.kind}</div><div>${e.message}</div></div>`)}</div>`:html`<div className="empty">No errors or warnings reported.</div>`)}
+    </div>`;
+}
+function RunDrawer({id,ctx,onClose}){
+  const r=ctx.runsQ.docs.find(x=>x.id===id); const agents=ctx.agentsQ.docs;
+  if(!r) return html`<div className="db empty">Run not found.</div>`;
+  const rep=ctx.reportsQ.docs.filter(x=>x.run_id===id);
+  return html`<div className="dh"><div style=${{flex:1}}><h2>Run ${r.id}</h2><div style=${{marginTop:8}}><${Status} s=${r.status}/></div></div><button className="icon-btn" onClick=${onClose} aria-label="Close"><${Icon} name="X"/></button></div>
+    <div className="db grid" style=${{gap:16}}>
+      <dl className="kv"><dt>Started</dt><dd>${fmtTs(r.started_at)}</dd><dt>Ended</dt><dd>${fmtTs(r.ended_at)}</dd><dt>Duration</dt><dd>${fmtDur(runDuration(r))}</dd><dt>Trigger</dt><dd>${r.trigger||"chat"}</dd><dt>Summary</dt><dd>${r.summary||"—"}</dd></dl>
+      <div><h3 style=${{marginBottom:8}}>Agents</h3>${Object.entries(r.agents||{}).map(([k,v])=>html`<div key=${k} style=${{display:"flex",gap:8,padding:"6px 0",borderBottom:"1px solid var(--line)",alignItems:"center"}}><span style=${{flex:1}}>${(agents.find(a=>a.id===k)||{}).label||k}</span><span className="small muted">${v.summary||""}</span><${Status} s=${v.status}/></div>`)}</div>
+      <div><h3 style=${{marginBottom:8}}>Timeline</h3><${Timeline} run=${r} agents=${agents}/></div>
+      ${r.log?html`<div><h3 style=${{marginBottom:8}}>Run-log line</h3><pre className="code">${r.log}</pre></div>`:null}
+      ${rep.length?html`<div><h3 style=${{marginBottom:8}}>Reports</h3>${rep.map(x=>html`<a key=${x.id} href="#reports" onClick=${()=>{window.__openReport=x.id; onClose();}} style=${{display:"block"}}>${x.title}</a>`)}</div>`:null}
+    </div>`;
+}
+
+/* ======================================================================
+   Execution history
+   ====================================================================== */
+function HistoryView({ctx}){
+  const runs=ctx.runsQ.docs; const agents=ctx.agentsQ.docs;
+  const [fs,setFs]=useState("all"), [fa,setFa]=useState("all"), [from,setFrom]=useState(""), [to,setTo]=useState(""), [dur,setDur]=useState("any");
+  const [cmp,setCmp]=useState([]);
+  const rows=runs.filter(r=>(fs==="all"||r.status===fs)&&(fa==="all"||(r.agents&&r.agents[fa]))&&(!from||String(r.started_at)>=from)&&(!to||String(r.started_at).slice(0,10)<=to)&&
+    (dur==="any"||(()=>{const d=runDuration(r); if(d==null) return dur==="unknown"; return dur==="lt5"?d<3e5:dur==="5to30"?d>=3e5&&d<18e5:dur==="gt30"?d>=18e5:false;})()));
+  const toggle=id=>setCmp(c=>c.includes(id)?c.filter(x=>x!==id):[...c.slice(-1),id]);
+  const A=runs.find(r=>r.id===cmp[0]), B=runs.find(r=>r.id===cmp[1]);
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Execution history</h1><p>Every recorded run. Runs before live instrumentation were imported from the agents' run logs; they carry a summary but no step events.</p></div></div>
+    <div className="panel" style=${{marginBottom:14}}>
+      <div style=${{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",marginBottom:12}}>
+        <select id="f-status" value=${fs} onChange=${e=>setFs(e.target.value)} aria-label="Status"><option value="all">All statuses</option>${Object.keys(STATUS).map(k=>html`<option key=${k} value=${k}>${STATUS[k][0]}</option>`)}</select>
+        <select id="f-agent" value=${fa} onChange=${e=>setFa(e.target.value)} aria-label="Agent"><option value="all">All agents</option>${agents.map(a=>html`<option key=${a.id} value=${a.id}>${a.label}</option>`)}</select>
+        <select id="f-dur" value=${dur} onChange=${e=>setDur(e.target.value)} aria-label="Duration"><option value="any">Any duration</option><option value="lt5">Under 5 min</option><option value="5to30">5–30 min</option><option value="gt30">Over 30 min</option><option value="unknown">Unknown</option></select>
+        <input type="date" id="h-from" value=${from} onChange=${e=>setFrom(e.target.value)} aria-label="From date"/><input type="date" id="h-to" value=${to} onChange=${e=>setTo(e.target.value)} aria-label="To date"/>
+        <span className="grow" style=${{flex:1}}></span><span className="small muted">${rows.length} runs · tick two to compare</span></div>
+      ${ctx.runsQ.loading?html`<${Skel} h=${200}/>`:rows.length?html`<div className="tablewrap"><table>
+        <thead><tr><th></th><th>Execution ID</th><th>Start</th><th>End</th><th>Duration</th><th>Agents</th><th>Succeeded</th><th>Failed</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${rows.map(r=>{ const ag=Object.values(r.agents||{}); return html`<tr key=${r.id} className="rowlink" onClick=${()=>ctx.openRun(r.id)}>
+          <td onClick=${e=>e.stopPropagation()}><input type="checkbox" id=${"cmp-"+r.id} aria-label=${"Compare "+r.id} checked=${cmp.includes(r.id)} onChange=${()=>toggle(r.id)}/></td>
+          <td className="mono">${r.id}${r.imported?html` <span className="badge">log</span>`:null}</td><td>${fmtTs(r.started_at)}</td><td>${fmtTs(r.ended_at)}</td><td>${fmtDur(runDuration(r))}</td>
+          <td>${ag.length}</td><td>${ag.filter(x=>x.status==="completed").length}</td><td>${ag.filter(x=>x.status==="failed").length}</td><td><${Status} s=${r.status}/></td>
+          <td onClick=${e=>e.stopPropagation()}><button className="btn sm" onClick=${()=>ctx.openRun(r.id)}>Details</button></td></tr>`; })}</tbody></table></div>`
+        :html`<div className="empty">${ctx.runsQ.err?"Runs can't be read in this view.":"No runs match these filters."}</div>`}
+    </div>
+    ${A&&B?html`<div className="panel"><div className="panel-h"><h2>Compare runs</h2><span className="grow"></span><button className="btn sm" onClick=${()=>setCmp([])}>Clear</button></div>
+      <div className="tablewrap"><table><thead><tr><th></th><th className="mono">${A.id}</th><th className="mono">${B.id}</th></tr></thead><tbody>
+        <tr><td className="muted">Started</td><td>${fmtTs(A.started_at)}</td><td>${fmtTs(B.started_at)}</td></tr>
+        <tr><td className="muted">Duration</td><td>${fmtDur(runDuration(A))}</td><td>${fmtDur(runDuration(B))}</td></tr>
+        <tr><td className="muted">Status</td><td><${Status} s=${A.status}/></td><td><${Status} s=${B.status}/></td></tr>
+        ${agents.filter(a=>(A.agents&&A.agents[a.id])||(B.agents&&B.agents[a.id])).map(a=>html`<tr key=${a.id}><td>${a.label}</td>
+          <td>${A.agents&&A.agents[a.id]?html`<${Status} s=${A.agents[a.id].status}/><div className="small muted">${A.agents[a.id].summary||""}</div>`:"—"}</td>
+          <td>${B.agents&&B.agents[a.id]?html`<${Status} s=${B.agents[a.id].status}/><div className="small muted">${B.agents[a.id].summary||""}</div>`:"—"}</td></tr>`)}
+        <tr><td className="muted">Summary</td><td className="small">${A.summary||"—"}</td><td className="small">${B.summary||"—"}</td></tr>
+      </tbody></table></div></div>`:null}
+  </div>`;
+}
+
+/* ======================================================================
+   Analytics
+   ====================================================================== */
+function AnalyticsView(){
+  const daily=useBQ("daily",SQL.daily), coh=useBQ("cohorts",SQL.cohorts), ads=useBQ("ads",SQL.ads);
+  const rows=(daily.rows||[]); const end=rows.length?addDays(rows[rows.length-1].d,-1):null; const r45=rows.filter(x=>end&&x.d<=end).slice(-45);
+  const plats=["web","ios","android"]; const all=(coh.rows||[]);
+  const weeks=[...new Set(all.map(r=>r.cohort_week))].sort();
+  const ad=ads.rows||[];
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Analytics dashboard</h1><p>Each source keeps its own section and its own numbers. Backend events count conversions; Google Ads numbers are the platform's own claims.</p></div></div>
+    <div className="grid g2">
+      <div className="panel span2"><div className="panel-h"><h2>Investor cohorts by platform (14-day window)</h2><span className="grow"></span><${Fresh} q=${coh}/><span className="label-data">Data</span></div>
+        ${coh.status==="ok"||coh.status==="stale"?html`<div className="tablewrap"><table><thead><tr><th>Registration week</th>${plats.map(p=>html`<th key=${p} colSpan="4">${p==="ios"?"iOS":p==="android"?"Android":"Web"}</th>`)}</tr>
+          <tr><th></th>${plats.map(p=>["Reg","KYC","Dep","Inv"].map(h=>html`<th key=${p+h} style=${{textAlign:"right"}}>${h}</th>`))}</tr></thead>
+          <tbody>${weeks.map(w=>html`<tr key=${w}><td className="mono">${w}</td>${plats.map(p=>{ const r=all.find(x=>x.cohort_week===w&&x.platform===p); const closed=r&&r.age>=20;
+            return r?[html`<td key=${p+"n"} style=${{textAlign:"right"}}>${fmtN(r.n)}</td>`,...["kyc14","dep14","inv14"].map(k=>html`<td key=${p+k} style=${{textAlign:"right"}} className=${closed?"":"muted"}>${closed?pct(r[k]/r.n,1):"pending"}</td>`)]:[1,2,3,4].map(i=>html`<td key=${p+i}>—</td>`); })}</tr>`)}</tbody></table></div>
+          <div className="small muted" style=${{marginTop:8}}>A cohort's rates show once its 14-day window has closed in the data.</div>`:html`<${BQState} q=${coh}/>`}
+        <${Source}>backend cohorts<//></div>
+      <div className="panel"><div className="panel-h"><h2>Deposits by currency</h2><span className="grow"></span><span className="label-data">Data</span></div>
+        ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"bar",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"SAR",data:r45.map(x=>x.dep_sar),backgroundColor:"#22c38e",borderRadius:3},{label:"USD",data:r45.map(x=>x.dep_usd),backgroundColor:"#7f8cff",borderRadius:3}]},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>fmtSAR(v)}}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>Amounts in their own currency. They are never added together.</div>`:html`<${BQState} q=${daily}/>`}<${Source}>backend · deposit_success<//></div>
+      <div className="panel"><div className="panel-h"><h2>KYC and identity verification</h2><span className="grow"></span><span className="label-data">Data</span></div>
+        ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"identity_verified",data:r45.map(x=>x.idv),borderColor:"#7f8cff",pointRadius:0,tension:.3},{label:"kyc_completed",data:r45.map(x=>x.kyc),borderColor:"#3A9AF4",pointRadius:0,tension:.3},{label:"registration_completed",data:r45.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3}]},options:{scales:{x:gridX,y:gridY}}}}/>`:html`<${BQState} q=${daily}/>`}<${Source}>backend events<//></div>
+      <div className="panel span2"><div className="panel-h"><h2>Google Ads</h2><span className="grow"></span><${Fresh} q=${ads}/><span className="label-data">Google Ads</span></div>
+        ${ads.status==="ok"||ads.status==="stale"?html`<div className="grid g4" style=${{marginBottom:12}}>
+            ${[["Spend","spend",v=>fmtSAR(v)+" SAR"],["Clicks","clicks",fmtN],["Impressions","impr",fmtN],["Claimed conversions","conv",fmtN]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}, last 7 days</div><div style=${{fontSize:20,fontWeight:600}}>${f(ad.slice(-7).reduce((s,x)=>s+(x[k]||0),0))}</div></div>`)}</div>
+          <${ChartC} small=${true} config=${{data:{labels:ad.map(x=>x.d.slice(5)),datasets:[{type:"bar",label:"Spend (SAR)",data:ad.map(x=>x.spend),backgroundColor:"rgba(58,154,244,.55)",borderRadius:3,yAxisID:"y"},{type:"line",label:"Claimed conversions",data:ad.map(x=>x.conv),borderColor:"#f2b136",pointRadius:2,yAxisID:"y1"}]},options:{scales:{x:gridX,y:gridY,y1:{...gridY,position:"right",grid:{display:false}}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>Claimed conversions are Google's count and include a GA4-imported KYC action that GA4 double-counts (tqa-016). History starts ${ad[0]?ad[0].d:"—"}.</div>`:html`<${BQState} q=${ads} label="Google Ads"/>`}
+        <${Source}>google_ads transfer · customer 3343082801<//></div>
+    </div></div>`;
+}
+
+/* ======================================================================
+   Event quality
+   ====================================================================== */
+function QualityView({ctx}){
+  const del=useBQ("delivery",SQL.delivery);
+  const issues=ctx.issuesQ.docs; const [show,setShow]=useState("open"); const [open,setOpen]=useState(null);
+  const list=issues.filter(i=>show==="all"||(show==="open"?i.status!=="resolved":i.status==="resolved"));
+  const sev=["high","med","low"];
+  const weeks=[...new Set((del.rows||[]).map(r=>r.wk))].sort();
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Event quality & monitoring</h1><p>Issues come from the tracking-health agent. Delivery health is queried live from the backend's own delivery log.</p></div>
+      <div className="seg">${[["open","Open"],["resolved","Resolved"],["all","All"]].map(([k,l])=>html`<button key=${k} className=${show===k?"on":""} onClick=${()=>setShow(k)}>${l}</button>`)}</div></div>
+    <div className="grid g3" style=${{marginBottom:14}}>
+      ${sev.map(s=>{ const L=list.filter(i=>(i.severity||"low")===s); return html`<div className="panel" key=${s}><div className="panel-h"><h2>${s==="high"?"High":s==="med"?"Medium":"Low"}</h2><span className="badge">${L.length}</span></div>
+        <div className="grid" style=${{gap:8}}>${L.map(i=>html`<div key=${i.id} className=${"issue sev-"+s} onClick=${()=>setOpen(open===i.id?null:i.id)} tabIndex="0">
+          <div style=${{display:"flex",gap:8,alignItems:"center"}}><b className="mono">${i.id}</b>${i.escalated?html`<span className="st st-failed">Escalated</span>`:null}<span className="grow" style=${{flex:1}}></span><span className="small muted">${i.owner||""}</span></div>
+          <div className="small" style=${{marginTop:4}}>${i.title||String(i.what||"").slice(0,140)}</div>
+          ${open===i.id?html`<div className="small muted" style=${{marginTop:8,whiteSpace:"pre-wrap"}}>${i.what}${i.latest?"\n\nLatest: "+i.latest:""}${i.next_check?"\n\nNext check: "+i.next_check:""}</div>`:null}
+        </div>`)}${!L.length&&html`<div className="muted small">None.</div>`}</div></div>`; })}
+    </div>
+    <div className="grid g2">
+      <div className="panel span2"><div className="panel-h"><h2>GA4 delivery health: events sent without a client ID</h2><span className="grow"></span><${Fresh} q=${del}/><span className="label-data">Data</span></div>
+        ${del.status==="ok"||del.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:weeks,datasets:["web","ios","android"].map((p,i)=>({label:p,data:weeks.map(w=>{const r=(del.rows||[]).find(x=>x.wk===w&&x.platform===p); return r?+(r.degraded/r.n*100).toFixed(1):null;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i],tension:.25,pointRadius:3}))},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>v+"%"}}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>Share of backend events delivered to GA4 as "degraded" each week. Web stepped up in the week of 26 Oct (tqa-013). The latest week may be partial.</div>`:html`<${BQState} q=${del}/>`}
+        <${Source}>backend · mi_analytics_event_deliveries<//></div>
+    </div></div>`;
+}
+
+/* ======================================================================
+   Reports
+   ====================================================================== */
+function ReportsView({ctx}){
+  const reps=ctx.reportsQ.docs; const [sel,setSel]=useState(()=>window.__openReport||null);
+  useEffect(()=>{ window.__openReport=null; },[]);
+  const r=reps.find(x=>x.id===sel)||reps[0];
+  const daily=useBQ("daily",SQL.daily); const rows=daily.rows||[]; const end=rows.length?addDays(rows[rows.length-1].d,-1):null;
+  const wk=k=>end?sumRange(rows,k,addDays(end,-6),end):null, pwk=k=>end?sumRange(rows,k,addDays(end,-13),addDays(end,-7)):null;
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Reports & business insights</h1><p><span className="label-data">Data</span> marks numbers queried from a source. <span className="label-ai">AI-generated</span> marks an agent's interpretation or recommendation, which a named person reviews before acting on it.</p></div></div>
+    <div className="panel" style=${{marginBottom:14}}><div className="panel-h"><h2>Key business metrics, last 7 complete days</h2><span className="grow"></span><span className="label-data">Data</span></div>
+      ${daily.status==="ok"||daily.status==="stale"?html`<div className="grid g4">${[["Registrations","reg"],["KYC completed","kyc"],["Deposits","dep"],["First investments","first_inv"],["Investments","inv"],["Auto-invest enabled","ai_on"],["Deposit volume (SAR)","dep_sar",fmtSAR],["Investment volume (SAR)","inv_sar",fmtSAR]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}</div><div style=${{display:"flex",gap:8,alignItems:"baseline"}}><b style=${{fontSize:20}}>${(f||fmtN)(wk(k))}</b><${Delta} cur=${wk(k)} prev=${pwk(k)}/></div></div>`)}</div>
+      <div className="small muted" style=${{marginTop:8}}>${end?`${addDays(end,-6)} to ${end}, against the 7 days before.`:""}</div>`:html`<${BQState} q=${daily}/>`}</div>
+    <div className="grid" style=${{gridTemplateColumns:"minmax(220px,300px) 1fr",gap:14}}>
+      <div className="panel"><div className="panel-h"><h2>Reports</h2></div><div className="grid" style=${{gap:6}}>
+        ${reps.map(x=>html`<button key=${x.id} className="btn" style=${{justifyContent:"flex-start",textAlign:"left",whiteSpace:"normal",borderColor:r&&r.id===x.id?"var(--brand-2)":null}} onClick=${()=>setSel(x.id)}>
+          <span><b style=${{display:"block"}}>${x.title}</b><span className="small muted">${x.week||""} · ${x.loop||""}</span></span></button>`)}
+        ${!reps.length&&html`<div className="muted small">${ctx.reportsQ.loading?"Loading…":"No reports yet."}</div>`}</div></div>
+      <div className="panel">${r?html`<div>
+        <div style=${{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap",marginBottom:10}}><h2 style=${{flex:1}}>${r.title}</h2>${r.verdict?html`<span className=${"st "+(/ESCAL/i.test(r.verdict)?"st-failed":/ISSUE/i.test(r.verdict)?"st-waiting":"st-completed")}>${r.verdict}</span>`:null}</div>
+        ${r.findings&&r.findings.length?html`<div style=${{marginBottom:14}}><div style=${{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><h3>Key findings</h3><span className="label-data">Data (observed)</span></div><ul className="small">${r.findings.map((f,i)=>html`<li key=${i}>${f}</li>`)}</ul></div>`:null}
+        ${r.insights&&r.insights.length?html`<div style=${{marginBottom:14}}><div style=${{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><h3>Insights</h3><span className="label-ai">AI-generated</span></div><ul className="small">${r.insights.map((f,i)=>html`<li key=${i}>${f}</li>`)}</ul></div>`:null}
+        ${r.actions&&r.actions.length?html`<div style=${{marginBottom:14}}><div style=${{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><h3>Recommended actions</h3><span className="label-ai">AI-generated · needs human approval</span></div><ul className="small">${r.actions.map((f,i)=>html`<li key=${i}>${f}</li>`)}</ul></div>`:null}
+        <details open=${!(r.findings&&r.findings.length)}><summary className="small muted" style=${{cursor:"pointer",marginBottom:8}}>Full report (agent-written; findings marked O = observed, I = inferred)</summary>
+          <div className="md" dangerouslySetInnerHTML=${{__html:mdToHtml(r.markdown)}}></div></details>
+        <div className="small muted" style=${{marginTop:10}}>Source file: <code className="mono">${r.path||"—"}</code></div></div>`:html`<div className="empty">Pick a report.</div>`}</div>
+    </div></div>`;
+}
+
+/* ======================================================================
+   Agent configuration (read-only)
+   ====================================================================== */
+function ConfigView({ctx}){
+  const agents=ctx.agentsQ.docs;
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Agent configuration</h1><p>Read-only view of each agent's specification. Changes are made in the skill files in the repo (<code className="mono">.claude/skills/&lt;agent&gt;/SKILL.md</code>) and reviewed like code.</p></div></div>
+    <div className="grid g2">${agents.map((a,i)=>html`<div className="panel" key=${a.id}>
+      <div className="panel-h"><span className="av" style=${{width:30,height:30,borderRadius:8,display:"grid",placeItems:"center",background:ACCENTS[i%7]+"22",color:ACCENTS[i%7]}}><${Icon} name=${a.icon||"Bot"} size=${16}/></span><h2>${a.label}</h2><span className="grow"></span><span className="mono muted">${a.id}</span></div>
+      <dl className="kv"><dt>Cadence</dt><dd>${a.cadence}</dd><dt>Acts when</dt><dd>${a.acts_when}</dd><dt>Depends on</dt><dd>${(a.depends_on||[]).join(", ")||"—"}</dd><dt>State</dt><dd className="mono">${a.state_file}</dd><dt>Skill</dt><dd className="mono">${a.skill_path}</dd></dl>
+      <h3 style=${{margin:"12px 0 6px"}}>Steps</h3><ol className="small" style=${{margin:0,paddingLeft:18}}>${(a.steps||[]).map((s,j)=>html`<li key=${j}>${s}</li>`)}</ol>
+    </div>`)}</div>
+    ${!agents.length&&html`<div className="empty">No agent registry loaded.</div>`}</div>`;
+}
+
+/* ======================================================================
+   System settings
+   ====================================================================== */
+function SystemView({ctx}){
+  const f=ctx.fresh; const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Riyadh"});
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>System settings</h1><p>Where the data comes from, how fresh it is, and the rules every agent follows.</p></div></div>
+    <div className="grid g2">
+      <div className="panel"><div className="panel-h"><h2>Data freshness</h2><span className="grow"></span><${Fresh} q=${f}/></div>
+        ${f.status==="ok"||f.status==="stale"?html`<table><thead><tr><th>Source</th><th>Latest day</th><th>Age</th></tr></thead><tbody>
+          ${(f.rows||[]).map(r=>{ const age=r.latest_date?Math.round((Date.parse(today)-Date.parse(r.latest_date))/864e5):null; return html`<tr key=${r.source}><td>${r.source}</td><td className="mono">${r.latest_date||"—"}</td><td><span className=${"st "+(age==null?"st-idle":age>8?"st-failed":age>3?"st-waiting":"st-completed")}>${age==null?"—":age+" d"}</span></td></tr>`; })}
+          <tr><td>Singular</td><td colSpan="2"><span className="st st-idle">Not configured (not in BigQuery)</span></td></tr>
+          <tr><td>Meta · TikTok · Snapchat · X</td><td colSpan="2"><span className="st st-idle">Not configured</span></td></tr>
+          <tr><td>Warehouse layer (gold)</td><td colSpan="2"><span className="st st-failed">Suspended: shows staging data (tqa-012)</span></td></tr></tbody></table>`:html`<${BQState} q=${f}/>`}</div>
+      <div className="panel"><div className="panel-h"><h2>Environment</h2></div><dl className="kv">
+        <dt>Mode</dt><dd>Local, on demand. Agents run in the Claude project chat.</dd><dt>BigQuery</dt><dd className="mono">databases-472111</dd>
+        <dt>Region</dt><dd>me-central2 (Dammam, Saudi Arabia) only</dd><dt>Access</dt><dd>Read-only queries; aggregated results only</dd>
+        <dt>Conversion truth</dt><dd className="mono">manafa_financing.mi_analytics_events</dd><dt>Timezone</dt><dd>Asia/Riyadh, ISO weeks</dd></dl></div>
+      <div className="panel"><div className="panel-h"><h2>Compliance (SAMA / PDPL)</h2></div><ul className="small" style=${{margin:0,paddingLeft:18}}>
+        <li>No personal data in queries, state, logs, reports or this page.</li><li>Customer tables (silver, curated, staging) are never queried.</li>
+        <li>Everything here is decision support; spend, customer-facing and regulatory actions need a named person's approval.</li><li>Agents never change budgets, bids, campaigns, tracking or live ads.</li></ul></div>
+      <div className="panel"><div className="panel-h"><h2>Deploy phase (not active yet)</h2></div><ul className="small" style=${{margin:0,paddingLeft:18}}>
+        <li>marketing_mart dataset + read-only service account</li><li>GitHub remote and scheduled runs</li><li>#marketing-loops Slack channel</li><li>Raw GA4 export, backfills, Singular and social spend in BigQuery</li></ul></div>
+    </div></div>`;
+}
+
+const st=document.createElement("style"); st.textContent="@keyframes draw{to{stroke-dashoffset:0}}"; document.head.appendChild(st);
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+</script>
+</body>
+</html>
