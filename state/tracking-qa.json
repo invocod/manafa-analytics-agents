@@ -127,7 +127,7 @@
     "meta": "not configured",
     "tiktok": "not configured",
     "snapchat": "not configured",
-    "backend_bigquery": "planned — not integrated yet",
+    "backend_bigquery": "connected 2026-11-16: databases-472111 / me-central2. mi_analytics_events replica through 2026-11-12; GA4+Google Ads transfers from 2026-11-06/07. Not yet validated by a QA run",
     "ga4_event_standard": "v2.1 (2026-10-27) loaded 2026-11-12 from user; machine-readable copy context/ga4-event-standard-v2.1.csv"
   },
   "pending_checks": [

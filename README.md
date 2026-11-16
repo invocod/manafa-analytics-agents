@@ -31,7 +31,7 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 - [x] Context docs filled (2026-11-11): KYC event `kyc_completed`, ads optimize on registration, no formal targets (loops baseline on trailing 8-week medians), no hard spend cap (pacing alerts), Slack `#marketing-loops`
 - [x] Data sources set (2026-11-11): **GA4 + Singular + Google Ads via CSV drops** into `data/exports/ga4|singular|google-ads/`; GA4 key events serve as the interim conversion ledger until **BigQuery** integration lands and becomes backend truth
 - [ ] Create `#marketing-loops` in Slack and invite the team
-- [ ] BigQuery integration (replaces the GA4 interim ledger — update `context/data-sources.md` + `CLAUDE.md` when it lands)
+- [x] BigQuery connected (2026-11-16): `databases-472111`, me-central2 (Saudi) only. Backend ledger + GA4 + Google Ads transfers. Remaining work: backfill the transfers, validate backend counts in tracking-QA, Singular → BigQuery
 - [ ] Open items the first runs will settle: reg→deposit lag (funnel-health measures p75), GA4 custom channel group existence (tracking-qa checks)
 - [ ] (When moving to APIs/scheduling) secrets on the Claude cloud environment: `GA4_SERVICE_ACCOUNT_JSON`, `GA4_PROPERTY_ID`, `SINGULAR_API_KEY`, or BigQuery credentials
 - [ ] Attach the **Slack connector** to each routine at claude.ai/code/routines (give it the marketing channel)

@@ -14,7 +14,9 @@ Manafa is a Saudi investment/crowdfunding platform (CMA-regulated). The marketin
 
 These events were deliberately moved server-side ("fire on confirmed success, not the submit click"). Platform-side numbers (GA4, Google Ads, Meta, TikTok, Snapchat, Singular) are *explanations of where those conversions came from* — they never redefine how many there were.
 
-**Interim data (until BigQuery lands):** direct backend access doesn't exist yet. Active sources are GA4, Singular and Google Ads, all CSV (details in `context/data-sources.md`). There is **no single interim ledger**: GA4 and Singular each report their own counts in their own section (see "Source separation" below). When BigQuery lands, backend counts get their own section and become the conversion truth.
+**BigQuery connected 2026-11-16:** project `databases-472111`, region **`me-central2` (Saudi Arabia) only — never query, store or export Manafa data in any other region**. Backend truth = `manafa_financing.mi_analytics_events` (aggregates only). Table map and open items are in `context/data-sources.md` §4. Until one tracking-QA run validates it, the CSV rules below still apply and BigQuery backend counts are reported in their own "Backend" section.
+
+**Interim data (pre-BigQuery rules, still in force during validation):** direct backend access didn't exist before 2026-11-16. Active sources are GA4, Singular and Google Ads, all CSV (details in `context/data-sources.md`). There is **no single interim ledger**: GA4 and Singular each report their own counts in their own section (see "Source separation" below). When BigQuery lands, backend counts get their own section and become the conversion truth.
 
 ## Operating rules (apply to every loop)
 
