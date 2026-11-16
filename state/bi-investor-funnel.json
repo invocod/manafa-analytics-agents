@@ -178,8 +178,9 @@
       "id": "wf-01",
       "added": "2026-11-16",
       "metric": "iOS deposit/investment 7d",
-      "note": "W44 iOS dep 14.6% vs 9.0-9.8%, inv 7.4% vs 3.6-5.9%; driver Apple Pay first deposits (42 vs ~23/wk). Confirm on 14d when data reaches 2026-11-15; ask product what shipped on iOS late Oct",
-      "review_on": "next run with data_end >= 2026-11-15"
+      "note": "W44 iOS dep 14.6% vs 9.0-9.8%, inv 7.4% vs 3.6-5.9%; driver Apple Pay first deposits (42 vs ~23/wk). Confirm on 14d when data reaches 2026-11-15; ask product/marketing what changed for iOS Apple Pay deposits in late Oct",
+      "review_on": "next run with data_end >= 2026-11-15",
+      "correction_2026_11_16": "payment_method change is a backend change on all platforms (tqa-017), not an iOS release; iOS Apple Pay deposit uplift stands, cause unknown"
     }
   ]
 }

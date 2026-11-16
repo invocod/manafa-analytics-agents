@@ -120,7 +120,8 @@
       "status": "open",
       "owner_suggestion": "data engineering (DWH)",
       "confirming_check": "source connection of gold build (etl_logs / pipeline config)",
-      "impact": "loops must not use gold/reporting/dashboard_views/sama_mart; compliance review if SAMA reporting reads them"
+      "impact": "loops must not use gold/reporting/dashboard_views/sama_mart; compliance review if SAMA reporting reads them",
+      "update_2026_11_16b": "Re-checked after gold rebuild 2026-11-16 15:30 UTC: unchanged (W of Nov 2 gold 161/238,000 = staging; prod 4,717/17,448,000; gold max profile 610,975)"
     },
     {
       "id": "tqa-013",
@@ -157,6 +158,15 @@
       "status": "open",
       "owner_suggestion": "paid media / analytics",
       "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action"
+    },
+    {
+      "id": "tqa-017",
+      "found": "2026-11-16",
+      "severity": "med",
+      "status": "open",
+      "owner_suggestion": "backend + event-standard owner",
+      "what": "Backend changed investment_completed on 2026-10-26 (mixed day; complete from 10-27), all platforms: payment_method 'opportunities.ewallet' -> 'wallet'; auto-invest investments were all labelled platform 'web' before (22 Oct: 3,234/3,234) and carry the user's device after. Web investments 6,455 (W43) -> 257 (W44). Investment-event platform splits are not comparable across 26 Oct. payment_method is not a standard v2.1 param for investment_completed.",
+      "confirming_check": "backend changelog for 2026-10-26; decide the intended platform for server-executed (auto-invest) investments; add/remove payment_method in the standard"
     }
   ],
   "baselines": {
@@ -246,11 +256,6 @@
     }
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
-  "inbox": [
-    {
-      "from": "bi-investor-funnel",
-      "date": "2026-11-16",
-      "note": "iOS investment_completed payment_method changed 'opportunities.ewallet' -> 'wallet' between W43 and W44 cohorts: payload change, check against Event Standard v2.1 params"
-    }
-  ]
+  "inbox": [],
+  "last_run": "run-20261116-1651"
 }

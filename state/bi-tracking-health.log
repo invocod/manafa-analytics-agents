@@ -22,3 +22,5 @@
   decision: conversion ledger = prod manafa_financing.mi_analytics_events; gold suspended for all loops until tqa-012 resolved
   decision: kyc_completed is not a new-user step (63% of KYC profiles pre-date the log) — funnel loops must cohort, not ratio
   decision: CSV-era baselines superseded by bigquery_2026_11_16
+2026-11-16T16:53Z  checked=freshness+tqa012+inbox  acted=2  note="no new backend/GA4/Ads data since run-20261116-1530 (other checks not re-run); gold rebuilt 15:30Z but tqa-012 unchanged (escalation stands); filed tqa-017: investment_completed backend change 2026-10-26 (payment_method value; auto-invest platform web->device); corrected bi-investor-funnel iOS-release inference"
+  decision: investment-event platform splits not comparable across 2026-10-26; cohort funnels unaffected

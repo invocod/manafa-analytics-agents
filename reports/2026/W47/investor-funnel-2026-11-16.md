@@ -20,7 +20,7 @@ Marks: **O** = Observed, **I** = Inferred.
 - O: iOS first deposits within 7 days rose to 51 (42 Apple Pay, 7 bank transfer, 2 card), against about 33 a week in W41–W43 (about 23 Apple Pay a week).
 - O: 7 of 26 iOS first investments in W44 were auto-invested (1 in W41–W43 combined).
 - O: iOS first investments switched `payment_method` from `opportunities.ewallet` (W41–W43) to `wallet` (W44): a payload change, passed to bi-tracking-health.
-- I: an iOS release in late October (Apple Pay / auto-invest flow) is a plausible cause. Possibly offering-driven too; not verified.
+- I: ~~an iOS release in late October is a plausible cause~~ **Corrected by bi-tracking-health (run-20261116-1651):** the `payment_method` change was a backend change on all platforms on 26 Oct (tqa-017), not an iOS release. The Apple Pay deposit uplift is real (backend deposits); its cause is unknown, possibly offering-driven.
 - O: the worst leak is unchanged: web KYC 30% vs 85–90% in the apps.
 
 ## Decision
@@ -28,7 +28,7 @@ No new fix proposed: fx-01 (web KYC handoff) is staged and awaiting a product de
 
 ## Watch items
 - Confirm the iOS uplift on the 14-day window when data reaches 2026-11-15 (W44 closes).
-- Ask product what shipped on iOS in late October (Apple Pay, auto-invest).
+- Ask product/marketing what changed for iOS Apple Pay deposits in late October.
 
 ## Not covered
 Channel split of the funnel (backend attribution coverage ~5%, tqa-014); Singular installs (not in BigQuery).
