@@ -1,3 +1,4 @@
+-- ⛔ SUSPENDED 2026-11-16 (tqa-012): gold reflects STAGING, not production. Do not use until resolved.
 -- investor_funnel_cohorts_weekly: Investor signup cohorts by week x channel with step conversion counts. No PII.
 -- READ-ONLY query (local mode). Run with execute_sql_readonly; use as a CTE/subquery and aggregate further.
 -- Same logic as the future marketing_mart view of the same name (sql/marketing_mart/). Aggregated, no PII.

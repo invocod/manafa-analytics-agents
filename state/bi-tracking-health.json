@@ -1,7 +1,7 @@
 {
   "loop": "bi-tracking-health",
-  "cursor": "2026-11-10",
-  "cursor_note": "UTM audit covers the 2026-10-20..2026-11-10 GA4 snapshot. Heartbeat/receipt checks have never run — their first run should NOT skip this window.",
+  "cursor": "2026-11-11",
+  "cursor_note": "First BigQuery run 2026-11-16 (re-baseline). Conversions judged through 2026-11-11 (backend replica partial on 11-12; 72h rule). UTM/naming audited 2026-11-09..15.",
   "open_issues": [
     {
       "id": "tqa-001",
@@ -10,8 +10,9 @@
       "what": "direct/(none) = 78.9% of GA4 sessions — investigated 2026-11-11: mostly structural (74% of sessions are app sessions, which GA4 labels direct); web-only direct ~18-38% of web sessions (Singular: 38.5% of web sessions carry no source)",
       "status": "open",
       "downgraded": "high->low 2026-11-11",
-      "confirming_check": "GA4 explore Recipe A (context/ga4-explore-recipes.md) — awaiting export",
-      "remaining_action": "report web and app separately; recoverable web direct handled by tqa-002/003/004"
+      "confirming_check": "raw GA4 export (platform/stream) in me-central2",
+      "remaining_action": "report web and app separately; recoverable web direct handled by tqa-002/003/004",
+      "update_2026_11_16": "BigQuery transfer W46: Unassigned 40.5% ((not set)/(not set) 16,813) + Direct 45.1% of 41,746 sessions. Transfer lacks platform split; structural app explanation remains Inferred."
     },
     {
       "id": "tqa-002",
@@ -19,21 +20,24 @@
       "severity": "med",
       "what": "paid social invisible in GA4 web but confirmed in app via Singular (ios: tiktok 208, snapchat 160 registrations) — fix web tagging; use Singular as app-acquisition record",
       "status": "open",
-      "confirming_check": "platform spend vs Singular-attributed conversions for same window"
+      "confirming_check": "platform spend vs Singular-attributed conversions for same window",
+      "update_2026_11_16": "W46 GA4: snapchat 3 sessions, tiktok/meta 0; app side unverifiable (Singular not in BigQuery)"
     },
     {
       "id": "tqa-003",
       "found": "2026-11-11",
       "severity": "med",
       "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes",
-      "status": "open"
+      "status": "open",
+      "update_2026_11_16": "persists W46: LinkedIn/Social 85; paid_social medium 140 sessions (linkedin, twitter, snapchat, google_ads)"
     },
     {
       "id": "tqa-004",
       "found": "2026-11-11",
       "severity": "med",
       "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)",
-      "status": "open"
+      "status": "open",
+      "update_2026_11_16": "persists W46: send_message_to_scf_borrower 33, download_app_modal 19, article 9, invite_a_friend, mid_page, x"
     },
     {
       "id": "tqa-005",
@@ -58,14 +62,15 @@
       "what": "registration_completed, kyc_completed (and login_completed, withdrawal_completed, passcode_enabled, bank_account_added) fit an app-side double-fire in GA4: GA4 = 2x Singular app + 1x Singular web within -3.5..+9.4%, vs -37..-50% with no doubling. GA4-internal: withdrawal_completed 6,795 > withdrawal_started 3,703 (~2x withdrawal_settled); kyc_completed 2,960 > kyc_started 1,744. Money events (deposit_success, investment_completed, withdrawal_settled) not doubled. Impact: interim ledger overstates reg ~1.6x, kyc ~1.9x; Google Ads may be bidding on doubled app registrations if it imports this event",
       "status": "open",
       "stability_check_2026-11-11": "gap steady across periods (Singular/GA4, prior 15d -> week Nov 4-10): reg 0.65->0.60, kyc 0.53->0.53, dep 0.98->1.05 — a persistent structural gap, not a recent break. Investments 0.96->0.84 for the week, likely the 1-day window offset (Singular ends Nov 9; Mon/Tue volumes ~1,000/day) + trailing-72h; recheck with matched dates, no alert",
-      "confirming_check": "Backend team: (1) do these six and the money events use the same GA4 sender; (2) for app users which stream/identifiers are used, ever more than one; (3) can any of the six be emitted twice per action (listeners, retries, two endpoints); (4) does Singular get them from the same code path. Data: GA4 Explore Recipe B (event x stream name x platform, event count vs total users) — doubled events on the web stream or ~2 events per user would settle (a) vs (b); add app version to rule out (c).",
+      "confirming_check": "Singular > Partner configuration > GA4 event mapping: doubled events mapped, money events not",
       "upgraded": "med->high 2026-11-11 (event health check)",
       "escalated": "2026-11-11 to user (Slack channel not yet created)",
       "interim_handling": "GA4 section shows GA4's own registration/KYC counts flagged with tqa-007; Singular section shows Singular's own counts. Never substitute or blend one for the other (source-separation rule, 2026-11-11; supersedes the earlier 'quote from Singular' note). GA4 money events unaffected",
       "bidding_impact_check": "chk-06-ads-conversion-actions",
       "hypothesis_2026-11-12": "REJECTED 2026-11-12 by team reply (app no longer fires these). Kept for history: half-finished P5 migration, client still firing.",
       "team_reply_2026-11-12": "Reported (mobile team via Amir): all legacy events removed from the mobile app; registration_completed, kyc_completed, login_completed, withdrawal_completed, passcode_enabled, bank_account_added are fired from the backend only.",
-      "hypothesis_v2_2026-11-12": "Inferred: the doubling happens in the backend's GA4 sending, and only for these events. Evidence (Observed, GA4): it is event-specific, not dispatch-wide — withdrawal_completed is ~2x withdrawal_settled (1,774 vs 933 in Nov 4-10) although both are backend events for the same withdrawals; deposit_success and investment_completed are not doubled. Ratios hold in the clean Nov 4-10 week (kyc_completed/kyc_started 1.65, withdrawal_completed/withdrawal_started 1.86), so they are not a window artifact. Also login_completed exceeds session_start 1.39x. Candidates: (a) the account/identity events go through a different GA4 sender than the money events, which sends app users' events twice (e.g. to both the app stream and the web stream, or once with app_instance_id and once with client_id); (b) these events are emitted at two points (two listeners, queue retries without idempotency, two endpoints the app calls). Less likely: (c) intermediate app versions still in use fire client copies under the new names."
+      "hypothesis_v2_2026-11-12": "Inferred: the doubling happens in the backend's GA4 sending, and only for these events. Evidence (Observed, GA4): it is event-specific, not dispatch-wide — withdrawal_completed is ~2x withdrawal_settled (1,774 vs 933 in Nov 4-10) although both are backend events for the same withdrawals; deposit_success and investment_completed are not doubled. Ratios hold in the clean Nov 4-10 week (kyc_completed/kyc_started 1.65, withdrawal_completed/withdrawal_started 1.86), so they are not a window artifact. Also login_completed exceeds session_start 1.39x. Candidates: (a) the account/identity events go through a different GA4 sender than the money events, which sends app users' events twice (e.g. to both the app stream and the web stream, or once with app_instance_id and once with client_id); (b) these events are emitted at two points (two listeners, queue retries without idempotency, two endpoints the app calls). Less likely: (c) intermediate app versions still in use fire client copies under the new names.",
+      "update_2026_11_16": "BigQuery backend truth: GA4/sent-OK = login 1.87, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.02, bank_account_added 1.80, identity_verified 1.38; money events 0.99-1.01. Backend logs exactly 1 GA4 delivery per event (0 multi-sends / 23,098) -> backend dispatcher is NOT the double sender. Leading hypothesis (Inferred): Singular->GA4 partner forwarding of mapped events."
     },
     {
       "id": "tqa-008",
@@ -84,7 +89,8 @@
       "confirming_check": "Explore event name x app version: legacy names only on versions before the removal release; close when legacy volume < 1% of app events or old versions are force-updated",
       "progress_2026-11-12": "Against Event Standard v2.1, Oct 20-Nov 10: of 41 rename/P5 events, 14 fully renamed, 23 still fire the legacy name alongside the new one, 4 not live (B2B lead events). Legacy names = 5.6% of that volume (4.2% in Nov 4-10). Largest: app_view_page_viewed+public_app_view_page_viewed 10,291 vs application_view 9,917 (half still on old names); Logged_in 5,430; Investment_Made 489; Withdrawal_Success 407. Names on the standard's Remove list still firing: User_launches_the_app 7,358, Transaction_View 3,110, 6 others 51. QA_* events: none live.",
       "team_reply_2026-11-12": "Reported: all legacy events removed from the mobile app (current release).",
-      "residual_2026-11-12": "Observed: legacy app names still arrive — 1,124/day in Nov 4-10 vs 1,603/day over Oct 20-Nov 10 (-30%); top: app_view_page_viewed 2,062/wk, Opportunity_Details_View 1,341, Logged_in 1,208. Remove-list names 350/day (User_launches_the_app 1,706/wk, Transaction_View 733). Inferred: users on older app versions that predate the removal; should keep fading as they update. Web legacy names also still fire (7/day: phone_number_page_viewed, nid_page_viewed, nafath_page_viewed) — that's the web team, not mobile."
+      "residual_2026-11-12": "Observed: legacy app names still arrive — 1,124/day in Nov 4-10 vs 1,603/day over Oct 20-Nov 10 (-30%); top: app_view_page_viewed 2,062/wk, Opportunity_Details_View 1,341, Logged_in 1,208. Remove-list names 350/day (User_launches_the_app 1,706/wk, Transaction_View 733). Inferred: users on older app versions that predate the removal; should keep fading as they update. Web legacy names also still fire (7/day: phone_number_page_viewed, nid_page_viewed, nafath_page_viewed) — that's the web team, not mobile.",
+      "update_2026_11_16": "improving: legacy names 1.2% of W46 events (7,318); User_launches_the_app 1,517/wk (was ~2.4k); Withdrawal_Click=Withdrawal_Success 98=98 persists"
     },
     {
       "id": "tqa-010",
@@ -102,7 +108,55 @@
       "what": "17 live GA4 event names are not in Event Standard v2.1 (20,713 events Oct 20-Nov 10): passcode_submitted 11,622, withdrawal_settled 3,543, create_passcode_page_viewed 2,476, create_passcode_page_back 1,318, lead_submitted 760, passcode_remind_later 650, nine w2a_* web-to-app funnel events (324), referral_reward_earned 16, bank_account_approved 3, investor_lead_created 1. withdrawal_settled is a confirmed-money event with no owner or parameter spec in the standard",
       "status": "open",
       "owner_suggestion": "standard owner (Engineering — Analytics Architecture): add to v2.2 with owner/params, or retire",
-      "confirming_check": "next standard version lists each name, or the name stops firing"
+      "confirming_check": "next standard version lists each name, or the name stops firing",
+      "update_2026_11_16": "W46: 15 names / 9,120 events (1.4%) not in standard; top passcode_submitted 6,712, withdrawal_settled 1,058"
+    },
+    {
+      "id": "tqa-012",
+      "found": "2026-11-16",
+      "severity": "high",
+      "escalated": true,
+      "what": "gold DWH layer reflects STAGING since ~2026-10-19: gold.fact_investment W of Nov 2 = 161 inv / 238,000 SAR = stg_staging_financing exactly; prod manafa_financing = 4,717 / 17,448,000 SAR. gold max profile 610,975 ~ staging 610,979; 0 of 2,790 prod registrants (Oct 12-Nov 8) in gold.",
+      "status": "open",
+      "owner_suggestion": "data engineering (DWH)",
+      "confirming_check": "source connection of gold build (etl_logs / pipeline config)",
+      "impact": "loops must not use gold/reporting/dashboard_views/sama_mart; compliance review if SAMA reporting reads them"
+    },
+    {
+      "id": "tqa-013",
+      "found": "2026-11-16",
+      "severity": "med",
+      "what": "web backend events reaching GA4 without client_id (degraded no_ga_client_id): ~44% -> 64% from week of Oct 26; Nov 6-11 identity_verified 74%, auto_invest_enabled 61%, kyc 55% degraded; degraded sends are absent from GA4",
+      "status": "open",
+      "owner_suggestion": "web frontend + backend",
+      "confirming_check": "deploys around 2026-10-26; GA client_id handoff from web to backend"
+    },
+    {
+      "id": "tqa-014",
+      "found": "2026-11-16",
+      "severity": "med",
+      "what": "backend events carry acquisition attribution (attribution.acquisition_source) on ~4-6% of registrations and ~1% of deposits -> backend ledger cannot attribute channels/campaigns",
+      "status": "open",
+      "owner_suggestion": "backend",
+      "confirming_check": "where/when attribution JSON is populated per platform"
+    },
+    {
+      "id": "tqa-015",
+      "found": "2026-11-16",
+      "severity": "low",
+      "what": "dev/preview traffic in prod GA4: 202 distinct 127.0.0.1:<port> referrers, *.netlify.app previews, tagassistant.google.com = 242 sessions W46",
+      "status": "open",
+      "owner_suggestion": "web",
+      "confirming_check": "internal/developer traffic filter active; dev builds not using prod measurement ID"
+    },
+    {
+      "id": "tqa-016",
+      "found": "2026-11-16",
+      "severity": "med",
+      "what": "Google Ads Conversions (Primary-only metric) include GA4-imported Android kyc_completed (110, Nov 7-12) which GA4 doubles (tqa-007); no registration_completed action present, contradicting context doc",
+      "status": "open",
+      "owner_suggestion": "paid media / analytics",
+      "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action"
     }
   ],
   "baselines": {
@@ -118,25 +172,57 @@
       "deposit_success": 1.0,
       "note": "full platform coverage incl. iOS, windows offset 1 day"
     },
-    "claim_ratio_note_2026-11-11": "identity events fit app x2 double-fire model; compare reg/kyc against Singular until tqa-007 is fixed"
+    "claim_ratio_note_2026-11-11": "identity events fit app x2 double-fire model; compare reg/kyc against Singular until tqa-007 is fixed",
+    "bigquery_2026_11_16": {
+      "heartbeat_window": "2026-10-02..2026-11-08 same-weekday (5 priors)",
+      "backend_week_2026_11_02": {
+        "registration_completed": 634,
+        "kyc_completed": 1118,
+        "deposit_success": 646,
+        "investment_completed": 4717
+      },
+      "ga4_over_backend_sent_ok": {
+        "login_completed": 1.87,
+        "withdrawal_completed": 1.88,
+        "kyc_completed": 1.84,
+        "registration_completed": 1.71,
+        "passcode_enabled": 2.02,
+        "bank_account_added": 1.8,
+        "identity_verified": 1.38,
+        "investment_completed": 1.0,
+        "deposit_success": 0.99,
+        "withdrawal_settled": 0.99,
+        "auto_invest_enabled": 1.01
+      },
+      "ga4_degraded_share_web": 0.632,
+      "ga4_degraded_share_ios": 0.052,
+      "ga4_degraded_share_android": 0.041,
+      "unassigned_share": 0.405,
+      "direct_share": 0.451,
+      "naming_share": {
+        "standard": 0.972,
+        "legacy": 0.012,
+        "not_in_standard": 0.014,
+        "remove_list_events": 1563
+      }
+    },
+    "csv_era_superseded": "2026-11-16: CSV-era baselines kept for history only; do not compare BigQuery numbers against them"
   },
   "source_status_last_run": {
-    "ga4_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
-    "singular_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
-    "google_ads_csv": "ignored: CSVs retired 2026-11-16 (BigQuery only)",
-    "meta": "not configured",
-    "tiktok": "not configured",
-    "snapchat": "not configured",
-    "backend_bigquery": "sole source of truth since 2026-11-16: databases-472111 / me-central2. mi_analytics_events replica through 2026-11-12; GA4+Google Ads transfers from 2026-11-06/07. First BigQuery QA run pending",
-    "ga4_event_standard": "v2.1 (2026-10-27) loaded 2026-11-12 from user; machine-readable copy context/ga4-event-standard-v2.1.csv",
-    "singular": "not configured until it lands in BigQuery (me-central2)"
+    "backend_prod": "manafa_financing.mi_analytics_events — complete through 2026-11-11 (11-12 partial)",
+    "gold": "SUSPENDED (tqa-012: reflects staging)",
+    "ga4_transfer": "2026-11-06..15, no platform/stream split",
+    "google_ads_transfer": "2026-11-07..15",
+    "singular": "not configured (not in BigQuery)",
+    "meta_tiktok_snapchat": "not configured",
+    "csv": "ignored"
   },
   "pending_checks": [
     {
       "id": "chk-06-ads-conversion-actions",
       "added": "2026-11-12",
       "playbook": "context/playbooks/google-ads-conversion-audit.md",
-      "status": "unknown — awaiting export",
+      "status": "partial 2026-11-16 — action names/volumes from BigQuery transfer (tqa-016); Primary flags still need Conversions > Summary",
       "needs": [
         "Google Ads Goals > Conversions > Summary (all actions, CSV)",
         "campaigns segmented by conversion action, last 4 closed weeks",
