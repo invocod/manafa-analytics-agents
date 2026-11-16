@@ -2,5 +2,32 @@
   "loop": "bi-campaign-health",
   "completed": [],
   "pending_lag": [],
-  "note": "created 2026-11-16; campaign attribution limited by tqa-014"
+  "note": "created 2026-11-16; campaign attribution limited by tqa-014",
+  "blocked": [
+    {
+      "campaign": "national_day_96",
+      "concluded": "~2026-10-04",
+      "found": "2026-11-16",
+      "blockers": [
+        "goals not on record",
+        "X/Snapchat spend not in BigQuery",
+        "backend attribution coverage ~5% (tqa-014)"
+      ],
+      "floor": {
+        "registrations": 21,
+        "deposits": 12,
+        "investments": 116
+      },
+      "note": "reports/postmortems/national_day_96.md"
+    }
+  ],
+  "active_campaigns_checked": {
+    "date": "2026-11-16",
+    "google_ads_serving": [
+      "Minto | Above 5Mn",
+      "Minto | App promotion - IOS | App installs",
+      "Minto | App installs - Android"
+    ]
+  },
+  "last_run": "run-20261116-1654"
 }

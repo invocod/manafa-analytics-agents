@@ -1,1 +1,3 @@
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-16T16:55Z  checked=40_gads_campaigns+3_backend_campaign_tags  acted=1  note="no campaign ended last week (3 Google Ads campaigns serving); national_day_96 concluded ~early Oct without postmortem: parked as blocked (no goals, no X/Snapchat spend in BigQuery, ~5% attribution); floor 21 reg / 12 dep / 116 inv"
+  decision: no postmortem verdict without spend + goals; re-check when Phase 2 B4 lands
