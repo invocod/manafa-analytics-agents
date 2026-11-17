@@ -1,1 +1,2 @@
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-17T06:05Z  checked=google_ads_3_campaigns_W46  acted=1  note="spend 7,564 SAR; iOS HOLD; Above 5Mn (B2B) INVESTIGATE (unverifiable leads, pacing 258-778/day, UTM naming); Android INVESTIGATE (action table ~2x campaign conv, tqa-016 unresolved); others not configured"

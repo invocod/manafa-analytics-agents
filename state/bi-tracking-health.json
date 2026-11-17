@@ -29,7 +29,8 @@
       "severity": "med",
       "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes",
       "status": "open",
-      "update_2026_11_16": "persists W46: LinkedIn/Social 85; paid_social medium 140 sessions (linkedin, twitter, snapchat, google_ads)"
+      "update_2026_11_16": "persists W46: LinkedIn/Social 85; paid_social medium 140 sessions (linkedin, twitter, snapchat, google_ads)",
+      "update_2026_11_17": "Google Ads Above 5Mn ads use utm_campaign=Minto_Manafa_B2B (uppercase/underscores)"
     },
     {
       "id": "tqa-004",
@@ -157,7 +158,8 @@
       "what": "Google Ads Conversions (Primary-only metric) include GA4-imported Android kyc_completed (110, Nov 7-12) which GA4 doubles (tqa-007); no registration_completed action present, contradicting context doc",
       "status": "open",
       "owner_suggestion": "paid media / analytics",
-      "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action"
+      "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action",
+      "update_2026_11_17": "bi-paid-media-review: ConversionStats action breakdown (323) is ~2x CampaignStats conversions (161) for Android 9-13 Nov, so Primary status of kyc_completed cannot be inferred from transfer data; needs Conversions > Summary"
     },
     {
       "id": "tqa-017",

@@ -1,7 +1,7 @@
 {
   "loop": "bi-paid-media-review",
   "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them).",
-  "cursor": null,
+  "cursor": "2026-W46",
   "accounts": {
     "google_ads": {
       "customer": "3343082801",
@@ -12,12 +12,53 @@
   "weekly_snapshots": {
     "google_ads": {
       "2026-W46": {
-        "spend_sar": 7563.18,
-        "campaigns": 3
+        "spend_sar": 7564,
+        "by_campaign": {
+          "ios_installs": {
+            "spend": 2613,
+            "clicks": 2429,
+            "ctr": 0.0696,
+            "claimed_conv_9_13": 145
+          },
+          "above_5mn_b2b": {
+            "spend": 3693,
+            "clicks": 808,
+            "ctr": 0.0678,
+            "claimed_conv_9_13": 20
+          },
+          "android_installs": {
+            "spend": 1258,
+            "clicks": 1487,
+            "ctr": 0.0131,
+            "claimed_conv_9_13": 161
+          }
+        }
       }
     }
   },
-  "calls": [],
+  "calls": [
+    {
+      "week": "2026-W46",
+      "account": "google_ads",
+      "campaign": "iOS installs",
+      "call": "HOLD"
+    },
+    {
+      "week": "2026-W46",
+      "account": "google_ads",
+      "campaign": "Above 5Mn (B2B)",
+      "call": "INVESTIGATE",
+      "check": "CRM B2B lead count 9-13 Nov vs 20 claimed"
+    },
+    {
+      "week": "2026-W46",
+      "account": "google_ads",
+      "campaign": "Android installs",
+      "call": "INVESTIGATE",
+      "check": "Conversions > Summary Primary flags (tqa-016)"
+    }
+  ],
   "staged_fixes": [],
-  "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)"
+  "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)",
+  "last_run": "run-20261117-0603"
 }
