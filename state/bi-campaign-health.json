@@ -18,16 +18,31 @@
         "deposits": 12,
         "investments": 116
       },
-      "note": "reports/postmortems/national_day_96.md"
+      "note": "reports/postmortems/national_day_96.md",
+      "rechecked": "2026-11-17: still blocked; Singular sheet starts 2026-10-11, after the campaign ended (~4 Oct), so it cannot supply X/Snapchat spend; no new BigQuery dataset"
     }
   ],
   "active_campaigns_checked": {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
+    "run": "run-20261117-1109",
     "google_ads_serving": [
       "Minto | Above 5Mn",
       "Minto | App promotion - IOS | App installs",
       "Minto | App installs - Android"
-    ]
+    ],
+    "google_ads_last_spend": "2026-11-16",
+    "singular_spending_2026-11-16": [
+      "Minto | App promotion | June 2026 (TikTok iOS)",
+      "Minto | Investors | App install (X iOS)"
+    ],
+    "singular_note": "'Minto | App promotion | July 2026' shows only sub-1-SAR residual cost on a few days; not treated as a campaign",
+    "singular_sheet": {
+      "max_date": "2026-11-16",
+      "max_etl_utc": "2026-11-17 10:43:00+00:00",
+      "rows": 671,
+      "duplicate_grain_rows": 0,
+      "currencies": "SAR"
+    }
   },
-  "last_run": "run-20261116-1654"
+  "last_run": "run-20261117-1109"
 }

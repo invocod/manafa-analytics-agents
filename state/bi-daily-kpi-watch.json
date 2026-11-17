@@ -1,6 +1,6 @@
 {
   "loop": "bi-daily-kpi-watch",
-  "cursor": "2026-11-13 (GA4/Ads); 2026-11-11 (backend)",
+  "cursor": "2026-11-14 (GA4/Ads); 2026-11-11 (backend)",
   "cursor_note": "Latest complete Riyadh day checked. Bands provisional (3 weeks of history; loop wants 8).",
   "active_anomalies": [
     {
@@ -327,11 +327,12 @@
         "2026-11-11": 1112.33,
         "2026-11-12": 1115.82,
         "2026-11-13": 816.45,
-        "2026-11-14": 982.62,
-        "2026-11-15": 1319.74,
+        "2026-11-14": 982.41,
+        "2026-11-15": 1320.26,
         "2026-11-16": 1192.38
       },
-      "note": "9 days only; pacing ~1.1k SAR/day weekdays"
+      "note": "9 days only; pacing ~1.1k SAR/day weekdays",
+      "restatement_note": "2026-11-17 11:11Z: Ads restated 11-14 982.62->982.41 and 11-15 1319.74->1320.26 (trailing 72h, not judged)"
     }
   },
   "watch_items": [
@@ -347,5 +348,14 @@
       "review_on": "next run"
     }
   ],
-  "last_run": "run-20261117-0603"
+  "last_run": "run-20261117-1109",
+  "stale_sources": [
+    {
+      "source": "backend replica (manafa_financing.mi_analytics_events)",
+      "latest_day": "2026-11-12 (partial, 445 events)",
+      "latest_complete_day": "2026-11-11",
+      "noted": "2026-11-17",
+      "note": "stale data - no new day since 12 Nov; backend bands not re-checked; owner: data engineering (tracked by bi-tracking-health)"
+    }
+  ]
 }

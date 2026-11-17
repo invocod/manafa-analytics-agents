@@ -161,5 +161,11 @@
   ],
   "staged_fixes": [],
   "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)",
-  "last_run": "run-20261117-1003"
+  "last_run": "run-20261117-1109",
+  "last_checked": {
+    "at": "2026-11-17T11:10Z",
+    "ads_max_date": "2026-11-16",
+    "singular_max_etl_utc": "2026-11-17 10:43:00+00:00",
+    "result": "no new W46 data; calls stand"
+  }
 }

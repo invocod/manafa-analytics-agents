@@ -321,11 +321,11 @@
     }
   },
   "source_status_last_run": {
-    "backend_prod": "complete through 2026-11-11 (12 Nov partial); not advanced since 16 Nov; stale on 2026-11-20",
+    "backend_prod": "complete through 2026-11-11 (12 Nov partial); not advanced since 16 Nov; stale on 2026-11-20 (re-checked 17 Nov 11:10 UTC)",
     "gold": "SUSPENDED (tqa-012; rebuilt 17 Nov, still staging-like)",
     "ga4_transfer": "2026-11-06..16",
     "google_ads_transfer": "2026-11-07..16",
-    "singular_sheet": "2026-10-11..16, checks pass",
+    "singular_sheet": "2026-10-11..16, checks pass (re-pulled 17 Nov 10:43 UTC; cost total 119,516.51 SAR, installs 3,392 / 9,951 — small restatement of recent days)",
     "meta_tiktok_snapchat": "not configured"
   },
   "pending_checks": [
@@ -358,7 +358,7 @@
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261117-0947",
+  "last_run": "run-20261117-1109",
   "jira": {
     "epic": "ISQ-6052",
     "project": "ISQ",

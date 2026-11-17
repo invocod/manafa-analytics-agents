@@ -85,5 +85,32 @@
     "GA4/Ads transfers start ~6 Nov: no week-over-week until backfill",
     "Meta/TikTok/Snapchat platform data not in BigQuery; Singular has no conversion events",
     "GA4 doubles reg/kyc (tqa-007): GA4 conversions unusable as ledger"
-  ]
+  ],
+  "last_run": "run-20261117-1109",
+  "input_fingerprints": {
+    "2026-11-17T11:11Z": {
+      "backend_max": "2026-11-12",
+      "backend_total": 300388,
+      "ga4_max": "2026-11-16",
+      "ga4_sessions_9_14nov": 32927,
+      "ads_max": "2026-11-16",
+      "ads_spend_9_14nov_sar": 6243.23,
+      "singular_max_date": "2026-11-16",
+      "singular_max_etl_utc": "2026-11-17 10:43",
+      "singular_w46_9_14nov": {
+        "AdWords": [
+          7584.36,
+          1579
+        ],
+        "TikTok Ads": [
+          6454.36,
+          159
+        ],
+        "Twitter": [
+          5999.66,
+          null
+        ]
+      }
+    }
+  }
 }
