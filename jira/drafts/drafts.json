@@ -1,0 +1,191 @@
+[
+ {
+  "draft_id": "d-tqa-007",
+  "tqa": [
+   "tqa-007"
+  ],
+  "area": "mobile",
+  "issuetype": "Bug",
+  "priority": "High",
+  "summary": "[App] GA4 counts 6 account events twice — check Singular → GA4 event forwarding",
+  "dev": {
+   "name": "AzibMuzammil",
+   "accountId": "712020:51fb9b58-a539-4130-9391-d2be6467ad7b"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "tqa-007"
+  ],
+  "description": "## Problem\nGA4 receives about twice as many `registration_completed`, `kyc_completed`, `login_completed`, `withdrawal_completed`, `passcode_enabled` and `bank_account_added` events as the backend actually sends. Money events (`deposit_success`, `investment_completed`, `withdrawal_settled`) are **not** doubled.\n\n## Impact\n- Every GA4 report and exploration overstates registrations (~1.7×) and KYC (~1.8×), so funnel conversion rates in GA4 are wrong.\n- Google Ads imports the Android `kyc_completed` key event from GA4 and bids on the doubled count (see tqa-016).\n\n## Evidence (aggregated, BigQuery)\n- GA4 count ÷ backend deliveries marked `succeeded` (week of 9 Nov): login 1.87 · withdrawal_completed 1.88 · kyc_completed 1.84 · registration_completed 1.71 · passcode_enabled 2.02 · bank_account_added 1.80 · identity_verified 1.38 · money events 0.99–1.01.\n- The backend sends **exactly one** GA4 hit per event: 0 multi-sends out of 23,098 deliveries (`mi_analytics_event_deliveries`). The backend's GA4 sender is not the duplicate source.\n- The mobile team confirmed on 12 Nov that the app no longer fires these events client-side.\n- The backend also sends every one of these events to **Singular** (2–11 Nov, e.g. login iOS 18,838, withdrawal_completed iOS 1,073, withdrawal_settled iOS 1,007), in the same proportions as the money events.\n- `withdrawal_completed` is doubled in GA4 but `withdrawal_settled` is not, although the backend sends both to GA4 and Singular the same way. So the duplication is **per event**, which points to a per-event configuration.\n\n## Likely root cause (inferred — please confirm)\n1. **Most likely:** Singular's partner integration with GA4 (Singular → Partner Configuration → Google Analytics 4) has these six events mapped for forwarding. Singular then re-sends them to GA4 on top of the backend's direct send. Money events aren't mapped, so they aren't doubled.\n2. Less likely: an older app version still in use fires these events through the Firebase SDK.\n\n## Where to look\n- Singular dashboard → Partner Configuration → Google Analytics 4 (app and web): the event mapping / postback list. Admin access may sit with marketing.\n- GA4 DebugView on a test device: register or log in once and count `login_completed` hits plus their source (`firebase` SDK vs Measurement Protocol).\n\n## Acceptance criteria\n- Each of the six events reaches GA4 once per backend event: GA4 ÷ backend `succeeded` deliveries is between 0.9 and 1.1 for a full week.\n- Money events are unchanged.\n- Decision recorded: is GA4 fed by the backend directly **or** via Singular, never both?\n\n## How the BI agent will verify\n`bi-tracking-health` compares the weekly GA4 event count with backend `succeeded` deliveries per event. It closes tqa-007 after two clean weeks.\n\n_Filed by the Manafa BI agent (decision support). Report: `reports/2026/W47/tracking-health-2026-11-16.md`._"
+ },
+ {
+  "draft_id": "d-tqa-014-app",
+  "tqa": [
+   "tqa-014"
+  ],
+  "area": "mobile",
+  "issuetype": "Bug",
+  "priority": "High",
+  "summary": "[API][App] App sends no acquisition attribution to the backend at registration (0 of 1,471 app sign-ups)",
+  "dev": {
+   "name": "AzibMuzammil",
+   "accountId": "712020:51fb9b58-a539-4130-9391-d2be6467ad7b"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "attribution",
+   "tqa-014"
+  ],
+  "description": "## Problem\nNo registration made in the iOS or Android app carries acquisition attribution in the backend event (`attribution.acquisition_source/medium/campaign` is empty).\n\n## Impact\nThe backend is the source of truth for registrations, deposits and investments. Without app attribution, Manafa can't tell which channel or campaign (Google Ads, TikTok, X, Snapchat) produced app investors. Deposits and investments inherit the profile's attribution, so they're blind too. App users are ~60% of registrations.\n\n## Evidence (aggregated, 19 Oct – 11 Nov)\n| Platform | registration_completed | with acquisition_source |\n|---|---|---|\n| iOS | 1,120 | **0** |\n| Android | 351 | **0** |\n| Web | 942 | 134 (14%) |\n\nSingular attributes app installs to networks (e.g. 1,738 attributed installs 9–14 Nov), so the attribution exists on the device side. It just never reaches the backend.\n\n## Likely root cause (inferred)\nThe registration API call from the app doesn't include any attribution fields. The app never reads the Singular attribution (or the install referrer / deep-link params) to pass it on.\n\n## Suggested approach\n- On first launch, read the Singular attribution callback (SDK `singularLinksHandler` / deferred deep-link data) and the Android Install Referrer. Store source, medium and campaign locally.\n- Send them with the registration request in the fields the backend expects (align with Khubaib on the contract in the companion [BE] ticket).\n- Organic / unknown installs send an explicit value (e.g. `source=organic`), not nothing, so \"no data\" and \"organic\" can be told apart.\n\n## Acceptance criteria\n- ≥ 80% of new app registrations carry `attribution.acquisition_source` (organic counted explicitly).\n- Values follow `context/utm-convention.md` (lowercase, network names as in Singular).\n\n## How the BI agent will verify\nWeekly coverage of `attribution.acquisition_source` on `registration_completed` by platform (`bi-channel-attribution`).\n\n_Filed by the Manafa BI agent (decision support). Report: `reports/2026/W47/channel-attribution-2026-11-17.md`._"
+ },
+ {
+  "draft_id": "d-tqa-014-be",
+  "tqa": [
+   "tqa-014"
+  ],
+  "area": "backend",
+  "issuetype": "Bug",
+  "priority": "High",
+  "summary": "[BE] Acquisition attribution is stored on only 14% of web registrations and ~1% of deposits/investments",
+  "dev": {
+   "name": "Mohammad Khubaib",
+   "accountId": "62b0783ecebad33432f5e0ce"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "attribution",
+   "tqa-014"
+  ],
+  "description": "## Problem\n`mi_analytics_events.attribution.acquisition_*` is filled on 134 of 942 web registrations (14%) and on 0 app registrations. Deposits and investments carry it only when the profile had it: deposits ~1%, investments ~1.3%.\n\n## Impact\nThe backend ledger can't credit any channel or campaign for registrations, deposits or investments. All channel and ROI reporting falls back to platform claims (GA4, Google Ads, Singular), which the agent may not use to count conversions.\n\n## Evidence (aggregated)\n- 19 Oct – 11 Nov: registration_completed web 134/942 attributed, iOS 0/1,120, Android 0/351. deposit_success 30/2,316 · investment_completed 276/20,857.\n- GA4 shows that about 50% of new web users arrive with a non-direct first source (Organic Search 19%, Performance Max 11%, Paid Search 9%, 9–14 Nov). So far more than 14% of web sign-ups should have a source.\n\n## Likely root cause (inferred)\n1. Web: the backend only stores UTMs present on the request at the registration step. UTMs on the landing page are lost after the user navigates (no first-touch cookie). **May need a web follow-up for Khalid Shabbir:** persist first-touch UTMs, referrer and gclid in a cookie/localStorage and send them at sign-up.\n2. App: nothing is sent (companion [API][App] ticket for Azib).\n3. Money events copy attribution from the profile, so (1) and (2) propagate.\n\n## Where to look\n- The Laravel code that builds the `attribution` JSON for `registration_completed`: where `acquisition_*` is read and what request fields or cookies it reads.\n- The registration API contract for web and app.\n\n## Acceptance criteria\n- An agreed registration contract for attribution (source, medium, campaign, gclid/click id, referrer, first-touch timestamp), shared with the app and web.\n- Web registrations ≥ 50% attributed and app ≥ 80% (organic counted explicitly) within two weeks of release.\n- Deposits and investments carry the profile's acquisition attribution.\n\n## How the BI agent will verify\nWeekly coverage per event and platform in `bi-channel-attribution`. Baseline: reg 5.1% · dep 0.4% · inv 1.3% (W46 Mon–Wed).\n\n_Filed by the Manafa BI agent (decision support). Related: tqa-019 (last-touch)._"
+ },
+ {
+  "draft_id": "d-tqa-019",
+  "tqa": [
+   "tqa-019"
+  ],
+  "area": "backend",
+  "issuetype": "Improvement",
+  "priority": "Medium",
+  "summary": "[BE] attribution.last_* is a copy of acquisition_* — record the real last touch at conversion",
+  "dev": {
+   "name": "Mohammad Khubaib",
+   "accountId": "62b0783ecebad33432f5e0ce"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "attribution",
+   "tqa-019"
+  ],
+  "description": "## Problem\nOn 1,026 of 1,038 attributed registration, deposit and investment events since 7 Sep (98.8%), `attribution.last_source/medium/campaign` is identical to `acquisition_*`. The backend has no real last-touch.\n\n## Impact\nManafa can't see which channel *closes* deposits and investments (e.g. a retargeting campaign or an email) as opposed to which one *acquired* the user. First- vs last-touch, the core of the weekly attribution readout, can only be read from GA4 sessions. GA4 isn't the conversion ledger.\n\n## Evidence (aggregated)\n`mi_analytics_events`, events with a non-empty `acquisition_source`, 7 Sep – 11 Nov: 1,038 attributed, 12 where last_* differs from acquisition_*.\n\n## Likely root cause (inferred)\nThe `last_*` fields are filled from the same stored profile attribution as `acquisition_*`. They aren't filled from the source of the session or request in which the conversion happened.\n\n## Suggested approach\n- Keep `acquisition_*` = first touch, stored once on the profile.\n- Set `last_*` from the most recent tagged visit before the event: UTMs, gclid or deep-link params on the current session, saved on the profile with a timestamp; fall back to `direct`.\n- Add `last_touch_at` so a lookback window (e.g. 30 days) can be applied in reporting.\n\n## Acceptance criteria\n- `last_*` differs from `acquisition_*` where the user came back through a different tagged link (QA test: register via link A, return via link B, deposit; the deposit event shows A as acquisition and B as last).\n- Documented in the event standard.\n\n## How the BI agent will verify\nShare of attributed events where last ≠ acquisition (expected well above 1.2% once live), checked weekly.\n\n_Filed by the Manafa BI agent (decision support). Depends on the [BE] attribution-coverage ticket._"
+ },
+ {
+  "draft_id": "d-tqa-017",
+  "tqa": [
+   "tqa-017"
+  ],
+  "area": "backend",
+  "issuetype": "Bug",
+  "priority": "Medium",
+  "summary": "[BE] investment_completed changed on 26 Oct: payment_method value and platform for auto-invest",
+  "dev": {
+   "name": "Mohammad Khubaib",
+   "accountId": "62b0783ecebad33432f5e0ce"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "event-standard",
+   "tqa-017"
+  ],
+  "description": "## Problem\nFrom 26 Oct (mixed day, complete from 27 Oct) the backend's `investment_completed` event changed in two ways on all platforms, with no change to the event standard:\n1. `payment_method` value changed from `opportunities.ewallet` to `wallet`.\n2. Auto-invest investments (executed server-side) used to all carry `context.platform = web`. They now carry the user's device (ios / android / web).\n\n## Impact\n- Investment splits by platform can't be compared before and after 26 Oct. Web investments went 6,455 (week of 19 Oct) → 257 (week of 26 Oct) purely from relabelling.\n- `payment_method` isn't a parameter of `investment_completed` in GA4 Event Standard v2.1, so GA4 reports using it are unofficial.\n- It also distorted the GA client_id share for web (see the client_id ticket).\n\n## Evidence (aggregated)\n- 22 Oct: auto-invest investments labelled web 3,234 / 3,234.\n- Web investment_completed: 6,455 (w/c 19 Oct) → 257 (w/c 26 Oct).\n\n## What's needed (decision + small fix)\n1. Confirm which release made the change (changelog around 26 Oct) and whether it was intended.\n2. Decide and document the platform for **server-executed** investments: either the user's device (current) or a dedicated value such as `server` / `auto_invest`. The BI team suggests keeping platform as the user's device and relying on `is_auto_invested` (already in the backend payload) to separate server-executed investments. Make sure it's also sent to GA4 as an event parameter.\n3. Either add `payment_method` (with the allowed values) to Event Standard v2.2 or stop sending it.\n\n## Acceptance criteria\n- The decision is written in the event standard. Event payloads follow it.\n- A release note entry exists for the 26 Oct change, so reporting can mark the break.\n\n## How the BI agent will verify\n`bi-tracking-health` checks the platform mix and `payment_method` values on investment_completed weekly against the standard.\n\n_Filed by the Manafa BI agent (decision support)._"
+ },
+ {
+  "draft_id": "d-tqa-013",
+  "tqa": [
+   "tqa-013"
+  ],
+  "area": "backend",
+  "issuetype": "Bug",
+  "priority": "High",
+  "summary": "[BE] Events completed by callbacks/jobs reach GA4 without a client_id (identity_verified 90%, KYC 87%)",
+  "dev": {
+   "name": "Mohammad Khubaib",
+   "accountId": "62b0783ecebad33432f5e0ce"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "ga4",
+   "tqa-013"
+  ],
+  "description": "## Problem\nFor web users, many backend events are delivered to GA4 marked `degraded` with reason `no_ga_client_id`. They can't be joined to the user's GA4 session, so they never show up in GA4 funnels.\n\n## Impact\nOn web, GA4 misses most identity-verification, KYC, auto-invest and failed-deposit events, and a third of investments. Web onboarding funnels in GA4 understate KYC by ~85–90%.\n\n## Evidence (aggregated, web, 2–11 Nov)\n| Event | GA4 deliveries | no client_id |\n|---|---|---|\n| auto_invest_enabled | 730 | 94% |\n| identity_verified | 2,517 | 90% |\n| deposit_failed | 49 | 90% |\n| kyc_completed | 1,014 | 87% |\n| deposit_success | 67 | 52% |\n| registration_completed | 370 | 42% |\n| investment_completed | 599 | 34% |\n| login_completed | 1,062 | **6%** |\n| phone_verified | 415 | **8%** |\n| email_verified | 117 | **8%** |\n\n- Events triggered **directly by a browser request** (login, phone and email verification) almost always have the client_id. Events finished **later, by a callback, webhook or queued job** (Nafath/identity callback, KYC result, payment-gateway webhook, scheduled auto-invest) mostly don't.\n- Not a recent break: excluding investments, the web share is steady at 59–68% every week since 5 Oct. The rise from 44% to 64% in the week of 26 Oct is a mix effect from auto-invest investments leaving the web bucket (see the investment_completed ticket).\n\n## Likely root cause (inferred)\nThe GA4 sender takes the client_id (from the `_ga` cookie or a header) from the **current HTTP request**. Callbacks, webhooks and queue workers have no browser request, so there's no client_id.\n\n## Suggested fix\n- Save the user's latest GA4 `client_id` (and `session_id`) on the profile whenever an authenticated web request carries it, with a timestamp.\n- When an event is emitted outside a browser request, use the stored values. Only mark `no_ga_client_id` when none was ever seen.\n- Same pattern for the Singular web identifier (Singular web deliveries for identity_verified show the same gap).\n- Web check (Khalid Shabbir): confirm every authenticated API call sends the client_id. Today's 6–8% gap on synchronous events is probably consent/ad-block, which is acceptable.\n\n## Acceptance criteria\n- `no_ga_client_id` share on web for identity_verified, kyc_completed and auto_invest_enabled below 15% for a full week.\n\n## How the BI agent will verify\n`event_delivery_health_daily.sql` weekly by event and platform (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._"
+ },
+ {
+  "draft_id": "d-tqa-015",
+  "tqa": [
+   "tqa-015"
+  ],
+  "area": "web",
+  "issuetype": "Bug",
+  "priority": "Low",
+  "summary": "[UI][Web] Localhost, Netlify-preview and Tag Assistant traffic is recorded in production GA4",
+  "dev": {
+   "name": "Khalid Shabbir",
+   "accountId": "712020:523e0199-eda3-4211-b807-efb682355023"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "ga4",
+   "tqa-015"
+  ],
+  "description": "## Problem\nProduction GA4 (property 413046941) receives sessions whose source is a developer or preview host.\n\n## Impact\nSmall in volume (the top 15 such sources alone = 43 sessions on 9–14 Nov), but it pollutes the referral channel and can fire test conversions in production.\n\n## Evidence (aggregated, 9–14 Nov sessions by source)\n- `127.0.0.1:<port>`: many different ports (8034–8874), mostly 2 sessions each; 202 distinct ports were seen in the week of 9 Nov.\n- `manafa-3billion.netlify.app`: 4 · `manafa-help-center.netlify.app`: 2 · `tagassistant.google.com`: 2.\n\n## Likely root cause (inferred)\n1. Netlify preview and branch deploys use the production GA4 measurement ID.\n2. `tagassistant.google.com` is GTM/GA debugging against production.\n3. `127.0.0.1:<random port>`: probably local dev servers using the prod measurement ID. **However**, the large number of different ports could instead come from the mobile app serving web content from an in-app localhost server (e.g. a WebView local server) and linking to the website. Please check with Azib.\n\n## Suggested fix\n- Load the production GA4 tag only when the hostname is a production domain. Previews and localhost use a separate dev measurement ID or no tag.\n- In GA4 admin: define internal/developer traffic and activate the data filter. Add the preview hosts to the unwanted-referrals list.\n\n## Acceptance criteria\nZero sessions from `127.0.0.1`, `*.netlify.app` and `tagassistant.google.com` in production GA4 for a full week (or the localhost source explained as the app and handled there).\n\n## How the BI agent will verify\nWeekly source check on the GA4 traffic-acquisition table (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._"
+ },
+ {
+  "draft_id": "d-tqa-005",
+  "tqa": [
+   "tqa-005"
+  ],
+  "area": "web",
+  "issuetype": "Bug",
+  "priority": "High",
+  "summary": "[UI][Web] Withdrawal reference number is sent to GA4 in the page path (/entrepreneur/transactions/withdraw/…)",
+  "dev": {
+   "name": "Khalid Shabbir",
+   "accountId": "712020:523e0199-eda3-4211-b807-efb682355023"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "ga4",
+   "compliance",
+   "tqa-005"
+  ],
+  "description": "## Problem\nThe web page path `/entrepreneur/transactions/withdraw/MWWD<16–18 digits>` is sent to GA4 as-is. The number is a **withdrawal (transaction) reference**. Under SAMA/PDPL handling rules, transaction references shouldn't leave Manafa's systems in analytics data.\n\n## Impact\n- Compliance: transaction identifiers are stored in Google Analytics (third party, outside Saudi Arabia).\n- Analytics: one page row per transaction inflates cardinality in GA4.\n\n## Evidence (aggregated, masked)\nGA4 Pages & Screens, 9–14 Nov: path `/entrepreneur/transactions/withdraw/MWWD<ID>`, page title \"منصة الدين\", 54 views. Earlier weeks: 129 rows with 16–18-digit IDs in page paths or titles. No actual reference numbers are included in this ticket.\n\n## Likely root cause\nThe GA4 config tag sends the full `page_location` / `page_path` by default. The withdrawal detail route puts the reference in the URL.\n\n## Suggested fix\n- Before sending, replace IDs in the path with a template, e.g. `/entrepreneur/transactions/withdraw/:ref`, in the GA4 config (`page_location` override) or the router's page-view call.\n- Apply the same rule to every route that carries a transaction, document or account identifier (check `/transactions/`, `/documents/`, `/wallet/`).\n- Ask GA4 admins whether past data with references should be deleted (GA4 data-deletion request). Involve compliance.\n\n## Ownership note\nThis is the **entrepreneur (borrower) side** of the web app. If it belongs to the debt-platform squad rather than the Investor Squad, please move it.\n\n## Acceptance criteria\nZero GA4 page paths or titles containing 12+ consecutive digits for a full week.\n\n## How the BI agent will verify\nWeekly regex check on GA4 Pages & Screens (`bi-tracking-health`). Only counts are reported, never the values.\n\n_Filed by the Manafa BI agent (decision support)._"
+ },
+ {
+  "draft_id": "d-tqa-004",
+  "tqa": [
+   "tqa-004"
+  ],
+  "area": "web",
+  "issuetype": "Bug",
+  "priority": "Medium",
+  "summary": "[UI][Web] Internal website links put placement names in utm_source (download_app_modal, article, mid_page…)",
+  "dev": {
+   "name": "Khalid Shabbir",
+   "accountId": "712020:523e0199-eda3-4211-b807-efb682355023"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "utm",
+   "tqa-004"
+  ],
+  "description": "## Problem\nSome links on Manafa's own website add `utm_source=<placement name>` (no medium). When a visitor clicks one, GA4 starts a new session and overwrites the visitor's real source (Google, X, TikTok…) with the placement name.\n\n## Impact\nPaid and organic traffic is under-credited, and junk sources appear in channel reports (\"Unassigned\"). It also breaks first- vs last-touch analysis.\n\n## Evidence (aggregated, GA4 sessions 9–14 Nov, source / medium)\n`send_message_to_scf_borrower` / (not set) 22 · `download_app_modal` / (not set) 13 · `article` 8 · `x` / (not set) 4 · `mid_page` 2 · `invite_a_friend` 3 · `hero` 1. Earlier weeks also had `jbyyfg` (146 in one week, looks like a typo'd link), `wallet`, `documents`.\n\n## Likely root cause\nCTAs, modals and blog/article links use UTM parameters to track *placement* on internal links. UTMs should only be used on links that bring people **from outside** the site.\n\n## Suggested fix\n- Remove UTM parameters from all internal links (same domain, and website → web app).\n- Track placement with a GA4 event parameter instead (e.g. `cta_click` with `placement=download_app_modal`), per the event standard. Or use `utm_content` only on external links.\n- Find and fix the `jbyyfg` link. Check whether `send_message_to_scf_borrower` comes from a message template (it may be a borrower-side email/SMS link; if so, use `utm_medium=email|sms` and `utm_source=manafa`).\n- Follow `context/utm-convention.md` (lowercase; source = where, medium = how, campaign = why).\n\n## Acceptance criteria\nNo GA4 sessions with these placement names as source for a full week.\n\n## How the BI agent will verify\nWeekly UTM convention check (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._"
+ }
+]

@@ -38,14 +38,16 @@
       "severity": "med",
       "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)",
       "status": "open",
-      "update_2026_11_16": "persists W46: send_message_to_scf_borrower 33, download_app_modal 19, article 9, invite_a_friend, mid_page, x"
+      "update_2026_11_16": "persists W46: send_message_to_scf_borrower 33, download_app_modal 19, article 9, invite_a_friend, mid_page, x",
+      "update_2026_11_17": "2026-11-17: sources are website placement names (send_message_to_scf_borrower 22, download_app_modal 13, article 8, invite_a_friend 3, mid_page 2, hero 1, x 4) -> internal links tagged with utm_source; owner web."
     },
     {
       "id": "tqa-005",
       "found": "2026-11-11",
-      "severity": "med",
+      "severity": "high",
       "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs",
-      "status": "open"
+      "status": "open",
+      "update_2026_11_17": "2026-11-17: the long IDs are withdrawal references in the web path /entrepreneur/transactions/withdraw/MWWD<ID> (title 'منصة الدين', 54 views 9-14 Nov) = transaction identifiers sent to GA4 -> compliance; severity med->high. Borrower side: ownership may be the debt-platform squad."
     },
     {
       "id": "tqa-006",
@@ -71,7 +73,8 @@
       "hypothesis_2026-11-12": "REJECTED 2026-11-12 by team reply (app no longer fires these). Kept for history: half-finished P5 migration, client still firing.",
       "team_reply_2026-11-12": "Reported (mobile team via Amir): all legacy events removed from the mobile app; registration_completed, kyc_completed, login_completed, withdrawal_completed, passcode_enabled, bank_account_added are fired from the backend only.",
       "hypothesis_v2_2026-11-12": "Inferred: the doubling happens in the backend's GA4 sending, and only for these events. Evidence (Observed, GA4): it is event-specific, not dispatch-wide — withdrawal_completed is ~2x withdrawal_settled (1,774 vs 933 in Nov 4-10) although both are backend events for the same withdrawals; deposit_success and investment_completed are not doubled. Ratios hold in the clean Nov 4-10 week (kyc_completed/kyc_started 1.65, withdrawal_completed/withdrawal_started 1.86), so they are not a window artifact. Also login_completed exceeds session_start 1.39x. Candidates: (a) the account/identity events go through a different GA4 sender than the money events, which sends app users' events twice (e.g. to both the app stream and the web stream, or once with app_instance_id and once with client_id); (b) these events are emitted at two points (two listeners, queue retries without idempotency, two endpoints the app calls). Less likely: (c) intermediate app versions still in use fire client copies under the new names.",
-      "update_2026_11_16": "BigQuery backend truth: GA4/sent-OK = login 1.87, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.02, bank_account_added 1.80, identity_verified 1.38; money events 0.99-1.01. Backend logs exactly 1 GA4 delivery per event (0 multi-sends / 23,098) -> backend dispatcher is NOT the double sender. Leading hypothesis (Inferred): Singular->GA4 partner forwarding of mapped events."
+      "update_2026_11_16": "BigQuery backend truth: GA4/sent-OK = login 1.87, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.02, bank_account_added 1.80, identity_verified 1.38; money events 0.99-1.01. Backend logs exactly 1 GA4 delivery per event (0 multi-sends / 23,098) -> backend dispatcher is NOT the double sender. Leading hypothesis (Inferred): Singular->GA4 partner forwarding of mapped events.",
+      "update_2026_11_17": "2026-11-17: backend sends doubled and non-doubled events to Singular in the same proportions (2-11 Nov); withdrawal_completed doubled but withdrawal_settled not -> per-event config, supports Singular->GA4 partner mapping hypothesis."
     },
     {
       "id": "tqa-008",
@@ -131,7 +134,8 @@
       "what": "web backend events reaching GA4 without client_id (degraded no_ga_client_id): ~44% -> 64% from week of Oct 26; Nov 6-11 identity_verified 74%, auto_invest_enabled 61%, kyc 55% degraded; degraded sends are absent from GA4",
       "status": "open",
       "owner_suggestion": "web frontend + backend",
-      "confirming_check": "deploys around 2026-10-26; GA client_id handoff from web to backend"
+      "confirming_check": "deploys around 2026-10-26; GA client_id handoff from web to backend",
+      "update_2026_11_17": "2026-11-17 correction: the 44%->64% rise in the week of 26 Oct is a MIX effect (auto-invest investment_completed left the web bucket, tqa-017); non-investment web share is steady 59-68% since 5 Oct. Real pattern: events triggered by a browser request (login 6%, phone 8%, email 8%) carry client_id; events completed by callbacks/jobs don't (auto_invest_enabled 94%, identity_verified 90%, kyc 87%). Root cause (inferred): GA4 sender reads client_id from the current HTTP request."
     },
     {
       "id": "tqa-014",
@@ -140,7 +144,8 @@
       "what": "backend events carry acquisition attribution (attribution.acquisition_source) on ~4-6% of registrations and ~1% of deposits -> backend ledger cannot attribute channels/campaigns",
       "status": "open",
       "owner_suggestion": "backend",
-      "confirming_check": "where/when attribution JSON is populated per platform"
+      "confirming_check": "where/when attribution JSON is populated per platform",
+      "update_2026_11_17": "2026-11-17 by platform (19 Oct-11 Nov): registration attributed web 134/942 (14%), iOS 0/1,120, Android 0/351 -> app sends no attribution at sign-up; web loses landing UTMs. Money events inherit profile attribution."
     },
     {
       "id": "tqa-015",
@@ -278,5 +283,39 @@
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261116-1651"
+  "last_run": "run-20261116-1651",
+  "jira": {
+    "epic": "ISQ-6052",
+    "project": "ISQ",
+    "dev_assignee_field": "customfield_10055",
+    "owners": {
+      "mobile": {
+        "name": "AzibMuzammil",
+        "accountId": "712020:51fb9b58-a539-4130-9391-d2be6467ad7b"
+      },
+      "backend": {
+        "name": "Mohammad Khubaib",
+        "accountId": "62b0783ecebad33432f5e0ce"
+      },
+      "web": {
+        "name": "Khalid Shabbir",
+        "accountId": "712020:523e0199-eda3-4211-b807-efb682355023"
+      }
+    },
+    "owners_note": "confirmed by Amir 2026-11-17",
+    "drafts_file": "jira/drafts/drafts.json",
+    "tickets": {},
+    "outside_squad": {
+      "tqa-012": "data engineering (DWH)",
+      "tqa-016": "paid media / Google Ads",
+      "tqa-018": "performance marketing / Singular",
+      "tqa-002": "marketing (UTM tagging)",
+      "tqa-003": "marketing (UTM convention)",
+      "tqa-011": "event-standard owner",
+      "tqa-001": "monitoring",
+      "tqa-008": "monitoring",
+      "tqa-009": "monitoring",
+      "tqa-010": "monitoring"
+    }
+  }
 }

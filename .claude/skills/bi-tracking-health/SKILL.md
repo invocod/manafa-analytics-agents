@@ -35,6 +35,9 @@ Keep the measurement layer trustworthy. State: `state/bi-tracking-health.json` +
 8. **GA4 naming** (`ga4_events_daily.sql` vs `context/ga4-event-standard-v2.1.csv`; playbook `ga4-event-standards.md`): share of standard / legacy / Remove-list / not-in-standard events; completion > start signatures.
 9. **Diff against open issues**: update existing issues (append `update_<date>`), never re-file. New issues get id, severity, owner suggestion, and the single next check that would confirm the fix.
 
+## Jira hand-off (squad-owned issues → ISQ-6052)
+Follow `docs/jira.md`. For each open issue whose owner is backend, mobile or web (not in `jira.outside_squad`): if no draft or ticket exists, write a staged draft (prefix, Dev Assignee by area, full description template, aggregated evidence only). If a ticket exists, check its fix criterion and, when it passes, stage a "verified fixed by data" comment. Never create, edit or comment in Jira without Amir's approval in chat. Report staged drafts in the output under "Jira: N drafts awaiting approval".
+
 ## Self-check
 Expected change (deploy, campaign end, intended rename)? Same days and timezone on both sides of every ratio? Unknown ≠ failure.
 

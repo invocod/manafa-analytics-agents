@@ -13,6 +13,7 @@ The page shows only what loops write here. **Never write a status, step, percent
 | `runs/<run-id>` | the running loop | one document per run: `started_at`, `ended_at`, `status`, `trigger`, `summary`, `agents{}`, `events[]` |
 | `issues/<tqa-id>` | bi-tracking-health | severity, status, owner, title, what, latest, next_check |
 | `reports/<id>` | the loop that wrote the report | title, loop, week, run_id, verdict, path, findings (data), insights + actions (AI-generated), markdown |
+| `jira_drafts/<draft_id>` | bi-tracking-health (and Claude on approval) | summary, area, priority, issuetype, dev, labels, tqa, status (`staged` → `created`), jira_key, parent, created, description (markdown). See `docs/jira.md`. |
 
 `run-id` = `run-YYYYMMDD-HHMM` (UTC start). One run may hold several loops (e.g. the Monday sequence).
 

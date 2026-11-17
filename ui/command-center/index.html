@@ -50,6 +50,8 @@ h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;le
 .nav a.on{background:var(--surface-2);color:var(--text)}
 .nav a.on::before{content:"";position:absolute;left:-8px;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--brand-2)}
 .nav .badge{margin-left:auto}
+.nav a svg{flex:none}
+.nav a span:not(.badge){min-width:0;overflow:hidden;text-overflow:ellipsis}
 .side-foot{padding:10px 8px;border-top:1px solid var(--line)}
 .main{display:flex;flex-direction:column;min-width:0;height:100%}
 .top{height:60px;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line);background:rgba(10,15,30,.85);backdrop-filter:blur(8px);flex:none}
@@ -191,6 +193,38 @@ input[type=date],select,input[type=text],input[type=search]{background:var(--sur
 .feed .k-warning{color:#f3d699}
 .feed .k-step_done,.feed .k-run_done{color:#a8efd4}
 
+
+/* Jira tab (Linear-style list + side panel) */
+.jr{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#0d1330}
+.jr-main{min-width:0;border-right:1px solid var(--line)}
+.jr-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.jr-bar .grow{flex:1}
+.jr-group{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#121a3a;border-bottom:1px solid var(--line);font-weight:500}
+.jr-group .cnt{color:var(--muted);font-weight:400}
+.jr-row{display:flex;align-items:center;gap:12px;padding:0 16px;height:48px;border-bottom:1px solid rgba(35,45,79,.6);cursor:pointer}
+.jr-row:hover{background:rgba(58,154,244,.05)}
+.jr-row .key{font-family:var(--font-mono);font-size:12px;color:var(--muted);width:78px;flex:none}
+.jr-row .ttl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jr-row .meta{display:flex;align-items:center;gap:8px;flex:none}
+.jr-row .date{color:var(--muted);font-size:12px;width:46px;text-align:right}
+.jr-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:#c9cfe6;white-space:nowrap}
+.jr-chip .d{width:6px;height:6px;border-radius:50%}
+.jr-av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:600;color:#0a0f1e;flex:none}
+.jr-side{padding:18px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.jr-side .sec{border-top:1px solid var(--line);padding-top:16px}
+.jr-prop{display:grid;grid-template-columns:96px 1fr;gap:10px 12px;align-items:center;font-size:13px}
+.jr-prop .k{color:var(--muted)}
+.jr-ep{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);color:#a78bfa}
+.jr-legend{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px}
+.jr-legend .n{font-size:14px;color:var(--text)}
+.jr-md h2{font-size:14px;margin:16px 0 6px}
+.jr-md p,.jr-md li{color:#c9cfe6;font-size:13px}
+.jr-md ul,.jr-md ol{padding-left:18px;margin:6px 0}
+.jr-md code{font-family:var(--font-mono);font-size:12px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.jr-md table{margin:8px 0}
+.jr-md td,.jr-md th{padding:6px 8px;font-size:12.5px}
+@media (max-width:1100px){.jr{grid-template-columns:1fr}.jr-main{border-right:0;border-bottom:1px solid var(--line)}}
+@media (max-width:640px){.jr-row .meta .jr-chip.opt{display:none}.jr-row .key{width:64px}}
 /* Drawer + modal */
 .scrim{position:fixed;inset:0;background:rgba(3,6,16,.55);z-index:30;animation:fade .2s ease both}
 @keyframes fade{from{opacity:0}}
@@ -271,6 +305,11 @@ const PROJECT = "databases-472111";
 const BQ_SERVER = "Google Cloud BigQuery";
 const BQ_TOOL = "execute_sql_readonly";
 const SHEETS_SERVER = "Google Sheets";
+const JIRA_SERVER = "Atlassian MCP";
+const JIRA_SITE = "manafaco.atlassian.net";
+const JIRA_EPIC = "ISQ-6052";
+const JIRA_FIELDS = ["summary","status","priority","labels","created","updated","resolutiondate","statuscategorychangedate","duedate","customfield_10055","issuetype","reporter"];
+const OUTSIDE_SQUAD = {"tqa-012":"Data engineering (DWH)","tqa-016":"Paid media / Google Ads","tqa-018":"Performance marketing / Singular","tqa-002":"Marketing (paid-social tagging)","tqa-003":"Marketing (UTM convention)","tqa-011":"Event-standard owner","tqa-001":"Monitoring","tqa-008":"Monitoring","tqa-009":"Monitoring","tqa-010":"Monitoring"};
 const SINGULAR_SHEET = "1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg";
 const SINGULAR_HEADER = "date,etl_query_timestamp_utc,app,source,os,platform,country_field,adn_campaign_id,adn_campaign_name,adn_account_id,adn_original_currency,adn_campaign_url,adn_sub_campaign_name,adn_sub_adnetwork_name,adn_account_name,adn_sub_campaign_id,data_connector_source_name,data_connector_id,data_connector_username,data_connector_timestamp_utc,adn_impressions,adn_clicks,adn_installs,adn_cost,adn_original_cost,app_install_count";
 const NAV = [
@@ -280,6 +319,7 @@ const NAV = [
   ["analytics","Analytics Dashboard","ChartLine"],
   ["singular","Singular (attribution)","Megaphone"],
   ["quality","Event Quality & Monitoring","ShieldCheck"],
+  ["jira","Jira · ISQ-6052","Ticket"],
   ["reports","Reports","FileText"],
   ["config","Agent Configuration","SlidersHorizontal"],
   ["system","System Settings","Server"],
@@ -417,6 +457,18 @@ function useWatchEntry(e){
   return {...s, allow};
 }
 function useSheet(key, range){ const e=useMemo(()=>mcpWatch(key,{server:SHEETS_SERVER,tool:"get_values",input:{spreadsheetId:SINGULAR_SHEET,range},parse:parseSheet,label:"Google Sheets"}),[key]); return useWatchEntry(e); }
+function parseJira(payload){
+  let p=payload; if(typeof p==="string"){ try{p=JSON.parse(p);}catch(e){return [];} }
+  if(p&&p.content&&!p.data&&!p.issues) p=p.content;
+  const iss=(p&&p.data&&p.data.issues)||(p&&p.issues)||[];
+  return iss.map(x=>{ const f=x.fields||{}; let dev=f.customfield_10055;
+    if(!dev&&f.customFields&&f.customFields["Dev Assignee"]) dev=f.customFields["Dev Assignee"].value;
+    const devName=dev?(Array.isArray(dev)?dev.map(d=>d&&d.displayName).filter(Boolean).join(", "):dev.displayName):null;
+    const st=f.status||{}; const sc=st.statusCategory||{}; const ck=String(sc.key||sc.name||"").toLowerCase();
+    const cat=ck.includes("done")?"done":(ck.includes("indeterminate")||ck.includes("progress"))?"progress":"todo";
+    return {key:x.key,summary:(f.summary||"").trim(),status:st.name||"—",cat,priority:f.priority&&f.priority.name,labels:f.labels||[],created:f.created,resolved:f.resolutiondate,catChanged:f.statuscategorychangedate,due:f.duedate,dev:devName,type:f.issuetype&&f.issuetype.name,reporter:f.reporter&&f.reporter.displayName}; });
+}
+function useJira(key,jql){ const e=useMemo(()=>mcpWatch(key,{server:JIRA_SERVER,tool:"searchJiraIssuesUsingJql",input:{cloudId:JIRA_SITE,jql,fields:JIRA_FIELDS,maxResults:100,view:"full"},parse:parseJira,label:"Jira"}),[key]); return useWatchEntry(e); }
 function useBQ(key, sql){
   const e = useMemo(()=>bqWatch(key,sql),[key]);
   return useWatchEntry(e);
@@ -500,7 +552,7 @@ function Spark({data,color="#3A9AF4"}){
     <circle cx=${last[0]} cy=${last[1]} r="2.6" fill=${color}/></svg>`;
 }
 function BQState({q,label="BigQuery"}){
-  const conn = label==="Google Sheets"||label==="Singular sheet" ? "Google Sheets" : "Google Cloud BigQuery";
+  const conn = label==="Google Sheets"||label==="Singular sheet" ? "Google Sheets" : label==="Jira" ? "Atlassian MCP" : "Google Cloud BigQuery";
   if(q.status==="loading") return html`<div className="grid" style=${{gap:8}}><${Skel} h=${14} w="40%"/><${Skel} h=${120}/></div>`;
   if(q.status==="nomcp") return html`<div className="note">Live data needs this page open in claude.ai, signed in, with the ${conn} connector.</div>`;
   if(q.status==="denied"){
@@ -508,7 +560,7 @@ function BQState({q,label="BigQuery"}){
     const msg = c==="needs_reauth" ? "Your "+conn+" connection expired. Reconnect it in claude.ai Settings → Connectors."
       : c==="server_not_connected" ? "Add the "+conn+" connector in claude.ai Settings → Connectors to see live data."
       : c==="selection_required" ? "Choose which "+conn+" connector this page should use in the claude.ai prompt."
-      : c==="approval_required" ? "This page needs your approval to read "+(conn==="Google Sheets"?"the Singular sheet (read-only)":"BigQuery (read-only queries)")+"."
+      : c==="approval_required" ? "This page needs your approval to read "+(conn==="Google Sheets"?"the Singular sheet (read-only)":conn==="Atlassian MCP"?"Jira (read-only search)":"BigQuery (read-only queries)")+"."
       : c==="not_in_manifest" ? conn+" access is turned off for this page in your view."
       : c==="blocked_by_policy" ? "Your organization's policy blocks this "+conn+" tool for you."
       : "Live "+conn+" data isn't available in this view.";
@@ -599,7 +651,7 @@ function App(){
   const runs = runsQ.docs;
   const activeRun = runs.find(r=>ACTIVE.has(r.status));
 
-  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,singular:SingularView,quality:QualityView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
+  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,singular:SingularView,quality:QualityView,jira:JiraView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
   return html`<div className="app">
     <aside className=${"side"+(collapsed?" collapsed":"")+(mobile?" mobile-open":"")} aria-label="Main navigation">
       <div className="brand"><div className="logo">M</div>${!collapsed&&html`<div><div style=${{fontWeight:600}}>Manafa BI</div><div className="small muted">Command Center</div></div>`}</div>
@@ -1176,6 +1228,167 @@ function SingularView(){
     </div>`}
   </div>`;
 }
+/* ======================================================================
+   Jira · ISQ-6052 (live, read-only) + staged drafts awaiting approval
+   ====================================================================== */
+function jAreaOf(s){ s=s||""; if(/\[BE\]/i.test(s)) return "backend"; if(/\[(API|UI)\]\s*\[App\]|\[App\]/i.test(s)) return "mobile"; if(/\[(API|UI)\]\s*\[Web\]|\[Web\]/i.test(s)) return "web"; return "other"; }
+const J_AREA = {backend:["Backend","#7f8cff"],mobile:["Mobile","#22c38e"],web:["Web","#3A9AF4"],other:["Other","#8b93b0"]};
+function jStrip(s){ return String(s||"").replace(/^(\s*\[[^\]]+\]\s*)+/,""); }
+function jTqa(labels){ return (labels||[]).filter(l=>/^tqa-\d+$/i.test(l)); }
+function jInitials(n){ return String(n||"?").replace(/([a-z])([A-Z])/g,"$1 $2").replace(/[^A-Za-z؀-ۿ ]/g," ").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase()||"?"; }
+function jColor(n){ let h=0; for(const c of String(n||"")) h=(h*31+c.charCodeAt(0))>>>0; return ["#f2b136","#7f8cff","#22c38e","#5ec8d8","#c084fc","#ef8a5a","#3A9AF4"][h%7]; }
+function jDate(s){ if(!s) return "—"; const d=new Date(s); if(isNaN(d)) return "—"; return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"Asia/Riyadh"}); }
+function JAvatar({name}){ return name?html`<span className="jr-av" title=${name} style=${{background:jColor(name)}}>${jInitials(name)}</span>`:html`<span className="jr-av" title="No Dev Assignee" style=${{background:"#2a3358",color:"#8b93b0"}}>–</span>`; }
+function JStatusIcon({cat,size=16}){
+  const s=size, r=s/2-1.5, c=s/2;
+  if(cat==="done") return html`<svg width=${s} height=${s} viewBox=${"0 0 "+s+" "+s} aria-hidden="true"><circle cx=${c} cy=${c} r=${r} fill="#7f6cf0"/><path d=${`M${s*.3} ${s*.52} L${s*.45} ${s*.66} L${s*.72} ${s*.36}`} stroke="#0d1330" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>`;
+  if(cat==="progress") return html`<svg width=${s} height=${s} viewBox=${"0 0 "+s+" "+s} aria-hidden="true"><circle cx=${c} cy=${c} r=${r} fill="none" stroke="#f2b136" strokeWidth="1.6"/><path d=${`M${c} ${c-r+2.5} A${r-2.5} ${r-2.5} 0 0 1 ${c} ${c+r-2.5} Z`} fill="#f2b136"/></svg>`;
+  if(cat==="staged") return html`<svg width=${s} height=${s} viewBox=${"0 0 "+s+" "+s} aria-hidden="true"><circle cx=${c} cy=${c} r=${r} fill="none" stroke="#3A9AF4" strokeWidth="1.6" strokeDasharray="2 2.2"/></svg>`;
+  if(cat==="outside") return html`<svg width=${s} height=${s} viewBox=${"0 0 "+s+" "+s} aria-hidden="true"><circle cx=${c} cy=${c} r=${r} fill="none" stroke="#5b6485" strokeWidth="1.6"/><circle cx=${c} cy=${c} r="2" fill="#5b6485"/></svg>`;
+  return html`<svg width=${s} height=${s} viewBox=${"0 0 "+s+" "+s} aria-hidden="true"><circle cx=${c} cy=${c} r=${r} fill="none" stroke="#8b93b0" strokeWidth="1.6" strokeDasharray="2.6 2"/></svg>`;
+}
+function JPrio({p}){ const n=p==="Highest"||p==="High"?3:p==="Medium"?2:p?1:0; return html`<span title=${p?("Priority: "+p):"No priority"} style=${{display:"inline-flex",alignItems:"flex-end",gap:2,height:12,width:16}}>${[1,2,3].map(i=>html`<span key=${i} style=${{width:3,height:4*i,borderRadius:1,background:i<=n?(n===3?"#ef8a5a":"#c9cfe6"):"#2a3358"}}></span>`)}</span>`; }
+function mdToHtml(md){
+  const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const inline=s=>esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/(^|\s)\*([^*\s][^*]*)\*(?=\s|[.,;:)]|$)/g,"$1<i>$2</i>");
+  const lines=String(md||"").split("\n"); let out=[], i=0;
+  while(i<lines.length){ const l=lines[i];
+    if(/^##\s+/.test(l)){ out.push("<h2>"+inline(l.replace(/^##\s+/,""))+"</h2>"); i++; continue; }
+    if(/^\|/.test(l)){ const rows=[]; while(i<lines.length&&/^\|/.test(lines[i])){ rows.push(lines[i]); i++; }
+      const cells=r=>r.replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
+      const body=rows.filter(r=>!/^\|\s*-/.test(r)); out.push("<div class='tablewrap'><table><thead><tr>"+cells(body[0]).map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"+body.slice(1).map(r=>"<tr>"+cells(r).map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"); continue; }
+    if(/^\s*-\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\s*-\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\s*-\s+/,""))+"</li>"); i++; } out.push("<ul>"+it.join("")+"</ul>"); continue; }
+    if(/^\d+\.\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\d+\.\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\d+\.\s+/,""))+"</li>"); i++; } out.push("<ol>"+it.join("")+"</ol>"); continue; }
+    if(/^_.*_$/.test(l.trim())){ out.push("<p class='small muted'><i>"+inline(l.trim().slice(1,-1))+"</i></p>"); i++; continue; }
+    if(l.trim()===""){ i++; continue; }
+    out.push("<p>"+inline(l)+"</p>"); i++;
+  }
+  return out.join("");
+}
+function JRow({k,cat,title,area,tqa,prio,date,dev,onOpen,extra}){
+  const [al,ac]=J_AREA[area]||J_AREA.other;
+  return html`<div className="jr-row" role="button" tabIndex="0" onClick=${onOpen} onKeyDown=${e=>(e.key==="Enter"||e.key===" ")&&(e.preventDefault(),onOpen())}>
+    <span className="muted" aria-hidden="true">···</span><span className="key">${k}</span><${JStatusIcon} cat=${cat}/>
+    <span className="ttl">${title}</span>
+    <span className="meta">${extra||null}${tqa&&tqa.length?html`<span className="jr-chip opt mono">${tqa.join(" · ")}</span>`:null}
+      ${area?html`<span className="jr-chip"><span className="d" style=${{background:ac}}></span>${al}</span>`:null}
+      ${prio!==undefined?html`<${JPrio} p=${prio}/>`:null}<span className="date">${date}</span><${JAvatar} name=${dev}/></span></div>`;
+}
+function JGroup({cat,label,count,children}){ return html`<div><div className="jr-group"><${JStatusIcon} cat=${cat}/><span>${label}</span><span className="cnt">${count}</span></div>${children}</div>`; }
+function JiraView({ctx}){
+  const jq=useJira("jira_epic",`key = ${JIRA_EPIC} OR parent = ${JIRA_EPIC} ORDER BY created ASC`);
+  const draftsQ=useDbQuery("jira_drafts",db=>db.collection("jira_drafts"));
+  const [area,setArea]=useState("all"); const [open,setOpen]=useState(null);
+  useEffect(()=>{ if(!open) return; const f=e=>e.key==="Escape"&&setOpen(null); addEventListener("keydown",f); return ()=>removeEventListener("keydown",f); },[open]);
+  const all=jq.rows||[]; const epic=all.find(x=>x.key===JIRA_EPIC); const tickets=all.filter(x=>x.key!==JIRA_EPIC).map(x=>({...x,area:jAreaOf(x.summary),tqa:jTqa(x.labels)}));
+  const liveKeys=new Set(tickets.map(t=>t.key));
+  const drafts=draftsQ.docs.filter(d=>d.status==="staged"&&!(d.jira_key&&liveKeys.has(d.jira_key)));
+  const fA=x=>area==="all"||x.area===area;
+  const PR={Highest:0,High:0,Medium:1,Low:2}; const tk=tickets.filter(fA), dr=drafts.filter(fA).sort((a,b)=>(PR[a.priority]??3)-(PR[b.priority]??3)||String(a.summary).localeCompare(String(b.summary)));
+  const order={progress:0,todo:1,done:2}; const groups={};
+  tk.forEach(t=>{ (groups[t.status]=groups[t.status]||{cat:t.cat,items:[]}).items.push(t); });
+  const gNames=Object.keys(groups).sort((a,b)=>(order[groups[a].cat]-order[groups[b].cat])||a.localeCompare(b));
+  const outside=(ctx.issuesQ.docs||[]).filter(i=>OUTSIDE_SQUAD[i.id]&&i.status!=="resolved").sort((a,b)=>a.id.localeCompare(b.id));
+  const devs=[...new Set([...tickets.map(t=>t.dev),...drafts.map(d=>d.dev)].filter(Boolean))];
+  const nScope=tickets.length, nDone=tickets.filter(t=>t.cat==="done").length, nStarted=tickets.filter(t=>t.cat!=="todo").length;
+  const counts={all:tickets.length+drafts.length}; ["backend","mobile","web"].forEach(a=>counts[a]=tickets.filter(t=>t.area===a).length+drafts.filter(d=>d.area===a).length);
+  // progress series (Riyadh days)
+  const dayOf=s=>s?new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Riyadh"}).format(new Date(s)):null;
+  const today=riyadhToday(); const first=tickets.map(t=>dayOf(t.created)).filter(Boolean).sort()[0]||(epic&&dayOf(epic.created))||addDays(today,-14);
+  const days=[]; for(let d=first; d<=today && days.length<400; d=addDays(d,1)) days.push(d);
+  const startDay=t=>t.cat==="progress"?dayOf(t.catChanged||t.created):t.cat==="done"?dayOf(t.resolved||t.catChanged):null;
+  const series=days.map(d=>({scope:tickets.filter(t=>dayOf(t.created)<=d).length,started:tickets.filter(t=>{const s=startDay(t);return s&&s<=d;}).length,done:tickets.filter(t=>t.cat==="done"&&dayOf(t.resolved||t.catChanged)<=d).length}));
+  const pct=(a,b)=>b?Math.round(100*a/b)+"%":"—";
+  const listBody = jq.rows ? html`
+      ${dr.length?html`<${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>
+        ${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} onOpen=${()=>setOpen({type:"draft",d})}/>`)}<//>`:null}
+      ${gNames.map(g=>html`<${JGroup} key=${g} cat=${groups[g].cat} label=${g} count=${groups[g].items.length}>
+        ${groups[g].items.map(t=>html`<${JRow} key=${t.key} k=${t.key} cat=${t.cat} title=${jStrip(t.summary)} area=${t.area} tqa=${t.tqa} prio=${t.priority} date=${jDate(t.created)} dev=${t.dev} onOpen=${()=>setOpen({type:"ticket",t})}/>`)}<//>`)}
+      ${!tk.length&&!dr.length?html`<div className="empty">${area==="all"?"No tickets under "+JIRA_EPIC+" yet.":"Nothing for this area."}</div>`:null}
+      ${area==="all"&&outside.length?html`<${JGroup} cat="outside" label="Owned outside the squad (no ISQ ticket)" count=${outside.length}>
+        ${outside.map(i=>html`<${JRow} key=${i.id} k=${i.id} cat="outside" title=${i.title||i.what||i.id} extra=${html`<span className="jr-chip opt">${OUTSIDE_SQUAD[i.id]}</span>`} date=${i.found?jDate(i.found):"—"} dev=${null} onOpen=${()=>setOpen({type:"outside",i})}/>`)}<//>`:null}`
+    : html`<div style=${{padding:16}}>
+        ${dr.length?html`<div style=${{margin:"-16px -16px 16px"}}><${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} onOpen=${()=>setOpen({type:"draft",d})}/>`)}<//></div>`:null}
+        <${BQState} q=${jq} label="Jira"/></div>`;
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Jira · Business Intelligence platform issues</h1>
+      <p>Tracking and data-quality problems the BI agents found, filed for the Investor Squad under ${JIRA_EPIC}. The list reads Jira live through your Atlassian connector and never changes it. Drafts are created in Jira by Claude only after Amir approves them in chat.</p></div>
+      <a className="btn" href=${"https://"+JIRA_SITE+"/browse/"+JIRA_EPIC} target="_blank" rel="noopener"><${Icon} name="ExternalLink" size=${14}/>Open epic in Jira</a></div>
+    <div className="jr">
+      <div className="jr-main">
+        <div className="jr-bar">
+          <div className="seg" role="group" aria-label="Area">${[["all","All"],["backend","Backend"],["mobile","Mobile"],["web","Web"]].map(([k,l])=>html`<button key=${k} className=${area===k?"on":""} aria-pressed=${area===k} onClick=${()=>setArea(k)}>${l} <span className="muted">${counts[k]}</span></button>`)}</div>
+          <span className="grow"></span><${Fresh} q=${jq}/><span className="label-data">Jira</span></div>
+        ${listBody}
+      </div>
+      <aside className="jr-side" aria-label="Epic details">
+        <div><div className="jr-ep"><${Icon} name="Layers" size=${18}/></div>
+          <h2 style=${{marginTop:12,fontSize:16}}>${(epic&&epic.summary)||"Business Intelligence platform issues"}</h2>
+          <div className="small muted" style=${{marginTop:4}}>Fixes the BI agents need from backend, mobile and web so the numbers can be trusted.</div></div>
+        <div className="sec"><h3 style=${{marginBottom:12}}>Properties</h3>
+          <div className="jr-prop">
+            <span className="k">Status</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JStatusIcon} cat=${epic?epic.cat:"todo"}/>${epic?epic.status:"—"}</span>
+            <span className="k">Lead</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JAvatar} name=${(epic&&epic.reporter)||"Amir Ayub"}/>${(epic&&epic.reporter)||"Amir Ayub"}</span>
+            <span className="k">Developers</span><span style=${{display:"flex",gap:4,flexWrap:"wrap"}}>${devs.length?devs.map(n=>html`<${JAvatar} key=${n} name=${n}/>`):html`<span className="muted">—</span>`}</span>
+            <span className="k">Target date</span><span>${epic&&epic.due?jDate(epic.due):html`<span className="muted">Not set</span>`}</span>
+            <span className="k">Team</span><span>Investor Squad · ISQ</span>
+          </div>
+          ${devs.length?html`<div className="small muted" style=${{marginTop:10}}>${devs.join(" · ")}</div>`:null}</div>
+        <div className="sec"><h3 style=${{marginBottom:10}}>Links</h3>
+          <div className="small" style=${{display:"grid",gap:6}}>
+            <a href=${"https://"+JIRA_SITE+"/browse/"+JIRA_EPIC} target="_blank" rel="noopener">${JIRA_EPIC} in Jira</a>
+            <span className="muted">Drafts: <span className="mono">jira/drafts/</span> (repo)</span>
+            <span className="muted">Evidence: <span className="mono">reports/2026/W47/</span> (repo)</span>
+            <a href="#quality">Event Quality & Monitoring tab</a></div></div>
+        <div className="sec"><h3 style=${{marginBottom:12}}>Progress</h3>
+          ${jq.rows?html`<div className="jr-legend">
+              <div><div className="muted">■ Scope</div><div className="n">${nScope}</div></div>
+              <div><div style=${{color:"#f2b136"}}>■ <span className="muted">Started</span></div><div className="n">${nStarted} · ${pct(nStarted,nScope)}</div></div>
+              <div><div style=${{color:"#7f6cf0"}}>■ <span className="muted">Completed</span></div><div className="n">${nDone} · ${pct(nDone,nScope)}</div></div></div>
+            ${nScope?html`<div style=${{marginTop:10}}><${ChartC} small=${true} config=${{type:"line",data:{labels:days.map(d=>jDate(d)),datasets:[
+              {label:"Scope",data:series.map(s=>s.scope),borderColor:"#8b93b0",borderWidth:1.5,pointRadius:0,stepped:true},
+              {label:"Started",data:series.map(s=>s.started),borderColor:"#f2b136",borderWidth:1.5,pointRadius:0,stepped:true},
+              {label:"Completed",data:series.map(s=>s.done),borderColor:"#7f6cf0",backgroundColor:"rgba(127,108,240,.25)",fill:true,borderWidth:1.5,pointRadius:0,stepped:true}]},
+              options:{plugins:{legend:{display:false}},scales:{x:{...gridX,ticks:{...gridX.ticks,maxTicksLimit:4}},y:{...gridY,beginAtZero:true,ticks:{precision:0,maxTicksLimit:4}}}}}}/></div>
+              <div className="small muted" style=${{marginTop:6}}>"Started" uses each ticket's current status date, so it's approximate.</div>`
+            :html`<div className="small muted" style=${{marginTop:10}}>No tickets in Jira yet${drafts.length?" — "+drafts.length+" drafts are waiting for approval":""}.</div>`}`
+          :html`<div className="small muted">Shows once Jira is readable.</div>`}</div>
+      </aside>
+    </div>
+    ${open?html`<div className="scrim" onClick=${()=>setOpen(null)}></div><aside className="drawer" role="dialog" aria-modal="true" aria-label="Ticket details">
+      <div className="dh"><div style=${{flex:1,minWidth:0}}>
+        <div className="small muted mono">${open.type==="draft"?"DRAFT · "+(open.d.tqa||[]).join(", "):open.type==="ticket"?open.t.key:open.i.id}</div>
+        <h2 style=${{marginTop:4}}>${open.type==="draft"?open.d.summary:open.type==="ticket"?open.t.summary:(open.i.title||open.i.id)}</h2></div>
+        <button className="icon-btn" onClick=${()=>setOpen(null)} aria-label="Close"><${Icon} name="X"/></button></div>
+      <div className="db">
+        ${open.type==="draft"?html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
+            <span className="jr-chip"><${JStatusIcon} cat="staged" size=${12}/>Awaiting approval</span>
+            <span className="jr-chip"><span className="d" style=${{background:(J_AREA[open.d.area]||J_AREA.other)[1]}}></span>${(J_AREA[open.d.area]||J_AREA.other)[0]}</span>
+            <span className="jr-chip">${open.d.issuetype} · ${open.d.priority}</span>
+            <span className="jr-chip"><${JAvatar} name=${open.d.dev}/>${open.d.dev}</span>
+            <span className="jr-chip">Parent ${open.d.parent||JIRA_EPIC}</span></div>
+          <div className="note" style=${{marginBottom:12}}>Not in Jira yet. Claude creates it under ${JIRA_EPIC} only after Amir approves the drafts in chat.</div>
+          <div className="jr-md" dangerouslySetInnerHTML=${{__html:mdToHtml(open.d.description)}}></div>`
+        :open.type==="ticket"?html`<div className="jr-prop" style=${{marginBottom:14}}>
+            <span className="k">Status</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JStatusIcon} cat=${open.t.cat}/>${open.t.status}</span>
+            <span className="k">Dev Assignee</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JAvatar} name=${open.t.dev}/>${open.t.dev||"—"}</span>
+            <span className="k">Area</span><span>${(J_AREA[open.t.area]||J_AREA.other)[0]}</span>
+            <span className="k">Priority</span><span>${open.t.priority||"—"}</span>
+            <span className="k">Tracking</span><span className="mono">${open.t.tqa.join(", ")||"—"}</span>
+            <span className="k">Created</span><span>${jDate(open.t.created)}</span>
+            <span className="k">Resolved</span><span>${jDate(open.t.resolved)}</span></div>
+          <a className="btn primary" href=${"https://"+JIRA_SITE+"/browse/"+open.t.key} target="_blank" rel="noopener"><${Icon} name="ExternalLink" size=${14}/>Open ${open.t.key} in Jira</a>`
+        :html`<div className="jr-prop" style=${{marginBottom:14}}>
+            <span className="k">Owner</span><span>${OUTSIDE_SQUAD[open.i.id]}</span>
+            <span className="k">Severity</span><span>${open.i.severity||"—"}</span>
+            <span className="k">Found</span><span>${open.i.found||"—"}</span></div>
+          <p className="small" style=${{color:"#c9cfe6"}}>${open.i.what||""}</p>
+          ${open.i.next_check?html`<p className="small muted">Next check: ${open.i.next_check}</p>`:null}
+          <div className="note">Not a squad development task, so no ISQ ticket. It stays on the tracking board until its owner fixes it.</div>`}
+      </div></aside>`:null}
+  </div>`;
+}
+
 /* ======================================================================
    Event quality
    ====================================================================== */
