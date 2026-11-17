@@ -270,11 +270,15 @@ const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion:
 const PROJECT = "databases-472111";
 const BQ_SERVER = "Google Cloud BigQuery";
 const BQ_TOOL = "execute_sql_readonly";
+const SHEETS_SERVER = "Google Sheets";
+const SINGULAR_SHEET = "1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg";
+const SINGULAR_HEADER = "date,etl_query_timestamp_utc,app,source,os,platform,country_field,adn_campaign_id,adn_campaign_name,adn_account_id,adn_original_currency,adn_campaign_url,adn_sub_campaign_name,adn_sub_adnetwork_name,adn_account_name,adn_sub_campaign_id,data_connector_source_name,data_connector_id,data_connector_username,data_connector_timestamp_utc,adn_impressions,adn_clicks,adn_installs,adn_cost,adn_original_cost,app_install_count";
 const NAV = [
   ["overview","Overview","LayoutDashboard"],
   ["agents","AI Agent Command Center","Bot"],
   ["history","Execution History","History"],
   ["analytics","Analytics Dashboard","ChartLine"],
+  ["singular","Singular (attribution)","Megaphone"],
   ["quality","Event Quality & Monitoring","ShieldCheck"],
   ["reports","Reports","FileText"],
   ["config","Agent Configuration","SlidersHorizontal"],
@@ -372,20 +376,20 @@ function parseBQ(payload){
   if(Array.isArray(p.rows)) return p.rows;
   return [];
 }
-function bqWatch(key, sql){
+function mcpWatch(key, call){
   let e = bqStore.get(key);
   if(e) return e;
-  e = {state:{status:"loading",rows:null,error:null,storedAt:null}, subs:new Set(), unsub:null};
+  e = {state:{status:"loading",rows:null,error:null,storedAt:null}, subs:new Set(), unsub:null, call};
   bqStore.set(key,e);
   const set = s => { e.state={...e.state,...s}; e.subs.forEach(f=>f(e.state)); bqNotify(); };
   const start = () => {
     if(caps.mcp===undefined) return;
     if(!caps.mcp){ set({status:"nomcp"}); return; }
     try{
-      e.unsub = caps.mcp.watchTool(BQ_SERVER, BQ_TOOL, {projectId:PROJECT, query:sql}, ev=>{
+      e.unsub = caps.mcp.watchTool(call.server, call.tool, call.input, ev=>{
         if(ev.type==="data"){
           const res = ev.result||{};
-          set({status:"ok", rows:parseBQ(res.payload), error:null, storedAt:(res.cache&&res.cache.storedAt)||Date.now()});
+          set({status:"ok", rows:call.parse(res.payload), error:null, storedAt:(res.cache&&res.cache.storedAt)||Date.now()});
         } else {
           const code = ev.error && ev.error.code;
           const retract = ["needs_reauth","server_not_connected","blocked_by_policy","not_in_manifest","not_granted","selection_required"].includes(code);
@@ -397,18 +401,25 @@ function bqWatch(key, sql){
     }catch(err){ set({status:"error",error:{code:"bad_request",message:String(err)}}); }
   };
   if(caps.mcp===undefined) onCaps(start); else start();
-  e.sql = sql;
   return e;
 }
-function useBQ(key, sql){
-  const e = useMemo(()=>bqWatch(key,sql),[key]);
+function parseSheet(payload){
+  let p=payload; if(typeof p==="string"){ try{p=JSON.parse(p);}catch(e){return [];} }
+  if(p&&p.content) p=p.content;
+  return (p&&Array.isArray(p.values))?p.values:[];
+}
+function bqWatch(key, sql){ return mcpWatch(key,{server:BQ_SERVER,tool:BQ_TOOL,input:{projectId:PROJECT,query:sql},parse:parseBQ,label:"BigQuery"}); }
+async function runCall(e){ const c=e.call; const r=await caps.mcp.callTool(c.server,c.tool,c.input); e.state={status:"ok",rows:c.parse(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); }
+function useWatchEntry(e){
   const [s,setS] = useState(e.state);
   useEffect(()=>{ e.subs.add(setS); setS(e.state); return ()=>e.subs.delete(setS); },[e]);
-  const allow = useCallback(async()=>{
-    try{ const r = await caps.mcp.callTool(BQ_SERVER,BQ_TOOL,{projectId:PROJECT,query:sql}); e.state={status:"ok",rows:parseBQ(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); }
-    catch(err){ e.state={...e.state,error:err}; e.subs.forEach(f=>f(e.state)); }
-  },[e]);
+  const allow = useCallback(async()=>{ try{ await runCall(e); }catch(err){ e.state={...e.state,error:err}; e.subs.forEach(f=>f(e.state)); } bqNotify(); },[e]);
   return {...s, allow};
+}
+function useSheet(key, range){ const e=useMemo(()=>mcpWatch(key,{server:SHEETS_SERVER,tool:"get_values",input:{spreadsheetId:SINGULAR_SHEET,range},parse:parseSheet,label:"Google Sheets"}),[key]); return useWatchEntry(e); }
+function useBQ(key, sql){
+  const e = useMemo(()=>bqWatch(key,sql),[key]);
+  return useWatchEntry(e);
 }
 
 /* vetted, aggregated SQL (same logic as sql/readonly/ in the repo) */
@@ -489,18 +500,19 @@ function Spark({data,color="#3A9AF4"}){
     <circle cx=${last[0]} cy=${last[1]} r="2.6" fill=${color}/></svg>`;
 }
 function BQState({q,label="BigQuery"}){
+  const conn = label==="Google Sheets"||label==="Singular sheet" ? "Google Sheets" : "Google Cloud BigQuery";
   if(q.status==="loading") return html`<div className="grid" style=${{gap:8}}><${Skel} h=${14} w="40%"/><${Skel} h=${120}/></div>`;
-  if(q.status==="nomcp") return html`<div className="note">Live BigQuery data needs this page open in claude.ai, signed in, with the Google Cloud BigQuery connector.</div>`;
+  if(q.status==="nomcp") return html`<div className="note">Live data needs this page open in claude.ai, signed in, with the ${conn} connector.</div>`;
   if(q.status==="denied"){
     const c=q.error&&q.error.code;
-    const msg = c==="needs_reauth" ? "Your BigQuery connection expired. Reconnect Google Cloud BigQuery in claude.ai Settings → Connectors."
-      : c==="server_not_connected" ? "Add the Google Cloud BigQuery connector in claude.ai Settings → Connectors to see live data."
-      : c==="selection_required" ? "Choose which BigQuery connector this page should use in the claude.ai prompt."
-      : c==="approval_required" ? "This page needs your approval to run read-only BigQuery queries."
-      : c==="not_in_manifest" ? "BigQuery access is turned off for this page in your view."
-      : c==="blocked_by_policy" ? "Your organization's policy blocks this BigQuery tool for you."
-      : "Live BigQuery data isn't available in this view.";
-    return html`<div className="note warn">${msg} ${c==="approval_required"?html`<button className="btn sm" style=${{marginLeft:8}} onClick=${q.allow}>Allow read-only queries</button>`:null}</div>`;
+    const msg = c==="needs_reauth" ? "Your "+conn+" connection expired. Reconnect it in claude.ai Settings → Connectors."
+      : c==="server_not_connected" ? "Add the "+conn+" connector in claude.ai Settings → Connectors to see live data."
+      : c==="selection_required" ? "Choose which "+conn+" connector this page should use in the claude.ai prompt."
+      : c==="approval_required" ? "This page needs your approval to read "+(conn==="Google Sheets"?"the Singular sheet (read-only)":"BigQuery (read-only queries)")+"."
+      : c==="not_in_manifest" ? conn+" access is turned off for this page in your view."
+      : c==="blocked_by_policy" ? "Your organization's policy blocks this "+conn+" tool for you."
+      : "Live "+conn+" data isn't available in this view.";
+    return html`<div className="note warn">${msg} ${c==="approval_required"?html`<button className="btn sm" style=${{marginLeft:8}} onClick=${q.allow}>Allow read-only access</button>`:null}</div>`;
   }
   if(q.status==="error") return html`<div className="note err">${label} didn't answer (${esc(q.error&&q.error.code)}). It will retry on the next refresh. ${q.error&&q.error.code==="tool_error"?html`<div className="mono" style=${{marginTop:6}}>${String(q.error.message||"").slice(0,240)}</div>`:null}</div>`;
   return null;
@@ -587,7 +599,7 @@ function App(){
   const runs = runsQ.docs;
   const activeRun = runs.find(r=>ACTIVE.has(r.status));
 
-  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,quality:QualityView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
+  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,singular:SingularView,quality:QualityView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
   return html`<div className="app">
     <aside className=${"side"+(collapsed?" collapsed":"")+(mobile?" mobile-open":"")} aria-label="Main navigation">
       <div className="brand"><div className="logo">M</div>${!collapsed&&html`<div><div style=${{fontWeight:600}}>Manafa BI</div><div className="small muted">Command Center</div></div>`}</div>
@@ -619,14 +631,14 @@ function BQBanner(){
   const lost=all.find(e=>e.state.status==="denied"&&e.state.error&&e.state.error.code!=="approval_required");
   const stale=all.filter(e=>e.state.status==="stale");
   const refresh=async()=>{ setBusy(true); setMsg(""); let ok=0, fail=null;
-    for(const e of all){ try{ const r=await caps.mcp.callTool(BQ_SERVER,BQ_TOOL,{projectId:PROJECT,query:e.sql}); e.state={...e.state,status:"ok",rows:parseBQ(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); ok++; }
+    for(const e of all){ try{ await runCall(e); ok++; }
       catch(err){ fail=err&&err.code||"error"; if(fail==="approval_required"||fail==="needs_reauth") break; } }
     bqNotify(); setBusy(false); if(fail) setMsg(fail==="approval_required"?"Approval was declined or couldn't be asked here. Open the page in claude.ai and try again.":"Some queries didn't refresh ("+fail+"). The last data stays on screen."); };
   if(!approval.length && !lost && !stale.length) return null;
-  if(lost){ const c=lost.state.error.code; const m=c==="needs_reauth"?"Your BigQuery connection expired. Reconnect Google Cloud BigQuery in claude.ai Settings → Connectors.":c==="server_not_connected"?"Add the Google Cloud BigQuery connector in claude.ai Settings → Connectors to see live data.":c==="selection_required"?"Choose which BigQuery connector this page should use in the claude.ai prompt.":c==="blocked_by_policy"?"Your organization's policy blocks this BigQuery tool for you.":"BigQuery access is turned off for this page in your view.";
+  if(lost){ const c=lost.state.error.code; const n=lost.call.server; const m=c==="needs_reauth"?"Your "+n+" connection expired. Reconnect it in claude.ai Settings → Connectors.":c==="server_not_connected"?"Add the "+n+" connector in claude.ai Settings → Connectors to see live data.":c==="selection_required"?"Choose which "+n+" connector this page should use in the claude.ai prompt.":c==="blocked_by_policy"?"Your organization's policy blocks this "+n+" tool for you.":n+" access is turned off for this page in your view.";
     return html`<div className="note warn" style=${{marginBottom:14}}>${m}</div>`; }
   if(approval.length) return html`<div className="note warn" style=${{marginBottom:14,display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
-    <span style=${{flex:1,minWidth:240}}>BigQuery needs your approval again to refresh live data. The last data stays on screen until then.${msg?html`<br/>${msg}`:null}</span>
+    <span style=${{flex:1,minWidth:240}}>${[...new Set(approval.map(e=>e.call.server))].join(" and ")} need${approval.length&&new Set(approval.map(e=>e.call.server)).size>1?"":"s"} your approval to refresh live data to refresh live data. The last data stays on screen until then.${msg?html`<br/>${msg}`:null}</span>
     <button className="btn sm" disabled=${busy} onClick=${refresh}><${Icon} name="RefreshCw" size=${13}/>${busy?"Refreshing…":"Allow and refresh"}</button></div>`;
   return html`<div className="note" style=${{marginBottom:14,display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}><span style=${{flex:1,minWidth:240}}>A live refresh didn't complete; showing the last data loaded.${msg?html`<br/>${msg}`:null}</span><button className="btn sm" disabled=${busy} onClick=${refresh}><${Icon} name="RefreshCw" size=${13}/>${busy?"Refreshing…":"Refresh now"}</button></div>`;
 }
@@ -1097,6 +1109,74 @@ function AnalyticsView(){
     </div></div>`;
 }
 
+
+/* ======================================================================
+   Singular (attribution) — Google Sheet exception, own section only
+   ====================================================================== */
+function riyadhToday(){ return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Riyadh"}).format(new Date()); }
+const SING_NET_COL = {"AdWords":"#3A9AF4","TikTok Ads":"#c084fc","Twitter":"#5ec8d8"};
+function netLabel(s){ return s==="AdWords"?"Google Ads":s==="Twitter"?"X (Twitter)":s; }
+function SingularView(){
+  const chk=useSheet("sing_checks","mbi_summary!L1:M12"), tab=useSheet("sing_daily","mbi_summary!A1:J2000");
+  const [win,setWin]=useState(7);
+  const C={}; (chk.rows||[]).forEach(r=>{ if(r&&r[0]) C[r[0]]=r[1]; });
+  const num=v=>{ const n=Number(v); return v===""||v==null||isNaN(n)?0:n; };
+  const gate=[];
+  if(chk.rows){
+    if(C.header!==SINGULAR_HEADER) gate.push("The sheet's columns changed. Numbers are hidden until the new columns are checked for personal data.");
+    if(String(C.duplicate_grain_rows)!=="0") gate.push(C.duplicate_grain_rows+" repeated rows: the sheet may hold a restated load.");
+    if(C.currencies!=="SAR") gate.push("Currencies other than SAR appeared ("+C.currencies+").");
+    if(Math.abs(num(C.table_cost_total)-num(C.cost_total_check))>0.01||String(C.table_rows_total)!==String(C.data_rows)) gate.push("The summary totals don't match the raw sheet.");
+  }
+  const today=riyadhToday(); const closed=addDays(today,-3);
+  const stale = C.max_date && C.max_date < addDays(today,-2);
+  const rows=(tab.rows||[]).slice(1).filter(r=>r&&r[0]).map(r=>({d:r[0],src:r[1],os:r[2],cur:r[3],impr:num(r[4]),clk:num(r[5]),ni:num(r[6]),cost:num(r[7]),ai:num(r[8])}));
+  const end = C.max_date && C.max_date<closed ? C.max_date : closed;
+  const from=addDays(end,-(win-1));
+  const inR=rows.filter(r=>r.d>=from&&r.d<=end);
+  const prevR=rows.filter(r=>r.d>=addDays(from,-win)&&r.d<from);
+  const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
+  const nets=[...new Set(rows.map(r=>r.src))].sort();
+  const byNet=nets.map(n=>{ const a=inR.filter(r=>r.src===n), b=prevR.filter(r=>r.src===n); const noInst=n==="Twitter";
+    return {n,cost:sum(a,"cost"),clk:sum(a,"clk"),ni:sum(a,"ni"),ai:sum(a,"ai"),pcost:sum(b,"cost"),pai:sum(b,"ai"),noInst,
+      os:["iOS","Android","Web"].map(o=>{const x=a.filter(r=>r.os===o); return {o,cost:sum(x,"cost"),ai:sum(x,"ai"),ni:sum(x,"ni"),clk:sum(x,"clk")};}).filter(x=>x.cost||x.ai||x.clk)}; });
+  const instNets=byNet.filter(x=>!x.noInst);
+  const days=[...new Set(inR.map(r=>r.d))].sort();
+  const ok = chk.rows && tab.rows && !gate.length;
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Singular (attribution)</h1><p>Ad-network spend and installs from Singular, read live from the Singular Google Sheet. These numbers stand on their own: they are never added to, averaged with or compared against GA4, Google Ads (BigQuery) or backend figures here.</p></div>
+      <div className="seg" role="group" aria-label="Window">${[7,14,28].map(w=>html`<button key=${w} className=${win===w?"on":""} onClick=${()=>setWin(w)} aria-pressed=${win===w}>${w} days</button>`)}</div></div>
+    <div className="panel" style=${{marginBottom:14}}><div className="panel-h"><h2>Data checks</h2><span className="grow"></span><${Fresh} q=${chk}/><span className="label-data">Singular sheet</span></div>
+      ${chk.rows?html`<div className="grid g4">
+          <div><div className="small muted">Latest data date</div><div style=${{fontSize:18,fontWeight:600}}>${C.max_date||"—"}</div></div>
+          <div><div className="small muted">Last Singular load (UTC)</div><div style=${{fontSize:18,fontWeight:600}}>${(C.max_etl_utc||"—").slice(0,16)}</div></div>
+          <div><div className="small muted">Rows in sheet</div><div style=${{fontSize:18,fontWeight:600}}>${fmtN(num(C.data_rows))}</div><div className="small muted">since ${C.min_date||"—"}</div></div>
+          <div><div className="small muted">Checks</div><div style=${{fontSize:18,fontWeight:600,color:gate.length?"#ef6b6b":"#22c38e"}}>${gate.length?"Failed":"Passed"}</div><div className="small muted">columns, repeats, currency, totals</div></div></div>
+        ${gate.length?html`<div className="note err" style=${{marginTop:10}}>${gate.map((g,i)=>html`<div key=${i}>${g}</div>`)}</div>`:null}
+        ${stale?html`<div className="note warn" style=${{marginTop:10}}>Singular data is stale: the latest date is ${C.max_date}.</div>`:null}`
+      :html`<${BQState} q=${chk} label="Google Sheets"/>`}
+      <${Source}>Google Sheet · mbi_summary checks<//></div>
+    ${!ok?(chk.rows&&!gate.length?html`<div className="panel"><${BQState} q=${tab} label="Google Sheets"/></div>`:null):html`
+    <div className="grid g4" style=${{marginBottom:14}}>
+      ${[["Spend (SAR)","cost",v=>fmtSAR(v),"pcost"],["Clicks","clk",fmtN],["Network-reported installs","ni",fmtN],["Singular-attributed installs","ai",fmtN,"pai"]].map(([l,k,f,pk])=>html`<div key=${k} className="panel kpi"><div className="small muted">${l}</div><div style=${{fontSize:24,fontWeight:600}}>${f(sum(byNet,k))}</div>
+        ${pk?html`<${Delta} cur=${sum(byNet,k)} prev=${sum(byNet,pk)}/>`:null}<div className="small muted">${from} to ${end}</div></div>`)}</div>
+    <div className="grid g2">
+      <div className="panel span2"><div className="panel-h"><h2>By network and OS</h2><span className="grow"></span><${Fresh} q=${tab}/><span className="label-data">Singular sheet</span></div>
+        <div className="tablewrap"><table><thead><tr><th>Network</th><th>OS</th><th style=${{textAlign:"right"}}>Spend (SAR)</th><th style=${{textAlign:"right"}}>Clicks</th><th style=${{textAlign:"right"}}>Network installs</th><th style=${{textAlign:"right"}}>Singular installs</th><th style=${{textAlign:"right"}}>CPI (SAR, Singular)</th></tr></thead>
+          <tbody>${byNet.map(x=>x.os.map((o,i)=>html`<tr key=${x.n+o.o}><td>${i===0?html`<b>${netLabel(x.n)}</b>`:""}</td><td>${o.o}</td><td style=${{textAlign:"right"}}>${fmtSAR(o.cost)}</td><td style=${{textAlign:"right"}}>${fmtN(o.clk)}</td>
+            <td style=${{textAlign:"right"}} className=${x.noInst?"muted":""}>${x.noInst?"not reported":fmtN(o.ni)}</td><td style=${{textAlign:"right"}} className=${x.noInst?"muted":""}>${x.noInst?"not reported":fmtN(o.ai)}</td>
+            <td style=${{textAlign:"right"}}>${x.noInst||!o.ai?"—":fmtSAR(o.cost/o.ai)}</td></tr>`))}</tbody></table></div>
+        <div className="small muted" style=${{marginTop:8}}>Network installs are what each ad network claims; Singular installs are Singular's own attribution. They are shown side by side, never merged. X (Twitter) sends no install data to Singular. Google Ads Android spend here is about 2× BigQuery's figure; that is open tracking issue tqa-018, so use BigQuery for Google Ads spend.</div>
+        <${Source}>Google Sheet · mbi_summary · last ${win} closed days (last 72 h excluded)<//></div>
+      <div className="panel"><div className="panel-h"><h2>Daily spend by network</h2><span className="grow"></span><span className="label-data">Singular sheet</span></div>
+        <${ChartC} config=${{type:"bar",data:{labels:days.map(d=>d.slice(5)),datasets:nets.map(n=>({label:netLabel(n),data:days.map(d=>sum(inR.filter(r=>r.d===d&&r.src===n),"cost")),backgroundColor:SING_NET_COL[n]||"#8b93b0",borderRadius:3,stack:"s"}))},options:{scales:{x:{...gridX,stacked:true},y:{...gridY,stacked:true,ticks:{callback:v=>fmtSAR(v)}}}}}}/>
+        <${Source}>Google Sheet · adn_cost (SAR)<//></div>
+      <div className="panel"><div className="panel-h"><h2>Daily Singular-attributed installs</h2><span className="grow"></span><span className="label-data">Singular sheet</span></div>
+        <${ChartC} config=${{type:"line",data:{labels:days.map(d=>d.slice(5)),datasets:instNets.map(x=>({label:netLabel(x.n),data:days.map(d=>sum(inR.filter(r=>r.d===d&&r.src===x.n),"ai")),borderColor:SING_NET_COL[x.n]||"#8b93b0",pointRadius:2,tension:.3}))},options:{scales:{x:gridX,y:gridY}}}}/>
+        <${Source}>Google Sheet · app_install_count<//></div>
+    </div>`}
+  </div>`;
+}
 /* ======================================================================
    Event quality
    ====================================================================== */
