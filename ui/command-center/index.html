@@ -225,6 +225,7 @@ input[type=date],select,input[type=text],input[type=search]{background:var(--sur
 .jr-md td,.jr-md th{padding:6px 8px;font-size:12.5px}
 @media (max-width:1100px){.jr{grid-template-columns:1fr}.jr-main{border-right:0;border-bottom:1px solid var(--line)}}
 @media (max-width:640px){.jr-row .meta .jr-chip.opt{display:none}.jr-row .key{width:64px}}
+@keyframes rspin{to{transform:rotate(360deg)}}
 /* Drawer + modal */
 .scrim{position:fixed;inset:0;background:rgba(3,6,16,.55);z-index:30;animation:fade .2s ease both}
 @keyframes fade{from{opacity:0}}
@@ -440,8 +441,28 @@ function mcpWatch(key, call){
       }, {refetchInterval:300000, cache:{staleTime:240000, gcTime:86400000}});
     }catch(err){ set({status:"error",error:{code:"bad_request",message:String(err)}}); }
   };
-  if(caps.mcp===undefined) onCaps(start); else start();
+  e.set = set;
+  const guard = () => setTimeout(()=>{ if(e.state.status==="loading" && !e.state.rows && caps.mcp) runCall(e).catch(err=>applyCallError(e,err)); }, 25000);
+  if(caps.mcp===undefined) onCaps(()=>{ start(); guard(); }); else { start(); guard(); }
   return e;
+}
+function applyCallError(e,err){
+  const code=err&&err.code;
+  const retract=["needs_reauth","server_not_connected","blocked_by_policy","not_in_manifest","not_granted","selection_required"].includes(code);
+  if(retract) e.set({status:"denied",error:err,rows:null});
+  else if(code==="approval_required") e.set({status:e.state.rows?"approval":"denied",error:err});
+  else e.set({status:e.state.rows?"stale":"error",error:err&&err.code?err:{code:"upstream_error",message:String(err&&err.message||err)}});
+}
+/* Reload every live query this page has opened (BigQuery, Google Sheets, Jira). Rows already on screen stay until the new data arrives. */
+async function reloadAll(){
+  const all=[...bqStore.values()];
+  if(!caps.mcp) return {ok:0,fail:all.length,total:all.length};
+  all.forEach(e=>{ if(!e.state.rows) e.set({status:"loading",error:null}); });
+  const res=await Promise.allSettled(all.map(e=>runCall(e)));
+  let ok=0, fail=0;
+  res.forEach((r,i)=>{ if(r.status==="fulfilled") ok++; else { fail++; applyCallError(all[i],r.reason); } });
+  bqNotify();
+  return {ok,fail,total:all.length};
 }
 function parseSheet(payload){
   let p=payload; if(typeof p==="string"){ try{p=JSON.parse(p);}catch(e){return [];} }
@@ -449,7 +470,7 @@ function parseSheet(payload){
   return (p&&Array.isArray(p.values))?p.values:[];
 }
 function bqWatch(key, sql){ return mcpWatch(key,{server:BQ_SERVER,tool:BQ_TOOL,input:{projectId:PROJECT,query:sql},parse:parseBQ,label:"BigQuery"}); }
-async function runCall(e){ const c=e.call; const r=await caps.mcp.callTool(c.server,c.tool,c.input); e.state={status:"ok",rows:c.parse(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); }
+async function runCall(e){ const c=e.call; const r=await caps.mcp.callTool(c.server,c.tool,c.input); e.state={status:"ok",rows:c.parse(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); bqNotify(); }
 function useWatchEntry(e){
   const [s,setS] = useState(e.state);
   useEffect(()=>{ e.subs.add(setS); setS(e.state); return ()=>e.subs.delete(setS); },[e]);
@@ -695,6 +716,18 @@ function BQBanner(){
   return html`<div className="note" style=${{marginBottom:14,display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}><span style=${{flex:1,minWidth:240}}>A live refresh didn't complete; showing the last data loaded.${msg?html`<br/>${msg}`:null}</span><button className="btn sm" disabled=${busy} onClick=${refresh}><${Icon} name="RefreshCw" size=${13}/>${busy?"Refreshing…":"Refresh now"}</button></div>`;
 }
 
+function ReloadButton(){
+  const [busy,setBusy]=useState(false); const [msg,setMsg]=useState("");
+  const go=async()=>{ if(busy) return; setBusy(true); setMsg("");
+    try{ const r=await reloadAll(); const t=new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Riyadh"});
+      setMsg(!r.total?"Nothing to reload yet":r.fail?`${r.ok} of ${r.total} sources reloaded · ${r.fail} didn't answer`:`Reloaded ${r.total} source${r.total>1?"s":""} at ${t}`); }
+    catch(e){ setMsg("Reload failed"); }
+    setBusy(false); setTimeout(()=>setMsg(""),6000); };
+  return html`<div style=${{position:"relative",display:"inline-flex",alignItems:"center",gap:8}}>
+    ${msg?html`<span className="small muted hide-sm" role="status" style=${{whiteSpace:"nowrap"}}>${msg}</span>`:null}
+    <button className="btn sm" onClick=${go} disabled=${busy} aria-label="Reload live data" title="Reload live data from BigQuery, Google Sheets and Jira">
+      <${Icon} name="RefreshCw" size=${14} style=${busy?{animation:"rspin 1s linear infinite"}:null}/><span className="hide-sm">${busy?"Reloading…":"Reload"}</span></button></div>`;
+}
 function TopBar({ctx,activeRun,highOpen,openIssues,onMenu}){
   const [menu,setMenu]=useState(null);
   const runs=ctx.runsQ.docs; const last=runs[0];
@@ -708,6 +741,7 @@ function TopBar({ctx,activeRun,highOpen,openIssues,onMenu}){
     <span className="chip" title="System health"><span className="dot" style=${{background:health[1]}}></span>${health[0]}</span>
     <div className="grow"></div>
     <span className="small muted hide-sm">Last execution: ${last?fmtTs(last.started_at):"—"}</span>
+    <${ReloadButton}/>
     <div className="menu-wrap" style=${{position:"relative"}}>
       <button className="icon-btn" aria-label="Notifications" onClick=${e=>{e.stopPropagation();setMenu(menu==="n"?null:"n");}}><${Icon} name="Bell" size=${18}/>
         ${notes.length?html`<span style=${{position:"absolute",top:3,right:3,width:8,height:8,borderRadius:"50%",background:"var(--err)"}}></span>`:null}</button>
