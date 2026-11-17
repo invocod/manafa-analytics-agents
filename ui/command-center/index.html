@@ -335,6 +335,26 @@ pre.code{background:#0b1124;border:1px solid var(--line);border-radius:8px;paddi
 .ask-comp{position:sticky;bottom:0;display:flex;gap:8px;align-items:flex-end;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 -8px 24px rgba(10,15,30,.8)}
 .ask-comp textarea{flex:1;resize:vertical;min-height:44px;max-height:220px;background:transparent;border:0;color:var(--text);font:inherit;outline:none;padding:6px 4px}
 .ask-comp:focus-within{border-color:var(--brand-2)}
+
+/* Orchestrator + queued agents animate while a run is live */
+.edge.pending{stroke:#9b8cf2;stroke-dasharray:3 7;animation:dash 1.8s linear infinite;opacity:.8}
+.edge.dim,.node.dim{opacity:.4}
+.node.pending rect{stroke:#7c6fe0;fill:#1a1d48}
+.node.pending .sub{fill:#c9c1fb}
+.node.pending .ring{animation:pl 2.2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.node .march{fill:none!important;stroke-width:1.6;stroke-dasharray:14 10;animation:march 1.4s linear infinite;pointer-events:none}
+.node.active .march{stroke:var(--brand-2)!important}
+.node.pending .march{stroke:#9b8cf2!important;animation-duration:2.6s;opacity:.85}
+.orch-node.active .march{stroke:var(--brand-2)!important;stroke-dasharray:22 12;animation-duration:1.1s}
+.orch-node .halo{fill:none!important;stroke:rgba(58,154,244,.55)!important;stroke-width:2;animation:halo 1.8s ease-in-out infinite;pointer-events:none}
+.orch-node.active .ring{animation:pl 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes march{to{stroke-dashoffset:-48}}
+@keyframes halo{0%,100%{opacity:.15}50%{opacity:.85}}
+.agent.pending{border-color:rgba(124,111,224,.55)}
+.agent.pending::after{content:"";position:absolute;inset:-1px;border-radius:var(--r);padding:1px;background:conic-gradient(from var(--a,0deg),transparent 0 75%,#9b8cf2 88%,transparent 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 5s linear infinite;pointer-events:none}
+.bar.queue i{width:100%!important;background:repeating-linear-gradient(90deg,rgba(155,140,242,.45) 0 10px,rgba(155,140,242,.12) 10px 20px);background-size:40px 100%;animation:qstripe 1.2s linear infinite}
+@keyframes qstripe{to{background-position:40px 0}}
+@media (prefers-reduced-motion:reduce){.edge.pending,.node .march,.orch-node .halo,.node.pending .ring,.orch-node.active .ring,.agent.pending::after,.bar.queue i{animation:none}}
 </style>
 </head>
 <body>
@@ -693,6 +713,8 @@ function mdToHtml(src){
 
 /* ---------------- run model helpers ---------------- */
 function runDuration(r){ const a=Date.parse(r.started_at), b=r.ended_at?Date.parse(r.ended_at):(ACTIVE.has(r.status)?Date.now():null); return a&&b?b-a:null; }
+/* A run is live while it isn't finished and it, or any agent in it, is active (queued and waiting count). */
+function isRunLive(run){ if(!run||["completed","failed","cancelled"].includes(run.status)) return false; return ACTIVE.has(run.status)||Object.values(run.agents||{}).some(a=>ACTIVE.has(a.status)); }
 function agentStateFrom(runs, agentId){
   const sorted=[...runs].sort((a,b)=>String(b.started_at).localeCompare(String(a.started_at)));
   for(const r of sorted){ const a=r.agents&&r.agents[agentId]; if(a) return {run:r, a}; }
@@ -1338,19 +1360,29 @@ function OrchMap({agents,run,onPick}){
   const n=agents.length||1; const cols=Math.min(n,7);
   const pos=agents.map((a,i)=>({a, x: 30+ (i+0.5)*((W-60)/cols), y: 218}));
   const stOf=id=>{ const s=run&&run.agents&&run.agents[id]; return s?s.status:"idle"; };
-  const cls=s=>ACTIVE.has(s)&&s!=="queued"&&s!=="waiting"?"active":s==="completed"?"ok":s==="failed"?"err":"";
-  const orchActive = run && ACTIVE.has(run.status);
+  const inRun=id=>!!(run&&run.agents&&run.agents[id]);
+  const working=s=>ACTIVE.has(s)&&s!=="queued"&&s!=="waiting";
+  const runLive = isRunLive(run);
+  const cls=s=>working(s)?"active":(s==="queued"||s==="waiting")&&runLive?"pending":s==="completed"?"ok":s==="failed"?"err":"";
+  const orchActive = runLive;
+  const nWork=agents.filter(a=>working(stOf(a.id))).length, nWait=agents.filter(a=>["queued","waiting"].includes(stOf(a.id))).length;
+  const orchSub = !run ? "Waiting for a run" : runLive ? [nWork?nWork+" working":null, nWait?nWait+" queued":null].filter(Boolean).join(" · ")||"Starting" : (STATUS[run.status]||STATUS.idle)[0]+" · "+(run.trigger||"chat");
   return html`<div className="orch"><svg viewBox=${"0 0 "+W+" "+H} role="img" aria-label="Orchestrator connected to seven agents">
-    ${pos.map(p=>{ const s=stOf(p.a.id); return html`<path key=${"e"+p.a.id} className=${"edge "+cls(s)} d=${`M${cx},${cy+22} C${cx},${cy+110} ${p.x},${p.y-110} ${p.x},${p.y-22}`}/>`; })}
-    <g className=${"node "+(orchActive?"active":run&&run.status==="completed"?"ok":"")} transform=${`translate(${cx-120},${cy-22})`}>
+    ${pos.map(p=>{ const s=stOf(p.a.id); return html`<path key=${"e"+p.a.id} className=${"edge "+cls(s)+(runLive&&!inRun(p.a.id)?" dim":"")} d=${`M${cx},${cy+22} C${cx},${cy+110} ${p.x},${p.y-110} ${p.x},${p.y-22}`}/>`; })}
+    <g className=${"node orch-node "+(orchActive?"active":run&&run.status==="completed"?"ok":"")} transform=${`translate(${cx-120},${cy-22})`}>
+      ${orchActive?html`<rect className="halo" x="-5" y="-5" width="250" height="54" rx="14"/>`:null}
       <rect width="240" height="44" rx="10"/>
-      <text x="120" y="19" textAnchor="middle">Orchestrator · Claude</text>
-      <text x="120" y="34" textAnchor="middle" className="sub">${run?(STATUS[run.status]||STATUS.idle)[0]+" · "+(run.trigger||"chat"):"Waiting for a run"}</text></g>
+      ${orchActive?html`<rect className="march" width="240" height="44" rx="10"/>`:null}
+      ${orchActive?html`<circle className="ring" cx="16" cy="22" r="5" fill="none" stroke="#3A9AF4" strokeWidth="2"/>`:null}
+      <circle cx="16" cy="22" r="3.5" fill=${orchActive?"#3A9AF4":run&&run.status==="completed"?"#22c38e":"#5b6485"}/>
+      <text x="124" y="19" textAnchor="middle">Orchestrator · Claude</text>
+      <text x="124" y="34" textAnchor="middle" className="sub">${orchSub}</text></g>
     ${pos.map((p,i)=>{ const s=stOf(p.a.id); const c=cls(s); const w=Math.min(100,(W-60)/cols-8);
-      return html`<g key=${p.a.id} className=${"node "+c} transform=${`translate(${p.x-w/2},${p.y-22})`} onClick=${()=>onPick(p.a.id)} tabIndex="0" role="button" aria-label=${p.a.label+": "+(STATUS[s]||STATUS.idle)[0]} onKeyDown=${e=>e.key==="Enter"&&onPick(p.a.id)}>
+      return html`<g key=${p.a.id} className=${"node "+c+(runLive&&!inRun(p.a.id)?" dim":"")} transform=${`translate(${p.x-w/2},${p.y-22})`} onClick=${()=>onPick(p.a.id)} tabIndex="0" role="button" aria-label=${p.a.label+": "+(STATUS[s]||STATUS.idle)[0]} onKeyDown=${e=>e.key==="Enter"&&onPick(p.a.id)}>
         <rect width=${w} height="44" rx="10"/>
-        ${c==="active"?html`<circle className="ring" cx=${w-10} cy="10" r="4" fill="none" stroke="#3A9AF4" strokeWidth="2"/>`:null}
-        <circle cx=${w-10} cy="10" r="3.5" fill=${c==="active"?"#3A9AF4":c==="ok"?"#22c38e":c==="err"?"#ef5a5a":"#5b6485"}/>
+        ${c==="active"||c==="pending"?html`<circle className="ring" cx=${w-10} cy="10" r="4" fill="none" stroke=${c==="active"?"#3A9AF4":"#9b8cf2"} strokeWidth="2"/>`:null}
+        ${c==="active"||c==="pending"?html`<rect className="march" width=${w} height="44" rx="10"/>`:null}
+        <circle cx=${w-10} cy="10" r="3.5" fill=${c==="active"?"#3A9AF4":c==="pending"?"#9b8cf2":c==="ok"?"#22c38e":c==="err"?"#ef5a5a":"#5b6485"}/>
         <text x=${w/2} y="20" textAnchor="middle">${p.a.short||p.a.label}</text>
         <text x=${w/2} y="34" textAnchor="middle" className="sub">${(STATUS[s]||STATUS.idle)[0].split(" ")[0]}</text></g>`; })}
   </svg></div>`;
@@ -1372,18 +1404,20 @@ function AgentCard({a,i,st,flash,onOpen}){
   const total=s&&s.steps_total, done=s&&s.steps_done||0;
   const measurable = !!total; const p = measurable ? Math.min(1,done/total) : null;
   const isActive = ACTIVE.has(status) && status!=="queued" && status!=="waiting";
+  const runLive = isRunLive(st&&st.run);
+  const isPending = (status==="queued"||status==="waiting") && runLive;
   const started = s&&s.started_at, ended=s&&s.ended_at;
   const dur = started ? (ended?Date.parse(ended):(isActive?Date.now():null)) - Date.parse(started) : null;
   const [,tick]=useState(0); useEffect(()=>{ if(!isActive) return; const t=setInterval(()=>tick(x=>x+1),1000); return ()=>clearInterval(t); },[isActive]);
   const color=ACCENTS[i%ACCENTS.length];
-  return html`<article className=${"panel agent"+(isActive?" active":"")+(flash?" done-flash":"")} onClick=${onOpen} tabIndex="0" onKeyDown=${e=>e.key==="Enter"&&onOpen()} aria-label=${a.label+" details"}>
+  return html`<article className=${"panel agent"+(isActive?" active":"")+(isPending?" pending":"")+(flash?" done-flash":"")} onClick=${onOpen} tabIndex="0" onKeyDown=${e=>e.key==="Enter"&&onOpen()} aria-label=${a.label+" details"}>
     <div className="head"><span className="av" style=${{background:color+"22",color}}><${Icon} name=${a.icon||"Bot"} size=${18}/></span>
       <div style=${{flex:1,minWidth:0}}><h2>${a.label}</h2><div className="small muted">${a.description}</div></div></div>
     <div style=${{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}><${Status} s=${status}/>
       ${s&&s.result?html`<span className=${"st "+(s.result==="success"?"st-completed":s.result==="failure"?"st-failed":"st-waiting")}>${s.result==="success"?"Success":s.result==="failure"?"Failure":"Escalation"}</span>`:null}</div>
     <div>
-      <div style=${{display:"flex",justifyContent:"space-between",marginBottom:5}} className="small"><span className="muted">${measurable?`Step ${Math.min(done+ (isActive?1:0),total)} of ${total}`:(isActive?"Working · no step count reported":"Progress")}</span><span>${measurable?Math.round(p*100)+"%":"—"}</span></div>
-      <div className=${"bar"+(status==="completed"?" ok":status==="failed"?" err":"")+(!measurable&&isActive?" indet":"")}><i style=${{width:measurable?(p*100)+"%":(isActive?"35%":"0%")}}></i></div>
+      <div style=${{display:"flex",justifyContent:"space-between",marginBottom:5}} className="small"><span className="muted">${measurable?`Step ${Math.min(done+ (isActive?1:0),total)} of ${total}`:(isActive?"Working · no step count reported":isPending?(status==="waiting"?"Waiting for the agents it depends on":"Queued in this run · starts when its turn comes"):"Progress")}</span><span>${measurable?Math.round(p*100)+"%":"—"}</span></div>
+      <div className=${"bar"+(status==="completed"?" ok":status==="failed"?" err":"")+(!measurable&&isActive?" indet":"")+(isPending?" queue":"")}><i style=${{width:measurable?(p*100)+"%":(isActive?"35%":"0%")}}></i></div>
     </div>
     <div className="small" style=${{minHeight:20}}><span className="muted">Current activity: </span>${s&&s.current_step?s.current_step:(status==="idle"?"Not running":s&&s.summary?s.summary:"—")}</div>
     <div className="meta">
