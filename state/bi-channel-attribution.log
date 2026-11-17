@@ -3,3 +3,5 @@
   decision: claim-ratio bands initialized; reg/kyc band encodes tqa-007 until resolved
   learning-proposed: "GA4 alone cannot evaluate app acquisition — paid social is 0.18% of GA4 sessions but 21% of Singular-attributed registrations" (1 window; needs a 2nd run before promotion)
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-17T07:50Z  checked=ledger+backend_attr+ga4+gads+singular  acted=1  note="W46 readout (backend Mon-Wed, others Mon-Sat): coverage 5.1/0.4/1.3%; Google Ads flat, TikTok installs -15% (Singular only), X disputed; deposits below 4-wk range; filed tqa-019"
+  decision: no budget shift (confidence low) - measurement first: tqa-018, tqa-019, tqa-014

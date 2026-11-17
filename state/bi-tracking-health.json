@@ -177,7 +177,17 @@
       "status": "open",
       "owner_suggestion": "performance marketing (Google Ads / Singular connector owner)",
       "what": "Google Ads cost, Singular sheet vs BigQuery google_ads, W46 (9-15 Nov): 'Minto | App installs - Android' 2,732.27 SAR (sheet) vs 1,257.80 SAR (BQ) = 2.17x, clicks 1,518 vs 1,487. Web (Above 5Mn) 3,693.17 vs 3,693.17 and iOS 2,713.45 vs 2,612.53 match. Gap is daily and steady. Same campaign as tqa-016 (Android ~2x).",
-      "confirming_check": "compare the Android campaign cost in the Google Ads UI vs Singular for one day; check whether Singular's Android connector pulls a second account/ID or double-counts sub-campaign rows"
+      "confirming_check": "compare the Android campaign cost in the Google Ads UI vs Singular for one day; check whether Singular's Android connector pulls a second account/ID or double-counts sub-campaign rows",
+      "latest": "2026-11-17 (bi-channel-attribution): inside Singular, Google Ads Android Singular-attributed installs = 4.5x network-reported (1,194 vs 268, 9-14 Nov); iOS 2.0x, TikTok 1.1x. Same row as the 2.2x cost gap."
+    },
+    {
+      "id": "tqa-019",
+      "found": "2026-11-17",
+      "severity": "med",
+      "status": "open",
+      "owner_suggestion": "backend (attribution capture) + analytics owner",
+      "what": "Backend attribution.last_source/medium/campaign equals acquisition_* on 1,026 of 1,038 attributed registration/deposit/investment events since 2026-09-07 (98.8%). The backend records no separate last-touch, so first- vs last-touch can only be read from GA4.",
+      "confirming_check": "check how last_* is populated in Laravel (is it copied from acquisition at signup?); decide whether last-touch should be the session source at conversion time"
     }
   ],
   "baselines": {

@@ -1,8 +1,8 @@
 {
   "loop": "bi-channel-attribution",
-  "cursor": "2026-W45",
-  "cursor_note": "First readout covers Oct 20 - Nov 9 baseline window. Next run: weekly (last closed Mon-Sun week).",
-  "weekly_snapshots": "reports/2026/W46/attribution-readout-2026-11-11.md",
+  "cursor": "2026-W46",
+  "cursor_note": "W46 read 2026-11-17: backend Mon-Wed 9-11 Nov (replica ends 12 Nov); GA4/Ads/Singular 9-14 Nov. Next: W47.",
+  "weekly_snapshots": "reports/2026/W47/channel-attribution-2026-11-17.md",
   "renamed_from": "attribution-recon (2026-11-16)",
   "csv_era": {
     "claim_ratio_bands": {
@@ -42,12 +42,48 @@
         0.009,
         0.017
       ],
-      "note": "share of events with attribution.acquisition_source, W41-W45 (tqa-014)"
+      "note": "share of events with attribution.acquisition_source, W41-W45 (tqa-014)",
+      "W46_monwed": {
+        "registration_completed": 0.051,
+        "deposit_success": 0.004,
+        "investment_completed": 0.013
+      }
+    },
+    "singular_w46_monsat": {
+      "note": "Singular sheet 9-14 Nov, SAR; vs 2-7 Nov",
+      "google_ads": {
+        "spend": 7584,
+        "attributed_installs": 1579,
+        "network_installs": 458
+      },
+      "tiktok_ads": {
+        "spend": 6454,
+        "attributed_installs": 159,
+        "network_installs": 149
+      },
+      "twitter": {
+        "spend": 6000,
+        "installs": "not reported"
+      }
+    },
+    "ga4_w46_monsat": {
+      "new_users": 4613,
+      "sessions": 32927,
+      "direct_unassigned_session_share": 0.85,
+      "ft_new_user_share": {
+        "Direct": 0.501,
+        "Organic Search": 0.189,
+        "Cross-network": 0.11,
+        "Paid Search": 0.087
+      }
     }
   },
   "known_gaps": [
     "backend attribution coverage ~5% reg / ~1% money events (tqa-014)",
-    "Singular/Meta/TikTok/Snapchat not in BigQuery",
+    "backend last_* = acquisition_* (tqa-019): no backend last-touch",
+    "Singular Google Ads Android row unreliable (tqa-018)",
+    "GA4/Ads transfers start ~6 Nov: no week-over-week until backfill",
+    "Meta/TikTok/Snapchat platform data not in BigQuery; Singular has no conversion events",
     "GA4 doubles reg/kyc (tqa-007): GA4 conversions unusable as ledger"
   ]
 }
