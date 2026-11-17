@@ -4,7 +4,7 @@
 - Dev Assignee: AzibMuzammil
 - Labels: bi-agent, analytics, attribution, tqa-014
 - Tracking: tqa-014
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6054 (approved by Amir 2026-11-17)
 
 ## Problem
 No registration made in the iOS or Android app carries acquisition attribution in the backend event (`attribution.acquisition_source/medium/campaign` is empty).

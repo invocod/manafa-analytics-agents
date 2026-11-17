@@ -4,7 +4,7 @@
 - Dev Assignee: Mohammad Khubaib
 - Labels: bi-agent, analytics, ga4, tqa-013
 - Tracking: tqa-013
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6056 (approved by Amir 2026-11-17)
 
 ## Problem
 For web users, many backend events are delivered to GA4 marked `degraded` with reason `no_ga_client_id`. They can't be joined to the user's GA4 session, so they never show up in GA4 funnels.

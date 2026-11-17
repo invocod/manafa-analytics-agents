@@ -4,7 +4,7 @@
 - Dev Assignee: Mohammad Khubaib
 - Labels: bi-agent, analytics, event-standard, tqa-017
 - Tracking: tqa-017
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6058 (approved by Amir 2026-11-17)
 
 ## Problem
 From 26 Oct (mixed day, complete from 27 Oct) the backend's `investment_completed` event changed in two ways on all platforms, with no change to the event standard:

@@ -4,7 +4,7 @@
 - Dev Assignee: Khalid Shabbir
 - Labels: bi-agent, analytics, ga4, compliance, tqa-005
 - Tracking: tqa-005
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6059 (approved by Amir 2026-11-17)
 
 ## Problem
 The web page path `/entrepreneur/transactions/withdraw/MWWD<16–18 digits>` is sent to GA4 as-is. The number is a **withdrawal (transaction) reference**. Under SAMA/PDPL handling rules, transaction references shouldn't leave Manafa's systems in analytics data.

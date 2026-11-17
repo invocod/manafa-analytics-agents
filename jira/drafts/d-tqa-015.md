@@ -4,7 +4,7 @@
 - Dev Assignee: Khalid Shabbir
 - Labels: bi-agent, analytics, ga4, tqa-015
 - Tracking: tqa-015
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6061 (approved by Amir 2026-11-17)
 
 ## Problem
 Production GA4 (property 413046941) receives sessions whose source is a developer or preview host.

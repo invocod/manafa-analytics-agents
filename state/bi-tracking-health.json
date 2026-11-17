@@ -39,7 +39,10 @@
       "what": "deep-links polluting utm_source (jbyyfg 146, send_message_to_scf_borrower 142, wallet, documents)",
       "status": "open",
       "update_2026_11_16": "persists W46: send_message_to_scf_borrower 33, download_app_modal 19, article 9, invite_a_friend, mid_page, x",
-      "update_2026_11_17": "2026-11-17: sources are website placement names (send_message_to_scf_borrower 22, download_app_modal 13, article 8, invite_a_friend 3, mid_page 2, hero 1, x 4) -> internal links tagged with utm_source; owner web."
+      "update_2026_11_17": "2026-11-17: sources are website placement names (send_message_to_scf_borrower 22, download_app_modal 13, article 8, invite_a_friend 3, mid_page 2, hero 1, x 4) -> internal links tagged with utm_source; owner web.",
+      "jira": [
+        "ISQ-6060"
+      ]
     },
     {
       "id": "tqa-005",
@@ -47,7 +50,10 @@
       "severity": "high",
       "what": "16-18-digit record IDs in page titles (129 rows) — confirm not payment refs",
       "status": "open",
-      "update_2026_11_17": "2026-11-17: the long IDs are withdrawal references in the web path /entrepreneur/transactions/withdraw/MWWD<ID> (title 'منصة الدين', 54 views 9-14 Nov) = transaction identifiers sent to GA4 -> compliance; severity med->high. Borrower side: ownership may be the debt-platform squad."
+      "update_2026_11_17": "2026-11-17: the long IDs are withdrawal references in the web path /entrepreneur/transactions/withdraw/MWWD<ID> (title 'منصة الدين', 54 views 9-14 Nov) = transaction identifiers sent to GA4 -> compliance; severity med->high. Borrower side: ownership may be the debt-platform squad.",
+      "jira": [
+        "ISQ-6059"
+      ]
     },
     {
       "id": "tqa-006",
@@ -74,7 +80,10 @@
       "team_reply_2026-11-12": "Reported (mobile team via Amir): all legacy events removed from the mobile app; registration_completed, kyc_completed, login_completed, withdrawal_completed, passcode_enabled, bank_account_added are fired from the backend only.",
       "hypothesis_v2_2026-11-12": "Inferred: the doubling happens in the backend's GA4 sending, and only for these events. Evidence (Observed, GA4): it is event-specific, not dispatch-wide — withdrawal_completed is ~2x withdrawal_settled (1,774 vs 933 in Nov 4-10) although both are backend events for the same withdrawals; deposit_success and investment_completed are not doubled. Ratios hold in the clean Nov 4-10 week (kyc_completed/kyc_started 1.65, withdrawal_completed/withdrawal_started 1.86), so they are not a window artifact. Also login_completed exceeds session_start 1.39x. Candidates: (a) the account/identity events go through a different GA4 sender than the money events, which sends app users' events twice (e.g. to both the app stream and the web stream, or once with app_instance_id and once with client_id); (b) these events are emitted at two points (two listeners, queue retries without idempotency, two endpoints the app calls). Less likely: (c) intermediate app versions still in use fire client copies under the new names.",
       "update_2026_11_16": "BigQuery backend truth: GA4/sent-OK = login 1.87, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.02, bank_account_added 1.80, identity_verified 1.38; money events 0.99-1.01. Backend logs exactly 1 GA4 delivery per event (0 multi-sends / 23,098) -> backend dispatcher is NOT the double sender. Leading hypothesis (Inferred): Singular->GA4 partner forwarding of mapped events.",
-      "update_2026_11_17": "2026-11-17: backend sends doubled and non-doubled events to Singular in the same proportions (2-11 Nov); withdrawal_completed doubled but withdrawal_settled not -> per-event config, supports Singular->GA4 partner mapping hypothesis."
+      "update_2026_11_17": "2026-11-17: backend sends doubled and non-doubled events to Singular in the same proportions (2-11 Nov); withdrawal_completed doubled but withdrawal_settled not -> per-event config, supports Singular->GA4 partner mapping hypothesis.",
+      "jira": [
+        "ISQ-6053"
+      ]
     },
     {
       "id": "tqa-008",
@@ -135,7 +144,10 @@
       "status": "open",
       "owner_suggestion": "web frontend + backend",
       "confirming_check": "deploys around 2026-10-26; GA client_id handoff from web to backend",
-      "update_2026_11_17": "2026-11-17 correction: the 44%->64% rise in the week of 26 Oct is a MIX effect (auto-invest investment_completed left the web bucket, tqa-017); non-investment web share is steady 59-68% since 5 Oct. Real pattern: events triggered by a browser request (login 6%, phone 8%, email 8%) carry client_id; events completed by callbacks/jobs don't (auto_invest_enabled 94%, identity_verified 90%, kyc 87%). Root cause (inferred): GA4 sender reads client_id from the current HTTP request."
+      "update_2026_11_17": "2026-11-17 correction: the 44%->64% rise in the week of 26 Oct is a MIX effect (auto-invest investment_completed left the web bucket, tqa-017); non-investment web share is steady 59-68% since 5 Oct. Real pattern: events triggered by a browser request (login 6%, phone 8%, email 8%) carry client_id; events completed by callbacks/jobs don't (auto_invest_enabled 94%, identity_verified 90%, kyc 87%). Root cause (inferred): GA4 sender reads client_id from the current HTTP request.",
+      "jira": [
+        "ISQ-6056"
+      ]
     },
     {
       "id": "tqa-014",
@@ -145,7 +157,11 @@
       "status": "open",
       "owner_suggestion": "backend",
       "confirming_check": "where/when attribution JSON is populated per platform",
-      "update_2026_11_17": "2026-11-17 by platform (19 Oct-11 Nov): registration attributed web 134/942 (14%), iOS 0/1,120, Android 0/351 -> app sends no attribution at sign-up; web loses landing UTMs. Money events inherit profile attribution."
+      "update_2026_11_17": "2026-11-17 by platform (19 Oct-11 Nov): registration attributed web 134/942 (14%), iOS 0/1,120, Android 0/351 -> app sends no attribution at sign-up; web loses landing UTMs. Money events inherit profile attribution.",
+      "jira": [
+        "ISQ-6054",
+        "ISQ-6055"
+      ]
     },
     {
       "id": "tqa-015",
@@ -154,7 +170,10 @@
       "what": "dev/preview traffic in prod GA4: 202 distinct 127.0.0.1:<port> referrers, *.netlify.app previews, tagassistant.google.com = 242 sessions W46",
       "status": "open",
       "owner_suggestion": "web",
-      "confirming_check": "internal/developer traffic filter active; dev builds not using prod measurement ID"
+      "confirming_check": "internal/developer traffic filter active; dev builds not using prod measurement ID",
+      "jira": [
+        "ISQ-6061"
+      ]
     },
     {
       "id": "tqa-016",
@@ -173,7 +192,10 @@
       "status": "open",
       "owner_suggestion": "backend + event-standard owner",
       "what": "Backend changed investment_completed on 2026-10-26 (mixed day; complete from 10-27), all platforms: payment_method 'opportunities.ewallet' -> 'wallet'; auto-invest investments were all labelled platform 'web' before (22 Oct: 3,234/3,234) and carry the user's device after. Web investments 6,455 (W43) -> 257 (W44). Investment-event platform splits are not comparable across 26 Oct. payment_method is not a standard v2.1 param for investment_completed.",
-      "confirming_check": "backend changelog for 2026-10-26; decide the intended platform for server-executed (auto-invest) investments; add/remove payment_method in the standard"
+      "confirming_check": "backend changelog for 2026-10-26; decide the intended platform for server-executed (auto-invest) investments; add/remove payment_method in the standard",
+      "jira": [
+        "ISQ-6058"
+      ]
     },
     {
       "id": "tqa-018",
@@ -192,7 +214,10 @@
       "status": "open",
       "owner_suggestion": "backend (attribution capture) + analytics owner",
       "what": "Backend attribution.last_source/medium/campaign equals acquisition_* on 1,026 of 1,038 attributed registration/deposit/investment events since 2026-09-07 (98.8%). The backend records no separate last-touch, so first- vs last-touch can only be read from GA4.",
-      "confirming_check": "check how last_* is populated in Laravel (is it copied from acquisition at signup?); decide whether last-touch should be the session source at conversion time"
+      "confirming_check": "check how last_* is populated in Laravel (is it copied from acquisition at signup?); decide whether last-touch should be the session source at conversion time",
+      "jira": [
+        "ISQ-6057"
+      ]
     }
   ],
   "baselines": {
@@ -304,7 +329,98 @@
     },
     "owners_note": "confirmed by Amir 2026-11-17",
     "drafts_file": "jira/drafts/drafts.json",
-    "tickets": {},
+    "tickets": {
+      "d-tqa-007": {
+        "key": "ISQ-6053",
+        "tqa": [
+          "tqa-007"
+        ],
+        "area": "mobile",
+        "dev": "AzibMuzammil",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-014-app": {
+        "key": "ISQ-6054",
+        "tqa": [
+          "tqa-014"
+        ],
+        "area": "mobile",
+        "dev": "AzibMuzammil",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-014-be": {
+        "key": "ISQ-6055",
+        "tqa": [
+          "tqa-014"
+        ],
+        "area": "backend",
+        "dev": "Mohammad Khubaib",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-019": {
+        "key": "ISQ-6057",
+        "tqa": [
+          "tqa-019"
+        ],
+        "area": "backend",
+        "dev": "Mohammad Khubaib",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-017": {
+        "key": "ISQ-6058",
+        "tqa": [
+          "tqa-017"
+        ],
+        "area": "backend",
+        "dev": "Mohammad Khubaib",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-013": {
+        "key": "ISQ-6056",
+        "tqa": [
+          "tqa-013"
+        ],
+        "area": "backend",
+        "dev": "Mohammad Khubaib",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-015": {
+        "key": "ISQ-6061",
+        "tqa": [
+          "tqa-015"
+        ],
+        "area": "web",
+        "dev": "Khalid Shabbir",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-005": {
+        "key": "ISQ-6059",
+        "tqa": [
+          "tqa-005"
+        ],
+        "area": "web",
+        "dev": "Khalid Shabbir",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-004": {
+        "key": "ISQ-6060",
+        "tqa": [
+          "tqa-004"
+        ],
+        "area": "web",
+        "dev": "Khalid Shabbir",
+        "created": "2026-11-17T08:40Z",
+        "approved_by": "Amir (chat, 2026-11-17)"
+      }
+    },
     "outside_squad": {
       "tqa-012": "data engineering (DWH)",
       "tqa-016": "paid media / Google Ads",

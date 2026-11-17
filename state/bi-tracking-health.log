@@ -27,3 +27,4 @@
 2026-11-17T00:00Z  checked=singular_sheet_connect+gads_cost_crosscheck  acted=1  note="Singular Google Sheet connected (exception, user decision 2026-11-17): 671 rows 10-11..11-16, PII-free, grain unique; filed tqa-018 Android Google Ads cost 2.17x sheet vs BQ (Web/iOS match)"
 2026-11-17T07:50Z  checked=filed_by_bi-channel-attribution  acted=1  note="filed tqa-019 backend last_* = acquisition_* (98.8%); tqa-018 updated: Singular Google Ads Android installs 4.5x network-reported"
 2026-11-17T08:30Z  checked=jira_drafting  acted=1  note="9 ISQ ticket drafts staged under ISQ-6052 (jira/drafts/); tqa-013 jump re-read as mix effect; tqa-005 upgraded to high (withdrawal refs in GA4 page path); tqa-004 owner -> web"
+2026-11-17T08:40Z  checked=jira_create  acted=9  note="Amir approved; created ISQ-6053..6061 under ISQ-6052 (Dev Assignee: Azib mobile, Khubaib backend, Khalid Shabbir web); tqa->ISQ mapping in state.jira.tickets"

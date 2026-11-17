@@ -4,7 +4,7 @@
 - Dev Assignee: Khalid Shabbir
 - Labels: bi-agent, analytics, utm, tqa-004
 - Tracking: tqa-004
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6060 (approved by Amir 2026-11-17)
 
 ## Problem
 Some links on Manafa's own website add `utm_source=<placement name>` (no medium). When a visitor clicks one, GA4 starts a new session and overwrites the visitor's real source (Google, X, TikTok…) with the placement name.

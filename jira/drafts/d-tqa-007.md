@@ -4,7 +4,7 @@
 - Dev Assignee: AzibMuzammil
 - Labels: bi-agent, analytics, tqa-007
 - Tracking: tqa-007
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6053 (approved by Amir 2026-11-17)
 
 ## Problem
 GA4 receives about twice as many `registration_completed`, `kyc_completed`, `login_completed`, `withdrawal_completed`, `passcode_enabled` and `bank_account_added` events as the backend actually sends. Money events (`deposit_success`, `investment_completed`, `withdrawal_settled`) are **not** doubled.

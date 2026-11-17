@@ -4,7 +4,7 @@
 - Dev Assignee: Mohammad Khubaib
 - Labels: bi-agent, analytics, attribution, tqa-014
 - Tracking: tqa-014
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6055 (approved by Amir 2026-11-17)
 
 ## Problem
 `mi_analytics_events.attribution.acquisition_*` is filled on 134 of 942 web registrations (14%) and on 0 app registrations. Deposits and investments carry it only when the profile had it: deposits ~1%, investments ~1.3%.

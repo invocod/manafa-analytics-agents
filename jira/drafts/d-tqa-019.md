@@ -4,7 +4,7 @@
 - Dev Assignee: Mohammad Khubaib
 - Labels: bi-agent, analytics, attribution, tqa-019
 - Tracking: tqa-019
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6057 (approved by Amir 2026-11-17)
 
 ## Problem
 On 1,026 of 1,038 attributed registration, deposit and investment events since 7 Sep (98.8%), `attribution.last_source/medium/campaign` is identical to `acquisition_*`. The backend has no real last-touch.
