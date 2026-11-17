@@ -47,5 +47,13 @@ Same weekday, **median ± max(3 × 1.4826 × MAD, 30% of median)**; provisional 
 ## Singular (own section only — Google Sheet exception)
 Source: `context/singular-sheet.md`. Metrics: `singular_spend` = SUM(adn_cost) by currency; `singular_network_installs` = SUM(adn_installs) (network-claimed); `singular_attributed_installs` = SUM(app_install_count); `singular_cpi` = singular_spend / singular_attributed_installs, same window, same rows, networks with installs reported only (Twitter excluded). Riyadh-date as given by the sheet; exclude the trailing 72 h. Never combined with GA4, Google Ads (BigQuery) or backend numbers.
 
+## Users (Command Center "Users" tab)
+Backend (`sql/readonly/users_backend_*.sql`, last 28 complete days to the replica's last complete day):
+- **Signed-in users** = distinct profiles with `login_completed` (the only platform-reliable "active user" measure; callback events such as identity_verified / kyc_completed / auto-invest default to platform web, tqa-013).
+- Registrations, KYC, depositors, investors (manual vs auto via `is_auto_invested`; a user can be both), first-time investors, average ticket in SAR only.
+- Device, app version, OS: each signed-in app user counted once by their latest sign-in (`context.app_version`, `context.vendor_keys.singular_device.*`; never device IDs).
+- Not used: `context.lifecycle.*` (tqa-020). Backend demographics (age, nationality, city) live in customer tables and are off-limits.
+GA4 (`sql/readonly/users_ga4_*.sql`, last 7 days in the transfer): daily active users are summed per day (user-days), so show averages per day or shares, never "unique users"; demographics are Google estimates, thresholded, all platforms; app screen names are missing (tqa-021).
+
 ## Not available (named, never estimated)
 Singular conversion events (registration/deposit/investment by network — not in the sheet), Meta/TikTok/Snapchat spend, GA4 platform/stream split, channel attribution of backend conversions (tqa-014), anything from `gold` (tqa-012).

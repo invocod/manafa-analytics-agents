@@ -147,7 +147,8 @@
       "update_2026_11_17": "2026-11-17 correction: the 44%->64% rise in the week of 26 Oct is a MIX effect (auto-invest investment_completed left the web bucket, tqa-017); non-investment web share is steady 59-68% since 5 Oct. Real pattern: events triggered by a browser request (login 6%, phone 8%, email 8%) carry client_id; events completed by callbacks/jobs don't (auto_invest_enabled 94%, identity_verified 90%, kyc 87%). Root cause (inferred): GA4 sender reads client_id from the current HTTP request.",
       "jira": [
         "ISQ-6056"
-      ]
+      ],
+      "update_2026_11_17b": "Backend platform for callback/job-completed events defaults to web: identity_verified web 7,067 users vs web registrations 1,079 (15 Oct-11 Nov). Platform splits are reliable only for direct user actions (login_completed, registration_completed). Users tab uses sign-ins for platform splits."
     },
     {
       "id": "tqa-014",
@@ -218,6 +219,24 @@
       "jira": [
         "ISQ-6057"
       ]
+    },
+    {
+      "id": "tqa-020",
+      "found": "2026-11-17",
+      "severity": "low",
+      "status": "open",
+      "owner_suggestion": "backend",
+      "what": "Backend context.lifecycle looks wrong: days_since_registration never exceeds 65 (max on 11 Nov) and is_new_user=true for 13,041 of 21,785 users with events 15 Oct-11 Nov, while registrations in that window were 2,846. Appears to count from when analytics tracking started, not from the real registration date. Not used in any report.",
+      "confirming_check": "how lifecycle.* is computed in Laravel (registration date vs first analytics event)"
+    },
+    {
+      "id": "tqa-021",
+      "found": "2026-11-17",
+      "severity": "med",
+      "status": "open",
+      "owner_suggestion": "mobile",
+      "what": "GA4 app screen views carry no screen names: FlutterViewController (iOS) and MainActivity (Android) = ~99% of app screen views (10-16 Nov: 143,347 and 56,552). App screen-level behaviour can't be analysed. Fix: log screen_view with screen_name/screen_class on each Flutter route (e.g. a NavigatorObserver), names from the event standard.",
+      "confirming_check": "GA4 PagesAndScreens app rows show named screens; generic classes < 20% of app views"
     }
   ],
   "baselines": {

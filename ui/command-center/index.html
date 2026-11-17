@@ -226,6 +226,19 @@ input[type=date],select,input[type=text],input[type=search]{background:var(--sur
 @media (max-width:1100px){.jr{grid-template-columns:1fr}.jr-main{border-right:0;border-bottom:1px solid var(--line)}}
 @media (max-width:640px){.jr-row .meta .jr-chip.opt{display:none}.jr-row .key{width:64px}}
 @keyframes rspin{to{transform:rotate(360deg)}}
+/* Users tab */
+.ux-sec{display:flex;align-items:center;gap:10px;margin:22px 0 12px}
+.ux-sec h2{font-size:16px}
+.ux-sec .line{flex:1;height:1px;background:var(--line)}
+.bl{display:grid;gap:7px}
+.bl-row{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;gap:10px;align-items:center;font-size:12.5px}
+.bl-row .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c9cfe6}
+.bl-row .tr{height:8px;border-radius:4px;background:#1a2346;overflow:hidden}
+.bl-row .br{height:100%;border-radius:4px}
+.bl-row .vl{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;min-width:86px}
+.ux-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.ux-mini .k{font-size:12px;color:var(--muted)}
+.ux-mini .v{font-size:18px;font-weight:600}
 /* Drawer + modal */
 .scrim{position:fixed;inset:0;background:rgba(3,6,16,.55);z-index:30;animation:fade .2s ease both}
 @keyframes fade{from{opacity:0}}
@@ -318,6 +331,7 @@ const NAV = [
   ["agents","AI Agent Command Center","Bot"],
   ["history","Execution History","History"],
   ["analytics","Analytics Dashboard","ChartLine"],
+  ["users","Users","Users"],
   ["singular","Singular (attribution)","Megaphone"],
   ["quality","Event Quality & Monitoring","ShieldCheck"],
   ["jira","Issues and Bugs","Ticket"],
@@ -438,7 +452,7 @@ function mcpWatch(key, call){
           else if(code==="approval_required") set({status: e.state.rows ? "approval" : "denied", error:ev.error});
           else set({status: e.state.rows ? "stale" : "error", error:ev.error||{code:"upstream_error"}});
         }
-      }, {refetchInterval:300000, cache:{staleTime:240000, gcTime:86400000}});
+      }, {refetchInterval:call.refetch||300000, cache:{staleTime:(call.refetch||300000)-60000, gcTime:86400000}});
     }catch(err){ set({status:"error",error:{code:"bad_request",message:String(err)}}); }
   };
   e.set = set;
@@ -469,7 +483,8 @@ function parseSheet(payload){
   if(p&&p.content) p=p.content;
   return (p&&Array.isArray(p.values))?p.values:[];
 }
-function bqWatch(key, sql){ return mcpWatch(key,{server:BQ_SERVER,tool:BQ_TOOL,input:{projectId:PROJECT,query:sql},parse:parseBQ,label:"BigQuery"}); }
+function bqWatch(key, sql, refetch){ return mcpWatch(key,{server:BQ_SERVER,tool:BQ_TOOL,input:{projectId:PROJECT,query:sql},parse:parseBQ,label:"BigQuery",refetch}); }
+function useBQSlow(key, sql){ const e=useMemo(()=>bqWatch(key,sql,1800000),[key]); return useWatchEntry(e); }
 async function runCall(e){ const c=e.call; const r=await caps.mcp.callTool(c.server,c.tool,c.input); e.state={status:"ok",rows:c.parse(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); bqNotify(); }
 function useWatchEntry(e){
   const [s,setS] = useState(e.state);
@@ -495,6 +510,15 @@ function useBQ(key, sql){
   return useWatchEntry(e);
 }
 
+const USERS_SQL = {
+"users_backend_profile": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\nt AS (\n  SELECT occurred_at AS ts, COALESCE(JSON_VALUE(context.platform),'unknown') AS platform, profile_id, event_name,\n    JSON_VALUE(context.app_version) AS app_version,\n    JSON_VALUE(context.vendor_keys.singular_device.os_version) AS os_version,\n    INITCAP(SPLIT(JSON_VALUE(context.vendor_keys.singular_device.make),' ')[SAFE_OFFSET(0)]) AS make,\n    JSON_VALUE(context.vendor_keys.singular_device.model) AS model,\n    LOWER(JSON_VALUE(context.language)) AS lang,\n    JSON_VALUE(context.entity_type) AS entity,\n    IF(event_name='login_completed', JSON_VALUE(payload.method), NULL) AS login_method\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(b.data_end, INTERVAL 27 DAY) AND b.data_end AND profile_id IS NOT NULL),\ndev AS (\n  SELECT platform, profile_id,\n    ARRAY_AGG(app_version IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS app_version,\n    ARRAY_AGG(os_version IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS os_version,\n    ARRAY_AGG(make IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS make,\n    ARRAY_AGG(model IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS model\n  FROM t WHERE platform IN ('ios','android') AND event_name='login_completed' GROUP BY 1, 2),\npref_p AS (SELECT platform, profile_id, ARRAY_AGG(lang IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS lang, ARRAY_AGG(entity IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS entity FROM t WHERE event_name='login_completed' GROUP BY 1, 2),\npref_a AS (SELECT 'all' AS platform, profile_id, ARRAY_AGG(lang IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS lang, ARRAY_AGG(entity IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS entity FROM t WHERE event_name='login_completed' GROUP BY 1, 2),\npref AS (SELECT * FROM pref_p UNION ALL SELECT * FROM pref_a),\nl AS (\n  SELECT 'app_version' AS dim, platform, app_version AS v, COUNT(*) AS users FROM dev WHERE app_version IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'os_version', platform, os_version, COUNT(*) FROM dev WHERE os_version IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'device_brand', platform, make, COUNT(*) FROM dev WHERE platform='android' AND make IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'device_model', platform, model, COUNT(*) FROM dev WHERE model IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'language', platform, lang, COUNT(*) FROM pref WHERE lang IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'account_type', platform, entity, COUNT(*) FROM pref WHERE entity IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'login_method', IF(GROUPING(tp)=1,'all',tp), login_method, COUNT(DISTINCT profile_id) FROM (SELECT platform AS tp, login_method, profile_id FROM t WHERE login_method IS NOT NULL) GROUP BY GROUPING SETS ((tp, login_method), (login_method)))\nSELECT dim, platform, v, users, (SELECT data_end FROM b) AS data_end FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim, platform ORDER BY users DESC) <= 12\nORDER BY dim, platform, users DESC",
+"users_backend_summary": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\ne AS (\n  SELECT event_name, COALESCE(JSON_VALUE(context.platform),'unknown') AS p, profile_id,\n    SAFE_CAST(JSON_VALUE(payload.is_auto_invested) AS BOOL) AS auto, SAFE_CAST(JSON_VALUE(payload.is_first_investment) AS BOOL) AS first_inv,\n    JSON_VALUE(payload.currency) AS cur, SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC) AS amt, b.data_end\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(b.data_end, INTERVAL 27 DAY) AND b.data_end AND profile_id IS NOT NULL)\nSELECT IF(GROUPING(p)=1,'all',p) AS platform, ANY_VALUE(data_end) AS data_end,\n  COUNT(DISTINCT profile_id) AS active_users,\n  COUNT(DISTINCT IF(event_name='registration_completed',profile_id,NULL)) AS registered,\n  COUNT(DISTINCT IF(event_name='login_completed',profile_id,NULL)) AS logged_in,\n  COUNTIF(event_name='login_completed') AS logins,\n  COUNT(DISTINCT IF(event_name='kyc_completed',profile_id,NULL)) AS kyc_done,\n  COUNT(DISTINCT IF(event_name='deposit_success',profile_id,NULL)) AS depositors,\n  COUNT(DISTINCT IF(event_name='investment_completed',profile_id,NULL)) AS investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND auto IS NOT TRUE,profile_id,NULL)) AS manual_investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND auto,profile_id,NULL)) AS auto_investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND first_inv,profile_id,NULL)) AS first_time_investors,\n  COUNTIF(event_name='investment_completed') AS investments,\n  COUNTIF(event_name='investment_completed' AND auto) AS auto_investments,\n  SUM(IF(event_name='investment_completed' AND cur='SAR' AND auto IS NOT TRUE, amt, 0)) AS manual_inv_sar,\n  COUNTIF(event_name='investment_completed' AND cur='SAR' AND auto IS NOT TRUE) AS manual_inv_sar_n,\n  SUM(IF(event_name='investment_completed' AND cur='SAR' AND auto, amt, 0)) AS auto_inv_sar,\n  COUNTIF(event_name='investment_completed' AND cur='SAR' AND auto) AS auto_inv_sar_n,\n  COUNT(DISTINCT IF(event_name='auto_invest_enabled',profile_id,NULL)) AS auto_invest_enablers,\n  COUNT(DISTINCT IF(event_name='withdrawal_completed',profile_id,NULL)) AS withdrawers\nFROM e GROUP BY ROLLUP(p)",
+"users_backend_weekly": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\ne AS (\n  SELECT DATE_TRUNC(DATE(occurred_at,'Asia/Riyadh'), ISOWEEK) AS wk, event_name, COALESCE(JSON_VALUE(context.platform),'unknown') AS p, profile_id, b.data_end\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(DATE_TRUNC(b.data_end, ISOWEEK), INTERVAL 7 WEEK) AND b.data_end AND profile_id IS NOT NULL)\nSELECT wk, IF(GROUPING(p)=1,'all',p) AS platform, ANY_VALUE(data_end) AS data_end,\n  COUNT(DISTINCT profile_id) AS active_users,\n  COUNT(DISTINCT IF(event_name='login_completed',profile_id,NULL)) AS logged_in,\n  COUNT(DISTINCT IF(event_name='investment_completed',profile_id,NULL)) AS investors\nFROM e GROUP BY GROUPING SETS ((wk, p), (wk))\nORDER BY wk, platform",
+"users_ga4_daily": "SELECT DATE(_PARTITIONTIME) AS d, platform,\n  SUM(activeUsers) AS active_users, SUM(newUsers) AS new_users, SUM(engagedSessions) AS engaged_sessions,\n  SUM(eventCount) AS events, SUM(userEngagementDuration) AS engagement_sec\nFROM `databases-472111.GA4.p_ga4_TechDetails_413046941`\nWHERE DATE(_PARTITIONTIME) >= DATE_SUB((SELECT MAX(DATE(_PARTITIONTIME)) FROM `databases-472111.GA4.p_ga4_TechDetails_413046941`), INTERVAL 13 DAY)\nGROUP BY 1, 2 ORDER BY 1, 2",
+"users_ga4_demographics": "WITH r AS (SELECT *, DATE(_PARTITIONTIME) AS pd FROM `databases-472111.GA4.p_ga4_DemographicDetails_413046941`\n  WHERE DATE(_PARTITIONTIME) >= DATE_SUB((SELECT MAX(DATE(_PARTITIONTIME)) FROM `databases-472111.GA4.p_ga4_DemographicDetails_413046941`), INTERVAL 6 DAY)),\nl AS (\n  SELECT 'age' AS dim, userAgeBracket AS v, SUM(activeUsers) AS users FROM r GROUP BY 1,2\n  UNION ALL SELECT 'gender', userGender, SUM(activeUsers) FROM r GROUP BY 1,2\n  UNION ALL SELECT 'country', country, SUM(activeUsers) FROM r GROUP BY 1,2\n  UNION ALL SELECT 'region', region, SUM(activeUsers) FROM r GROUP BY 1,2\n  UNION ALL SELECT 'city', city, SUM(activeUsers) FROM r GROUP BY 1,2\n  UNION ALL SELECT 'language', language, SUM(activeUsers) FROM r GROUP BY 1,2\n  UNION ALL SELECT 'interest', brandingInterest, SUM(activeUsers) FROM r GROUP BY 1,2)\nSELECT dim, v, users, (SELECT MIN(pd) FROM r) AS from_d, (SELECT MAX(pd) FROM r) AS to_d FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim ORDER BY users DESC) <= 12\nORDER BY dim, users DESC",
+"users_ga4_pages": "WITH r AS (SELECT *, DATE(_PARTITIONTIME) AS pd FROM `databases-472111.GA4.p_ga4_PagesAndScreens_413046941`\n  WHERE DATE(_PARTITIONTIME) >= DATE_SUB((SELECT MAX(DATE(_PARTITIONTIME)) FROM `databases-472111.GA4.p_ga4_PagesAndScreens_413046941`), INTERVAL 6 DAY)),\nl AS (\n  SELECT IF(STARTS_WITH(unifiedPagePathScreen,'/'),'web','app') AS kind,\n    REGEXP_REPLACE(REGEXP_REPLACE(unifiedPagePathScreen, r'\\d{5,}', '<ID>'), r'[?#].*$', '') AS page,\n    SUM(screenPageViews) AS views, SUM(activeUsers) AS users, SUM(userEngagementDuration) AS engagement_sec\n  FROM r GROUP BY 1, 2)\nSELECT kind, page, views, users, engagement_sec, (SELECT MIN(pd) FROM r) AS from_d, (SELECT MAX(pd) FROM r) AS to_d FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY kind ORDER BY views DESC) <= 20\nORDER BY kind, views DESC",
+"users_ga4_tech": "WITH r AS (SELECT *, DATE(_PARTITIONTIME) AS pd FROM `databases-472111.GA4.p_ga4_TechDetails_413046941`\n  WHERE DATE(_PARTITIONTIME) >= DATE_SUB((SELECT MAX(DATE(_PARTITIONTIME)) FROM `databases-472111.GA4.p_ga4_TechDetails_413046941`), INTERVAL 6 DAY)),\nl AS (\n  SELECT 'device_category' AS dim, platform, deviceCategory AS v, SUM(activeUsers) AS users FROM r GROUP BY 1,2,3\n  UNION ALL SELECT 'os_version', platform, operatingSystemWithVersion, SUM(activeUsers) FROM r GROUP BY 1,2,3\n  UNION ALL SELECT 'app_version', platform, appVersion, SUM(activeUsers) FROM r WHERE platform!='web' GROUP BY 1,2,3\n  UNION ALL SELECT 'browser', platform, browser, SUM(activeUsers) FROM r WHERE platform='web' GROUP BY 1,2,3\n  UNION ALL SELECT 'screen', platform, screenResolution, SUM(activeUsers) FROM r WHERE platform='web' GROUP BY 1,2,3)\nSELECT dim, platform, v, users, (SELECT MIN(pd) FROM r) AS from_d, (SELECT MAX(pd) FROM r) AS to_d FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim, platform ORDER BY users DESC) <= 12\nORDER BY dim, platform, users DESC"
+};
 /* vetted, aggregated SQL (same logic as sql/readonly/ in the repo) */
 const SQL = {
 fresh:`SELECT 'Backend events (production)' AS source, MAX(DATE(occurred_at,'Asia/Riyadh')) AS latest_date FROM \`databases-472111.manafa_financing.mi_analytics_events\`
@@ -672,7 +696,7 @@ function App(){
   const runs = runsQ.docs;
   const activeRun = runs.find(r=>ACTIVE.has(r.status));
 
-  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,singular:SingularView,quality:QualityView,jira:JiraView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
+  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,users:UsersView,singular:SingularView,quality:QualityView,jira:JiraView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
   return html`<div className="app">
     <aside className=${"side"+(collapsed?" collapsed":"")+(mobile?" mobile-open":"")} aria-label="Main navigation">
       <div className="brand"><div className="logo">M</div>${!collapsed&&html`<div><div style=${{fontWeight:600}}>Manafa BI</div><div className="small muted">Command Center</div></div>`}</div>
@@ -1262,6 +1286,136 @@ function SingularView(){
     </div>`}
   </div>`;
 }
+/* ======================================================================
+   Users: backend (production ledger) and GA4 (product analytics), separate sections
+   ====================================================================== */
+const IPHONE = {"iPhone13,1":"iPhone 12 mini","iPhone13,2":"iPhone 12","iPhone13,3":"iPhone 12 Pro","iPhone13,4":"iPhone 12 Pro Max","iPhone14,2":"iPhone 13 Pro","iPhone14,3":"iPhone 13 Pro Max","iPhone14,4":"iPhone 13 mini","iPhone14,5":"iPhone 13","iPhone14,6":"iPhone SE (3rd gen)","iPhone14,7":"iPhone 14","iPhone14,8":"iPhone 14 Plus","iPhone15,2":"iPhone 14 Pro","iPhone15,3":"iPhone 14 Pro Max","iPhone15,4":"iPhone 15","iPhone15,5":"iPhone 15 Plus","iPhone16,1":"iPhone 15 Pro","iPhone16,2":"iPhone 15 Pro Max","iPhone17,1":"iPhone 16 Pro","iPhone17,2":"iPhone 16 Pro Max","iPhone17,3":"iPhone 16","iPhone17,4":"iPhone 16 Plus","iPhone17,5":"iPhone 16e"};
+const GALAXY = {"SM-S908E":"Galaxy S22 Ultra","SM-S908B":"Galaxy S22 Ultra","SM-S918B":"Galaxy S23 Ultra","SM-S928B":"Galaxy S24 Ultra","SM-S926B":"Galaxy S24+","SM-S921B":"Galaxy S24","SM-S938B":"Galaxy S25 Ultra","SM-S936B":"Galaxy S25+","SM-S931B":"Galaxy S25","SM-A556E":"Galaxy A55","SM-A556B":"Galaxy A55"};
+function modelName(m){ if(!m) return "—"; if(IPHONE[m]) return IPHONE[m]+" ("+m+")"; if(/^iPhone18,/.test(m)) return "iPhone 17 family ("+m+")"; if(GALAXY[m]) return GALAXY[m]+" ("+m+")"; return m; }
+const PLAT = {all:"All platforms",ios:"iOS",android:"Android",web:"Web"};
+const PCOL = {ios:"#7f8cff",android:"#22c38e",web:"#3A9AF4",unknown:"#5b6485",all:"#c9cfe6"};
+const ga4P = p => p==="ios"?"iOS":p==="android"?"Android":"web";
+function BarList({rows,color="#3A9AF4",total,fmt=fmtN,label=r=>r.v,max=10,empty="No data"}){
+  const rs=(rows||[]).slice(0,max); const tot=total||rs.reduce((s,r)=>s+(r.users||0),0); const top=Math.max(1,...rs.map(r=>r.users||0));
+  if(!rs.length) return html`<div className="small muted">${empty}</div>`;
+  return html`<div className="bl">${rs.map((r,i)=>html`<div className="bl-row" key=${i} title=${label(r)}>
+    <span className="lb">${label(r)}</span><span className="tr"><span className="br" style=${{display:"block",width:(100*(r.users||0)/top)+"%",background:color}}></span></span>
+    <span className="vl">${fmt(r.users)}${tot?html` · ${pct((r.users||0)/tot,0)}`:null}</span></div>`)}</div>`;
+}
+const cap = s => { s=String(s==null?"":s).replace(/_/g," "); return s.charAt(0).toUpperCase()+s.slice(1); };
+function SecHead({title,sub,tag}){ return html`<div className="ux-sec"><h2>${title}</h2>${tag?html`<span className="label-data">${tag}</span>`:null}<span className="small muted">${sub||""}</span><span className="line"></span></div>`; }
+function UsersView(){
+  const [plat,setPlat]=useState("all");
+  const sum=useBQSlow("u_sum",USERS_SQL.users_backend_summary), wk=useBQSlow("u_wk",USERS_SQL.users_backend_weekly), prof=useBQSlow("u_prof",USERS_SQL.users_backend_profile);
+  const gd=useBQSlow("u_gd",USERS_SQL.users_ga4_daily), gt=useBQSlow("u_gt",USERS_SQL.users_ga4_tech), gdem=useBQSlow("u_gdem",USERS_SQL.users_ga4_demographics), gp=useBQSlow("u_gp",USERS_SQL.users_ga4_pages);
+  const S=(sum.rows||[]).find(r=>r.platform===plat)||null; const dataEnd=(sum.rows&&sum.rows[0]&&sum.rows[0].data_end)||(prof.rows&&prof.rows[0]&&prof.rows[0].data_end)||null;
+  const from28=dataEnd?addDays(dataEnd,-27):null;
+  const P=(dim,p)=>(prof.rows||[]).filter(r=>r.dim===dim&&r.platform===(p||plat));
+  // weekly
+  const wrows=wk.rows||[]; const weeks=[...new Set(wrows.map(r=>r.wk))].sort();
+  const wEnd=wrows[0]&&wrows[0].data_end; const lastPartial=wEnd&&weeks.length&&addDays(weeks[weeks.length-1],6)>wEnd;
+  const wSeries=plat==="all"?["ios","android","web"]:[plat];
+  // GA4 daily
+  const gdr=gd.rows||[]; const gdays=[...new Set(gdr.map(r=>r.d))].sort(); const last7=gdays.slice(-7);
+  const gsel=r=>plat==="all"||r.platform===ga4P(plat);
+  const g7=gdr.filter(r=>last7.includes(r.d)&&gsel(r)); const gs=k=>g7.reduce((s,r)=>s+(r[k]||0),0);
+  const nd=last7.length||1; const dau=gs("active_users")/nd;
+  const T=(dim,p)=>(gt.rows||[]).filter(r=>r.dim===dim&&(p?r.platform===p:true));
+  const D=dim=>(gdem.rows||[]).filter(r=>r.dim===dim);
+  const gRange=(gt.rows&&gt.rows[0])?[gt.rows[0].from_d,gt.rows[0].to_d]:last7.length?[last7[0],last7[last7.length-1]]:null;
+  const ageTot=D("age").reduce((s,r)=>s+r.users,0);
+  const webPages=(gp.rows||[]).filter(r=>r.kind==="web"); const appScreens=(gp.rows||[]).filter(r=>r.kind==="app");
+  const area=pg=>/^\/investor/.test(pg)?["Investor","#7f8cff"]:/^\/entrepreneur/.test(pg)?["Borrower","#f2b136"]:/^\/auth/.test(pg)?["Sign-in / sign-up","#5ec8d8"]:["Public site","#8b93b0"];
+  const mobile=plat!=="web";
+  const LI=p=>{ const r=(sum.rows||[]).find(x=>x.platform===p); return r?r.logged_in:null; };
+  const preOct27 = from28 && from28 < "2026-10-27";
+  return html`<div>
+    <div className="page-h"><div className="grow"><h1>Users</h1>
+      <p>Who your users are, what they use and how they behave on web and mobile. The backend section is Manafa's own record. The GA4 section is Google Analytics' measurement. They are kept separate and never added together.</p></div>
+      <div className="seg" role="group" aria-label="Platform">${["all","ios","android","web"].map(k=>html`<button key=${k} className=${plat===k?"on":""} aria-pressed=${plat===k} onClick=${()=>setPlat(k)}>${PLAT[k]}</button>`)}</div></div>
+
+    <${SecHead} title="Backend users" tag="Data" sub=${dataEnd?`Production records · last 28 complete days, ${from28} to ${dataEnd}`:"Production records"}/>
+    ${sum.rows?html`<div className="grid g4" style=${{marginBottom:14}}>
+        <${KPI} icon="LogIn" label="Signed-in users" value=${S&&S.logged_in} note=${S?`${fmtN(S.logins)} sign-ins · ${(S.logins/Math.max(1,S.logged_in)).toFixed(1)} per user`:""} src="backend · login_completed"/>
+        <${KPI} icon="UserPlus" label="New registrations" value=${S&&S.registered} note=${S&&plat==="all"?`${fmtN(S.kyc_done)} completed KYC in the same 28 days`:S?`${fmtN(S.kyc_done)} completed KYC (platform as recorded)`:""} src="backend · registration_completed"/>
+        <${KPI} icon="Wallet" label="Depositors" value=${S&&S.depositors} note=${S?`${fmtN(S.withdrawers)} users withdrew`:""} src="backend · deposit_success"/>
+        <${KPI} icon="TrendingUp" label="Investors" value=${S&&S.investors} note=${S?`${fmtN(S.manual_investors)} invested themselves · ${fmtN(S.auto_investors)} via auto-invest (some did both)`:""} src="backend · investment_completed"/></div>
+      ${plat!=="all"?html`<div className="note" style=${{marginBottom:14}}>Sign-ins and registrations carry the platform the user was on. KYC, identity checks and auto-invest finish in a background process and are often recorded as "web" whatever device the user has (tqa-013), so read their platform split with care.${preOct27?" Before 27 Oct, every auto-invest investment was recorded as web (tqa-017).":""}</div>`:null}`
+      :html`<div className="panel" style=${{marginBottom:14}}><${BQState} q=${sum}/></div>`}
+    <div className="grid g2">
+      <div className="panel span2"><div className="panel-h"><h2>Weekly signed-in users</h2><span className="grow"></span><${Fresh} q=${wk}/><span className="label-data">Data</span></div>
+        ${wk.rows?html`<${ChartC} config=${{type:"bar",data:{labels:weeks.map((w,i)=>w.slice(5)+(i===weeks.length-1&&lastPartial?" (partial)":"")),datasets:wSeries.map(p=>({label:PLAT[p],data:weeks.map(w=>{const r=wrows.find(x=>x.wk===w&&x.platform===p);return r?r.logged_in:0;}),backgroundColor:PCOL[p],borderRadius:3,stack:"s"}))},options:{scales:{x:{...gridX,stacked:true},y:{...gridY,stacked:true}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>Unique users who signed in each ISO week (Mon–Sun, Riyadh time). ${lastPartial?`The last week is partial: the backend copy ends ${wEnd}.`:""} A user who signs in on two platforms counts once per platform.</div>`:html`<${BQState} q=${wk}/>`}
+        <${Source}>backend · login_completed<//></div>
+      <div className="panel"><div className="panel-h"><h2>Investing behaviour</h2><span className="grow"></span><span className="label-data">Data</span></div>
+        ${S?html`<div className="ux-mini">
+            <div><div className="k">Investments</div><div className="v">${fmtN(S.investments)}</div><div className="small muted">${pct(S.auto_investments/Math.max(1,S.investments),0)} placed by auto-invest</div></div>
+            <div><div className="k">First-time investors</div><div className="v">${fmtN(S.first_time_investors)}</div><div className="small muted">of ${fmtN(S.investors)} investors</div></div>
+            <div><div className="k">Average manual investment</div><div className="v">${S.manual_inv_sar_n?fmtSAR(S.manual_inv_sar/S.manual_inv_sar_n)+" SAR":"—"}</div><div className="small muted">${fmtN(S.manual_inv_sar_n)} investments</div></div>
+            <div><div className="k">Average auto-invest investment</div><div className="v">${S.auto_inv_sar_n?fmtSAR(S.auto_inv_sar/S.auto_inv_sar_n)+" SAR":"—"}</div><div className="small muted">${fmtN(S.auto_inv_sar_n)} investments</div></div>
+            <div><div className="k">Turned on auto-invest</div><div className="v">${fmtN(S.auto_invest_enablers)}</div><div className="small muted">users in the period</div></div>
+            <div><div className="k">Signed-in users who invested themselves</div><div className="v">${pct(S.manual_investors/Math.max(1,S.logged_in),0)}</div><div className="small muted">${fmtN(S.manual_investors)} of ${fmtN(S.logged_in)}</div></div></div>
+          <div className="small muted" style=${{marginTop:10}}>Amounts are SAR only; USD investments are excluded, never converted.</div>`:html`<${BQState} q=${sum}/>`}
+        <${Source}>backend · investment_completed, auto_invest_enabled<//></div>
+      <div className="panel"><div className="panel-h"><h2>Preferences and sign-in</h2><span className="grow"></span><${Fresh} q=${prof}/><span className="label-data">Data</span></div>
+        ${prof.rows?html`<h3 style=${{marginBottom:8}}>App language</h3><${BarList} rows=${P("language")} label=${r=>r.v==="ar"?"Arabic":r.v==="en"?"English":r.v} color="#7f8cff"/>
+          <h3 style=${{margin:"14px 0 8px"}}>Sign-in method</h3><${BarList} rows=${P("login_method")} label=${r=>r.v==="otp"?"One-time code (OTP)":r.v==="password"?"Password":r.v} color="#5ec8d8" total=${S&&S.logged_in}/>
+          <h3 style=${{margin:"14px 0 8px"}}>Account type</h3><${BarList} rows=${P("account_type")} label=${r=>cap(r.v)} color="#c084fc"/>
+          <div className="small muted" style=${{marginTop:8}}>Signed-in users, each counted once by their latest setting. A user can use both sign-in methods.</div>`:html`<${BQState} q=${prof}/>`}
+        <${Source}>backend · context.language, payload.method, context.entity_type<//></div>
+      ${mobile?html`<div className="panel"><div className="panel-h"><h2>App versions</h2><span className="grow"></span><span className="label-data">Data</span></div>
+        ${prof.rows?html`${(plat==="all"?["ios","android"]:[plat]).map(p=>{ const rs=P("app_version",p); const tot=rs.reduce((s,r)=>s+r.users,0); const latest=[...rs].sort((a,b)=>b.v.localeCompare(a.v,undefined,{numeric:true}))[0];
+            return html`<div key=${p} style=${{marginBottom:12}}><h3 style=${{marginBottom:8}}>${PLAT[p]} ${latest?html`<span className="small muted" style=${{textTransform:"none",letterSpacing:0,fontWeight:400}}>· ${pct((latest.users)/Math.max(1,tot),0)} on ${latest.v}</span>`:null}</h3><${BarList} rows=${rs} color=${PCOL[p]} max=${6}/></div>`; })}
+          <div className="small muted">Each signed-in app user counted once, by the version of their latest sign-in.</div>`:html`<${BQState} q=${prof}/>`}
+        <${Source}>backend · context.app_version<//></div>
+      <div className="panel"><div className="panel-h"><h2>Devices</h2><span className="grow"></span><span className="label-data">Data</span></div>
+        ${prof.rows?html`${plat!=="android"?html`<h3 style=${{marginBottom:8}}>iPhone models</h3><${BarList} rows=${P("device_model","ios")} label=${r=>modelName(r.v)} color=${PCOL.ios} max=${6} total=${LI("ios")}/>`:null}
+          ${plat!=="ios"?html`<h3 style=${{margin:"14px 0 8px"}}>Android brands</h3><${BarList} rows=${P("device_brand","android")} color=${PCOL.android} max=${6} total=${LI("android")}/>`:null}
+          <h3 style=${{margin:"14px 0 8px"}}>OS versions</h3><${BarList} rows=${(plat==="all"?[...P("os_version","ios").map(r=>({...r,v:"iOS "+r.v})),...P("os_version","android").map(r=>({...r,v:"Android "+r.v}))].sort((a,b)=>b.users-a.users):P("os_version",plat).map(r=>({...r,v:(plat==="ios"?"iOS ":"Android ")+r.v})))} color="#8b93b0" max=${6} total=${plat==="all"?((LI("ios")||0)+(LI("android")||0))||null:LI(plat)}/>
+          <div className="small muted" style=${{marginTop:8}}>Share of signed-in app users on each platform, by their latest device.</div>`:html`<${BQState} q=${prof}/>`}
+        <${Source}>backend · device info from the Singular SDK<//></div>`:null}
+    </div>
+
+    <${SecHead} title="GA4 product analytics" tag="GA4" sub=${gRange?`Google Analytics · ${gRange[0]} to ${gRange[1]} (last 7 days in the transfer; recent days can still change)`:"Google Analytics"}/>
+    ${gd.rows?html`<div className="grid g4" style=${{marginBottom:14}}>
+        <${KPI} icon="Users" label="Daily active users (average)" value=${Math.round(dau)} note=${`${fmtN(gs("new_users"))} new users in 7 days`} src="GA4 · TechDetails"/>
+        <${KPI} icon="MousePointerClick" label="Engaged sessions per user per day" value=${gs("active_users")?(gs("engaged_sessions")/gs("active_users")):null} fmt=${v=>v.toFixed(2)} note="sessions longer than 10 s, with a conversion or 2+ views" src="GA4"/>
+        <${KPI} icon="Timer" label="Engagement time per user per day" value=${gs("active_users")?Math.round(gs("engagement_sec")/gs("active_users")):null} fmt=${v=>{v=Math.round(v);return v>=60?Math.floor(v/60)+"m "+(v%60)+"s":v+"s";}} note="foreground time in the app or tab" src="GA4"/>
+        <${KPI} icon="Activity" label="Events per user per day" value=${gs("active_users")?Math.round(gs("events")/gs("active_users")):null} note="all GA4 events, including automatic ones" src="GA4"/></div>`
+      :html`<div className="panel" style=${{marginBottom:14}}><${BQState} q=${gd}/></div>`}
+    <div className="grid g2">
+      <div className="panel span2"><div className="panel-h"><h2>Daily active users by platform</h2><span className="grow"></span><${Fresh} q=${gd}/><span className="label-data">GA4</span></div>
+        ${gd.rows?html`<${ChartC} config=${{type:"line",data:{labels:gdays.map(d=>d.slice(5)),datasets:(plat==="all"?["ios","android","web"]:[plat]).map(p=>({label:PLAT[p],data:gdays.map(d=>{const r=gdr.find(x=>x.d===d&&x.platform===ga4P(p));return r?r.active_users:0;}),borderColor:PCOL[p],backgroundColor:PCOL[p]+"22",pointRadius:2,tension:.3}))},options:{scales:{x:gridX,y:{...gridY,beginAtZero:true}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>The GA4 transfer started on ${gdays[0]||"—"}, so there's no longer history yet (backfill requested). Daily figures, not unique users across days.</div>`:html`<${BQState} q=${gd}/>`}
+        <${Source}>GA4 transfer · TechDetails<//></div>
+      <div className="panel"><div className="panel-h"><h2>Tech</h2><span className="grow"></span><${Fresh} q=${gt}/><span className="label-data">GA4</span></div>
+        ${gt.rows?html`${plat==="all"||plat==="web"?html`<h3 style=${{marginBottom:8}}>Web: device type</h3><${BarList} rows=${T("device_category","web")} label=${r=>cap(r.v)} color=${PCOL.web}/>
+            <h3 style=${{margin:"14px 0 8px"}}>Web: browsers</h3><${BarList} rows=${T("browser","web")} color=${PCOL.web} max=${6}/>`:null}
+          ${plat!=="web"?html`<h3 style=${{margin:(plat==="all"?"14px":"0")+" 0 8px"}}>App versions (GA4)</h3><${BarList} rows=${(plat==="all"?[...T("app_version","iOS").map(r=>({...r,v:"iOS "+r.v})),...T("app_version","Android").map(r=>({...r,v:"Android "+r.v}))].sort((a,b)=>b.users-a.users):T("app_version",ga4P(plat)).map(r=>({...r,v:r.v})))} color=${plat==="android"?PCOL.android:PCOL.ios} max=${6}/>`:null}
+          <h3 style=${{margin:"14px 0 8px"}}>Operating systems</h3><${BarList} rows=${(plat==="all"?(gt.rows||[]).filter(r=>r.dim==="os_version").sort((a,b)=>b.users-a.users):T("os_version",ga4P(plat)))} color="#8b93b0" max=${6}/>
+          <div className="small muted" style=${{marginTop:8}}>Shares of daily active users over 7 days.</div>`:html`<${BQState} q=${gt}/>`}
+        <${Source}>GA4 transfer · TechDetails<//></div>
+      <div className="panel"><div className="panel-h"><h2>Demographics</h2><span className="grow"></span><${Fresh} q=${gdem}/><span className="label-data">GA4</span></div>
+        ${gdem.rows?html`<h3 style=${{marginBottom:8}}>Age</h3><${BarList} rows=${[...D("age")].sort((a,b)=>a.v.localeCompare(b.v))} color="#c084fc" max=${8}/>
+          <h3 style=${{margin:"14px 0 8px"}}>City</h3><${BarList} rows=${D("city")} color="#5ec8d8" max=${6} total=${ageTot}/>
+          <h3 style=${{margin:"14px 0 8px"}}>Device language</h3><${BarList} rows=${D("language")} color="#7f8cff" max=${4}/>
+          <h3 style=${{margin:"14px 0 8px"}}>Gender (Google estimate)</h3><${BarList} rows=${D("gender")} label=${r=>cap(r.v)} color="#8b93b0" max=${3}/>
+          <div className="note" style=${{marginTop:10}}>All platforms together (GA4 doesn't split demographics by platform). Age, gender and interests are Google's estimates for signed-in Google users; small groups are hidden by Google's privacy thresholds, which is why only four cities show and why the gender split shouldn't be relied on. Manafa's own records hold age, nationality and city, but those customer tables are off-limits to this dashboard by policy.</div>`:html`<${BQState} q=${gdem}/>`}
+        <${Source}>GA4 transfer · DemographicDetails<//></div>
+      <div className="panel"><div className="panel-h"><h2>Interests</h2><span className="grow"></span><span className="label-data">GA4</span></div>
+        ${gdem.rows?html`<${BarList} rows=${D("interest").map(r=>({...r,v:String(r.v).split("/").slice(-1)[0]}))} color="#f2b136" max=${10} total=${ageTot}/>
+          <div className="small muted" style=${{marginTop:8}}>Google's affinity audiences, as a share of daily active users with demographics. A user can be in several.</div>`:html`<${BQState} q=${gdem}/>`}
+        <${Source}>GA4 transfer · DemographicDetails (brandingInterest)<//></div>
+      <div className="panel span2"><div className="panel-h"><h2>Most visited web pages</h2><span className="grow"></span><${Fresh} q=${gp}/><span className="label-data">GA4</span></div>
+        ${gp.rows?html`<div className="tablewrap"><table><thead><tr><th>Page</th><th>Area</th><th style=${{textAlign:"right"}}>Views</th><th style=${{textAlign:"right"}}>Users (daily, summed)</th><th style=${{textAlign:"right"}}>Views per user</th><th style=${{textAlign:"right"}}>Time per user</th></tr></thead>
+          <tbody>${webPages.slice(0,15).map(r=>{ const [al,ac]=area(r.page); const sec=r.users?Math.round(r.engagement_sec/r.users):0; return html`<tr key=${r.page}><td className="mono" style=${{fontSize:12}}>${r.page}</td><td><span className="jr-chip"><span className="d" style=${{background:ac}}></span>${al}</span></td><td style=${{textAlign:"right"}}>${fmtN(r.views)}</td><td style=${{textAlign:"right"}}>${fmtN(r.users)}</td><td style=${{textAlign:"right"}}>${r.users?(r.views/r.users).toFixed(1):"—"}</td><td style=${{textAlign:"right"}}>${sec>=60?Math.floor(sec/60)+"m "+(sec%60)+"s":sec+"s"}</td></tr>`; })}</tbody></table></div>
+          <div className="note warn" style=${{marginTop:10}}>Mobile app screens can't be broken down yet: the app reports almost every screen to GA4 under one generic name (${appScreens.slice(0,2).map(s=>s.page).join(", ")||"FlutterViewController, MainActivity"}: ${appScreens.length?pct((appScreens.slice(0,2).reduce((s,r)=>s+r.views,0))/Math.max(1,appScreens.reduce((s,r)=>s+r.views,0)),0):"—"} of app screen views). Sending a screen name with each screen view (tqa-021) would show which app screens people use.</div>`:html`<${BQState} q=${gp}/>`}
+        <${Source}>GA4 transfer · PagesAndScreens (long numbers masked)<//></div>
+    </div>
+    <div className="note" style=${{marginTop:14}}><b>Not shown on purpose:</b> backend "days since registration" and "new user" fields. They appear to count from when analytics tracking started, not from the real registration date (tqa-020), so they would mislead.</div>
+  </div>`;
+}
+
 /* ======================================================================
    Jira · ISQ-6052 (live, read-only) + staged drafts awaiting approval
    ====================================================================== */
