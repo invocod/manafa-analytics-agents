@@ -201,7 +201,7 @@ input[type=date],select,input[type=text],input[type=search]{background:var(--sur
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);padding:0 18px;overflow-x:auto}
 .tabs button{border:0;background:transparent;padding:10px 12px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
 .tabs button.on{color:var(--text);border-bottom-color:var(--brand-2)}
-.modal{position:fixed;left:50%;top:12vh;transform:translateX(-50%);width:min(620px,calc(100% - 32px));background:#0f1734;border:1px solid var(--line);border-radius:12px;z-index:31;animation:pop .22s ease both;max-height:76vh;display:flex;flex-direction:column}
+.modal{position:fixed;left:50%;top:10vh;transform:translateX(-50%);width:min(680px,calc(100% - 32px));background:#0f1734;border:1px solid var(--line);border-radius:12px;z-index:31;animation:pop .22s ease both;max-height:76vh;display:flex;flex-direction:column}
 @keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.97)}}
 .modal .mh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .modal .mb{padding:16px 18px;overflow:auto}
@@ -209,6 +209,8 @@ input[type=date],select,input[type=text],input[type=search]{background:var(--sur
 @keyframes pop2{from{opacity:0;transform:translateY(-4px)}}
 .menu .mi{padding:8px 10px;border-radius:6px;display:block;color:var(--text);text-decoration:none;font-size:13px}
 .menu .mi:hover{background:var(--surface)}
+.run-prompt{border:1px solid rgba(58,154,244,.55);background:linear-gradient(180deg,#13204a,#0f1734);border-radius:10px;padding:14px 16px;box-shadow:0 0 0 1px rgba(58,154,244,.15),0 10px 30px -14px rgba(58,154,244,.5)}
+.run-prompt-text{font:500 16px/1.55 var(--font-body);color:#fff;white-space:pre-wrap;overflow-wrap:anywhere;user-select:all}
 .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}
 .kv dt{color:var(--muted)}
 .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
@@ -680,7 +682,10 @@ function RunDialog({agents,onClose}){
           <span style=${{flex:1}}><b>${a.label}</b> <span className="mono muted">${a.id}</span><div className="small muted">${a.cadence}</div></span></label>`)}
         ${!agents.length&&html`<div className="empty">Agent list not loaded yet.</div>`}
       </div>
-      ${prompt&&html`<pre className="code">${prompt}</pre>`}
+      ${prompt&&html`<div className="run-prompt">
+        <div style=${{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><span className="label-data">Instruction to send</span><span className="small muted" style=${{flex:1}}>Paste this in the Manafa BI project chat</span>
+          <button className="btn sm primary" onClick=${copy}><${Icon} name=${copied?"Check":"Copy"} size=${13}/>${copied?"Copied":"Copy"}</button></div>
+        <div className="run-prompt-text" tabIndex="0" aria-label="Instruction to send">${prompt}</div></div>`}
       <div style=${{display:"flex",gap:8,justifyContent:"flex-end"}}>
         <button className="btn" onClick=${onClose}>Close</button>
         <button className="btn primary" disabled=${!prompt} onClick=${copy}><${Icon} name=${copied?"Check":"Copy"} size=${15}/>${copied?"Copied":"Copy instruction"}</button>
