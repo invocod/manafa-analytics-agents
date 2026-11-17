@@ -7,6 +7,14 @@
       "customer": "3343082801",
       "name": "Manafa Debt Crowdfunding",
       "currency": "SAR"
+    },
+    "singular_tiktok_ios": {
+      "source": "Singular sheet (mbi_summary method)",
+      "currency": "SAR"
+    },
+    "singular_x_ios": {
+      "source": "Singular sheet (mbi_summary method)",
+      "currency": "SAR"
     }
   },
   "weekly_snapshots": {
@@ -34,6 +42,83 @@
           }
         }
       }
+    },
+    "singular_tiktok_ios": {
+      "settled_mon_fri": {
+        "2026-W43": {
+          "spend": 5396,
+          "clicks": 3535,
+          "net_inst": 158,
+          "sing_inst": 230,
+          "cpi_sing": 23.5
+        },
+        "2026-W44": {
+          "spend": 5392,
+          "clicks": 2852,
+          "net_inst": 204,
+          "sing_inst": 203,
+          "cpi_sing": 26.6
+        },
+        "2026-W45": {
+          "spend": 5386,
+          "clicks": 2192,
+          "net_inst": 164,
+          "sing_inst": 153,
+          "cpi_sing": 35.2
+        },
+        "2026-W46": {
+          "spend": 5392,
+          "clicks": 2916,
+          "net_inst": 128,
+          "sing_inst": 127,
+          "cpi_sing": 42.5
+        }
+      },
+      "full_week_spend_installs": {
+        "2026-W42": [
+          4845,
+          195
+        ],
+        "2026-W43": [
+          7536,
+          335
+        ],
+        "2026-W44": [
+          7542,
+          287
+        ],
+        "2026-W45": [
+          7536,
+          231
+        ],
+        "2026-W46": [
+          7534,
+          190
+        ]
+      }
+    },
+    "singular_x_ios": {
+      "2026-W42": {
+        "spend": 5550,
+        "clicks": 4359
+      },
+      "2026-W43": {
+        "spend": 7000,
+        "clicks": 3184
+      },
+      "2026-W44": {
+        "spend": 7000,
+        "clicks": 3909
+      },
+      "2026-W45": {
+        "spend": 7000,
+        "clicks": 4230
+      },
+      "2026-W46": {
+        "spend": 7000,
+        "clicks": 4011
+      },
+      "installs": "not reported in Singular"
     }
   },
   "calls": [
@@ -56,9 +141,25 @@
       "campaign": "Android installs",
       "call": "INVESTIGATE",
       "check": "Conversions > Summary Primary flags (tqa-016)"
+    },
+    {
+      "week": "2026-W46",
+      "account": "singular_tiktok_ios",
+      "campaign": "TikTok iOS",
+      "call": "INVESTIGATE",
+      "check": "creative x placement 9-13 Nov vs 26-30 Oct; settles if W47 settled click->install <5% (post-click) or >6% (postback lag)",
+      "owner": "TikTok account owner"
+    },
+    {
+      "week": "2026-W46",
+      "account": "singular_x_ios",
+      "campaign": "X iOS",
+      "call": "INVESTIGATE",
+      "check": "X install postback / SKAN mapping configured in Singular? 33,550 SAR since 12 Oct with no installs",
+      "owner": "X account owner + Singular admin"
     }
   ],
   "staged_fixes": [],
   "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)",
-  "last_run": "run-20261117-0603"
+  "last_run": "run-20261117-1003"
 }
