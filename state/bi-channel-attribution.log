@@ -5,3 +5,4 @@
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
 2026-11-17T07:50Z  checked=ledger+backend_attr+ga4+gads+singular  acted=1  note="W46 readout (backend Mon-Wed, others Mon-Sat): coverage 5.1/0.4/1.3%; Google Ads flat, TikTok installs -15% (Singular only), X disputed; deposits below 4-wk range; filed tqa-019"
   decision: no budget shift (confidence low) - measurement first: tqa-018, tqa-019, tqa-014
+2026-11-17T09:52Z  checked=inputs_vs_run-20261117-0733  acted=0  note="re-run requested for W46: every input identical to the 07:33 run (backend Mon-Wed 4,604 events / 69 attributed; GA4 9-14 Nov 32,927 sessions / 4,613 new users; Ads 6,243.23 SAR; Singular max ETL 16 Nov 22:29). W46 readout stands: reports/2026/W47/channel-attribution-2026-11-17.md"
