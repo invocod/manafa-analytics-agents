@@ -1,7 +1,7 @@
 {
   "loop": "bi-tracking-health",
-  "cursor": "2026-11-11",
-  "cursor_note": "First BigQuery run 2026-11-16 (re-baseline). Conversions judged through 2026-11-11 (backend replica partial on 11-12; 72h rule). UTM/naming audited 2026-11-09..15.",
+  "cursor": "2026-W46",
+  "cursor_note": "W46 audited 2026-11-17: backend judged through 11 Nov (replica stuck at 12 Nov partial), GA4/Ads/UTM/naming 9-15 Nov.",
   "open_issues": [
     {
       "id": "tqa-001",
@@ -30,7 +30,8 @@
       "what": "UTM convention violations: LinkedIn/Social 238, paid_social mediums, case dupes",
       "status": "open",
       "update_2026_11_16": "persists W46: LinkedIn/Social 85; paid_social medium 140 sessions (linkedin, twitter, snapchat, google_ads)",
-      "update_2026_11_17": "Google Ads Above 5Mn ads use utm_campaign=Minto_Manafa_B2B (uppercase/underscores)"
+      "update_2026_11_17": "Google Ads Above 5Mn ads use utm_campaign=Minto_Manafa_B2B (uppercase/underscores)",
+      "update_2026_11_17_run": "2026-11-17 (9-15 Nov): LinkedIn/Social 85 sessions persists; paid_social medium on linkedin 25, twitter 23, snapchat 3."
     },
     {
       "id": "tqa-004",
@@ -42,7 +43,8 @@
       "update_2026_11_17": "2026-11-17: sources are website placement names (send_message_to_scf_borrower 22, download_app_modal 13, article 8, invite_a_friend 3, mid_page 2, hero 1, x 4) -> internal links tagged with utm_source; owner web.",
       "jira": [
         "ISQ-6060"
-      ]
+      ],
+      "update_2026_11_17_run": "2026-11-17: persists (send_message_to_scf_borrower 22, download_app_modal 13, article 8, 9-14 Nov). Ticket ISQ-6060."
     },
     {
       "id": "tqa-005",
@@ -83,7 +85,8 @@
       "update_2026_11_17": "2026-11-17: backend sends doubled and non-doubled events to Singular in the same proportions (2-11 Nov); withdrawal_completed doubled but withdrawal_settled not -> per-event config, supports Singular->GA4 partner mapping hypothesis.",
       "jira": [
         "ISQ-6053"
-      ]
+      ],
+      "update_2026_11_17_run": "2026-11-17 (W46, 9-11 Nov): ratios unchanged (login 1.86, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.05, bank_account_added 1.91); auto_invest_disabled now also doubled 2.54 (28 sent / 71 GA4). Money events 0.98-1.00. Ticket ISQ-6053."
     },
     {
       "id": "tqa-008",
@@ -122,7 +125,8 @@
       "status": "open",
       "owner_suggestion": "standard owner (Engineering — Analytics Architecture): add to v2.2 with owner/params, or retire",
       "confirming_check": "next standard version lists each name, or the name stops firing",
-      "update_2026_11_16": "W46: 15 names / 9,120 events (1.4%) not in standard; top passcode_submitted 6,712, withdrawal_settled 1,058"
+      "update_2026_11_16": "W46: 15 names / 9,120 events (1.4%) not in standard; top passcode_submitted 6,712, withdrawal_settled 1,058",
+      "update_2026_11_17_run": "2026-11-17 (9-15 Nov): 15 names not in standard, 9,127 events (passcode_submitted 6,719, withdrawal_settled 1,058, create_passcode_page_viewed 575)."
     },
     {
       "id": "tqa-012",
@@ -134,7 +138,8 @@
       "owner_suggestion": "data engineering (DWH)",
       "confirming_check": "source connection of gold build (etl_logs / pipeline config)",
       "impact": "loops must not use gold/reporting/dashboard_views/sama_mart; compliance review if SAMA reporting reads them",
-      "update_2026_11_16b": "Re-checked after gold rebuild 2026-11-16 15:30 UTC: unchanged (W of Nov 2 gold 161/238,000 = staging; prod 4,717/17,448,000; gold max profile 610,975)"
+      "update_2026_11_16b": "Re-checked after gold rebuild 2026-11-16 15:30 UTC: unchanged (W of Nov 2 gold 161/238,000 = staging; prod 4,717/17,448,000; gold max profile 610,975)",
+      "update_2026_11_17_run": "2026-11-17: gold rebuilt 17 Nov, still not production: W46 Mon-Wed gold 44 inv / 73,000 SAR vs prod 4,113 / 15.2M; W45 gold 161 / 238,000 (= staging). Escalation stands."
     },
     {
       "id": "tqa-013",
@@ -148,7 +153,8 @@
       "jira": [
         "ISQ-6056"
       ],
-      "update_2026_11_17b": "Backend platform for callback/job-completed events defaults to web: identity_verified web 7,067 users vs web registrations 1,079 (15 Oct-11 Nov). Platform splits are reliable only for direct user actions (login_completed, registration_completed). Users tab uses sign-ins for platform splits."
+      "update_2026_11_17b": "Backend platform for callback/job-completed events defaults to web: identity_verified web 7,067 users vs web registrations 1,079 (15 Oct-11 Nov). Platform splits are reliable only for direct user actions (login_completed, registration_completed). Users tab uses sign-ins for platform splits.",
+      "update_2026_11_17_run": "2026-11-17: GA4 degraded share web 64% -> 63% -> 54% (W46 partial); iOS 4.8 -> 5.2 -> 6.7%, Android 3.6 -> 4.1 -> 5.5% (creeping, below the 10-pt step rule; watch). Ticket ISQ-6056."
     },
     {
       "id": "tqa-014",
@@ -174,7 +180,8 @@
       "confirming_check": "internal/developer traffic filter active; dev builds not using prod measurement ID",
       "jira": [
         "ISQ-6061"
-      ]
+      ],
+      "update_2026_11_17_run": "2026-11-17: persists (127.0.0.1:<port>, *.netlify.app, tagassistant). Ticket ISQ-6061."
     },
     {
       "id": "tqa-016",
@@ -184,7 +191,8 @@
       "status": "open",
       "owner_suggestion": "paid media / analytics",
       "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action",
-      "update_2026_11_17": "bi-paid-media-review: ConversionStats action breakdown (323) is ~2x CampaignStats conversions (161) for Android 9-13 Nov, so Primary status of kyc_completed cannot be inferred from transfer data; needs Conversions > Summary"
+      "update_2026_11_17": "bi-paid-media-review: ConversionStats action breakdown (323) is ~2x CampaignStats conversions (161) for Android 9-13 Nov, so Primary status of kyc_completed cannot be inferred from transfer data; needs Conversions > Summary",
+      "update_2026_11_17_run": "2026-11-17: unchanged 9-14 Nov (Android kyc_completed 120 claimed; no registration action). chk-06 export still needed."
     },
     {
       "id": "tqa-017",
@@ -286,16 +294,39 @@
         "remove_list_events": 1563
       }
     },
-    "csv_era_superseded": "2026-11-16: CSV-era baselines kept for history only; do not compare BigQuery numbers against them"
+    "csv_era_superseded": "2026-11-16: CSV-era baselines kept for history only; do not compare BigQuery numbers against them",
+    "bigquery_2026_11_17": {
+      "ga4_over_backend_sent_ok_9_11nov": {
+        "login_completed": 1.86,
+        "withdrawal_completed": 1.88,
+        "kyc_completed": 1.84,
+        "registration_completed": 1.71,
+        "passcode_enabled": 2.05,
+        "bank_account_added": 1.91,
+        "auto_invest_disabled": 2.54,
+        "identity_verified": 1.4,
+        "investment_completed": 1.0,
+        "deposit_success": 0.98,
+        "withdrawal_settled": 0.99
+      },
+      "unassigned_share": 0.387,
+      "direct_share": 0.465,
+      "distinct_source_medium": 264,
+      "naming_share": {
+        "standard": 0.9715,
+        "legacy": 0.0107,
+        "remove_list_events": 2140,
+        "not_in_standard": 0.0144
+      }
+    }
   },
   "source_status_last_run": {
-    "backend_prod": "manafa_financing.mi_analytics_events — complete through 2026-11-11 (11-12 partial)",
-    "gold": "SUSPENDED (tqa-012: reflects staging)",
-    "ga4_transfer": "2026-11-06..15, no platform/stream split",
-    "google_ads_transfer": "2026-11-07..15",
-    "singular": "not configured (not in BigQuery)",
-    "meta_tiktok_snapchat": "not configured",
-    "csv": "ignored"
+    "backend_prod": "complete through 2026-11-11 (12 Nov partial); not advanced since 16 Nov; stale on 2026-11-20",
+    "gold": "SUSPENDED (tqa-012; rebuilt 17 Nov, still staging-like)",
+    "ga4_transfer": "2026-11-06..16",
+    "google_ads_transfer": "2026-11-07..16",
+    "singular_sheet": "2026-10-11..16, checks pass",
+    "meta_tiktok_snapchat": "not configured"
   },
   "pending_checks": [
     {
@@ -327,7 +358,7 @@
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261116-1651",
+  "last_run": "run-20261117-0947",
   "jira": {
     "epic": "ISQ-6052",
     "project": "ISQ",

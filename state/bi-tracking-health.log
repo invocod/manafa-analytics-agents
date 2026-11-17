@@ -29,3 +29,5 @@
 2026-11-17T08:30Z  checked=jira_drafting  acted=1  note="9 ISQ ticket drafts staged under ISQ-6052 (jira/drafts/); tqa-013 jump re-read as mix effect; tqa-005 upgraded to high (withdrawal refs in GA4 page path); tqa-004 owner -> web"
 2026-11-17T08:40Z  checked=jira_create  acted=9  note="Amir approved; created ISQ-6053..6061 under ISQ-6052 (Dev Assignee: Azib mobile, Khubaib backend, Khalid Shabbir web); tqa->ISQ mapping in state.jira.tickets"
 2026-11-17T09:15Z  checked=users_tab_build  acted=2  note="filed tqa-020 (backend lifecycle fields count from tracking start) and tqa-021 (Flutter app screen names missing in GA4); tqa-013 note: callback events default to platform web"
+2026-11-17T09:51Z  checked=heartbeat+receipt+delivery+ledger+utm+channels+ads_actions+naming  acted=10  note="W46: escalation tqa-012 stands (gold rebuilt 17 Nov, still not prod); auto_invest_disabled joins GA4 doubled set (2.54); backend replica stuck at 12 Nov (stale 20 Nov); app degraded share creeping; 2 Jira drafts staged (tqa-020, tqa-021)"
+  decision: no new issues; updates appended to tqa-003/004/007/011/012/013/015/016

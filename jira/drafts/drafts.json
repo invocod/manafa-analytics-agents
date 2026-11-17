@@ -205,5 +205,50 @@
   "description": "## Problem\nSome links on Manafa's own website add `utm_source=<placement name>` (no medium). When a visitor clicks one, GA4 starts a new session and overwrites the visitor's real source (Google, X, TikTok…) with the placement name.\n\n## Impact\nPaid and organic traffic is under-credited, and junk sources appear in channel reports (\"Unassigned\"). It also breaks first- vs last-touch analysis.\n\n## Evidence (aggregated, GA4 sessions 9–14 Nov, source / medium)\n`send_message_to_scf_borrower` / (not set) 22 · `download_app_modal` / (not set) 13 · `article` 8 · `x` / (not set) 4 · `mid_page` 2 · `invite_a_friend` 3 · `hero` 1. Earlier weeks also had `jbyyfg` (146 in one week, looks like a typo'd link), `wallet`, `documents`.\n\n## Likely root cause\nCTAs, modals and blog/article links use UTM parameters to track *placement* on internal links. UTMs should only be used on links that bring people **from outside** the site.\n\n## Suggested fix\n- Remove UTM parameters from all internal links (same domain, and website → web app).\n- Track placement with a GA4 event parameter instead (e.g. `cta_click` with `placement=download_app_modal`), per the event standard. Or use `utm_content` only on external links.\n- Find and fix the `jbyyfg` link. Check whether `send_message_to_scf_borrower` comes from a message template (it may be a borrower-side email/SMS link; if so, use `utm_medium=email|sms` and `utm_source=manafa`).\n- Follow `context/utm-convention.md` (lowercase; source = where, medium = how, campaign = why).\n\n## Acceptance criteria\nNo GA4 sessions with these placement names as source for a full week.\n\n## How the BI agent will verify\nWeekly UTM convention check (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._",
   "status": "created",
   "jira_key": "ISQ-6060"
+ },
+ {
+  "draft_id": "d-tqa-021",
+  "tqa": [
+   "tqa-021"
+  ],
+  "area": "mobile",
+  "issuetype": "Bug",
+  "priority": "Medium",
+  "status": "staged",
+  "jira_key": null,
+  "summary": "[App] GA4 receives no screen names from the Flutter app (99% of screen views are FlutterViewController / MainActivity)",
+  "dev": {
+   "name": "AzibMuzammil",
+   "accountId": "712020:51fb9b58-a539-4130-9391-d2be6467ad7b"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "ga4",
+   "tqa-021"
+  ],
+  "description": "## Problem\nIn GA4, almost every app screen view is reported under the native container class, not the Flutter screen: `FlutterViewController` (iOS) and `MainActivity` (Android).\n\n## Impact\nNobody can see which app screens people use, where they drop off between screens, or how long they spend on each. App behaviour reports in GA4 and the Command Center's Users tab can't break the app down by screen.\n\n## Evidence (aggregated, GA4 Pages & Screens, 10–16 Nov)\n- `FlutterViewController` 143,347 views and `MainActivity` 56,552 views: about 99% of app screen views.\n- The other app classes are system or SDK screens (PermissionsActivity 2,637, UIAlertController 2,020, Intercom, Help Center).\n- The web, by contrast, reports real page paths.\n\n## Likely root cause (inferred)\nThe Firebase Analytics SDK logs automatic screen views using the native activity / view controller. A single-activity Flutter app has one of each. No `screen_view` with a `screen_name` is logged when Flutter routes change.\n\n## Suggested fix\n- Add a `NavigatorObserver` (e.g. `FirebaseAnalyticsObserver`, or a custom observer for go_router / auto_route) that logs `screen_view` with `screen_name` and `screen_class` on every route change.\n- Use route names from the event standard (snake_case, stable, no IDs in names).\n- Optionally turn off automatic screen reporting so the container class stops polluting reports.\n\n## Acceptance criteria\nGeneric classes (`FlutterViewController`, `MainActivity`) are below 20% of app screen views for a full week, and the main screens (home, opportunity list/detail, invest, deposit, withdraw, KYC steps) appear by name.\n\n## How the BI agent will verify\nWeekly share of app screen views by class in GA4 Pages & Screens (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._"
+ },
+ {
+  "draft_id": "d-tqa-020",
+  "tqa": [
+   "tqa-020"
+  ],
+  "area": "backend",
+  "issuetype": "Bug",
+  "priority": "Low",
+  "status": "staged",
+  "jira_key": null,
+  "summary": "[BE] context.lifecycle (days_since_registration, is_new_user) counts from tracking start, not registration",
+  "dev": {
+   "name": "Mohammad Khubaib",
+   "accountId": "62b0783ecebad33432f5e0ce"
+  },
+  "labels": [
+   "bi-agent",
+   "analytics",
+   "tqa-020"
+  ],
+  "description": "## Problem\nThe backend event field `context.lifecycle` doesn't match users' real registration dates:\n- `days_since_registration` never goes above 65 (as of 11 Nov), although many users registered years ago.\n- `is_new_user = true` for 13,041 of the 21,785 users with events between 15 Oct and 11 Nov, while only 2,846 registered in that window.\n\n## Impact\nNew- vs returning-user analysis, tenure cohorts and \"days to first investment\" can't use these fields. The BI dashboards exclude them for now.\n\n## Evidence (aggregated, `mi_analytics_events`, 15 Oct – 11 Nov)\nMax `days_since_registration` per platform: iOS 65, Android 64, web 54. `is_new_user` true for 13,041 users vs 2,846 registrations.\n\n## Likely root cause (inferred)\nThe value is computed from the user's first analytics event (tracking went live around early September), not from the account's registration date.\n\n## Suggested fix\nCompute `days_since_registration` from the profile/user creation date and `is_new_user` from a defined rule (e.g. registered within the last 7 days). Document both in the event standard.\n\n## Acceptance criteria\n`days_since_registration` matches the account's creation date for a sample of long-standing accounts, and the `is_new_user` share among active users is in line with recent registrations.\n\n## How the BI agent will verify\nWeekly distribution of `lifecycle.days_since_registration` and the `is_new_user` share vs registrations (`bi-tracking-health`).\n\n_Filed by the Manafa BI agent (decision support)._"
  }
 ]
