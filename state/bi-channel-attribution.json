@@ -86,7 +86,7 @@
     "Meta/TikTok/Snapchat platform data not in BigQuery; Singular has no conversion events",
     "GA4 doubles reg/kyc (tqa-007): GA4 conversions unusable as ledger"
   ],
-  "last_run": "run-20261117-1133",
+  "last_run": "run-20261117-1214",
   "input_fingerprints": {
     "2026-11-17T11:11Z": {
       "backend_max": "2026-11-12",

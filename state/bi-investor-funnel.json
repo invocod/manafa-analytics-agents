@@ -151,7 +151,7 @@
     },
     "kyc_note": "kyc_completed is a cohort step only; event counts include ~63% existing profiles"
   },
-  "last_run": "run-20261117-1133",
+  "last_run": "run-20261117-1214",
   "early_read_7d": {
     "cohort": "2026-10-26",
     "web": {
