@@ -1,3 +1,5 @@
 2026-11-10T22:10Z  checked=5_metrics_x_21d  acted=1  note="first run; latest complete day Mon Nov 9 all in band; window movers explained by offering launch (Oct 22) + salary days (Oct 25-28); App Install step-function Oct 30 classified tracking artifact, routed to bi-tracking-health as tqa-008; spend skipped (no ads export); bands provisional (3w history)"
   decision: install baselines start 2026-11-03 — no trend math across the Oct-30 boundary
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-17T06:06Z  checked=backend(to 11-11, unchanged)+ga4/ads(to 11-13)  acted=0  note="silent: no out-of-band metric; backend unchanged since last check (watch item Mon 11-09 regs kept); GA4/Ads have 1 same-weekday prior point, no band possible; GA4 restated 11-15 -11%"
+  decision: GA4/Ads daily bands wait for backfill (Phase 2, B2); until then only exact-zero and backend bands alert

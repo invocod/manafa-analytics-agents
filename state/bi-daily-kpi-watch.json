@@ -1,6 +1,6 @@
 {
   "loop": "bi-daily-kpi-watch",
-  "cursor": "2026-11-11",
+  "cursor": "2026-11-13 (GA4/Ads); 2026-11-11 (backend)",
   "cursor_note": "Latest complete Riyadh day checked. Bands provisional (3 weeks of history; loop wants 8).",
   "active_anomalies": [
     {
@@ -310,11 +310,13 @@
         "2026-11-10": 6588,
         "2026-11-11": 6008,
         "2026-11-12": 6312,
-        "2026-11-13": 3603,
+        "2026-11-13": 3597,
         "2026-11-14": 3849,
-        "2026-11-15": 8813
+        "2026-11-15": 7848,
+        "2026-11-16": 7705
       },
-      "note": "10 days only; bands need backfill (Phase 2)"
+      "note": "10 days only; bands need backfill (Phase 2)",
+      "restatement_note": "2026-11-17: GA4 transfer restated 11-15 from 8,813 to 7,848 (-11%) and 11-13 from 3,603 to 3,597; never judge the trailing 72h"
     },
     "gads_spend_sar_daily": {
       "values": {
@@ -326,7 +328,8 @@
         "2026-11-12": 1115.82,
         "2026-11-13": 816.45,
         "2026-11-14": 982.62,
-        "2026-11-15": 1319.74
+        "2026-11-15": 1319.74,
+        "2026-11-16": 1192.38
       },
       "note": "9 days only; pacing ~1.1k SAR/day weekdays"
     }
@@ -343,5 +346,6 @@
       "status": "watch, not alerted: provisional bands (6 points); a Monday at 64 occurred 2026-10-12",
       "review_on": "next run"
     }
-  ]
+  ],
+  "last_run": "run-20261117-0603"
 }
