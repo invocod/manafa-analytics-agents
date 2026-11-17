@@ -320,7 +320,7 @@ const NAV = [
   ["analytics","Analytics Dashboard","ChartLine"],
   ["singular","Singular (attribution)","Megaphone"],
   ["quality","Event Quality & Monitoring","ShieldCheck"],
-  ["jira","Jira · ISQ-6052","Ticket"],
+  ["jira","Issues and Bugs","Ticket"],
   ["reports","Reports","FileText"],
   ["config","Agent Configuration","SlidersHorizontal"],
   ["system","System Settings","Server"],
@@ -1345,7 +1345,7 @@ function JiraView({ctx}){
         ${dr.length?html`<div style=${{margin:"-16px -16px 16px"}}><${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} onOpen=${()=>setOpen({type:"draft",d})}/>`)}<//></div>`:null}
         <${BQState} q=${jq} label="Jira"/></div>`;
   return html`<div>
-    <div className="page-h"><div className="grow"><h1>Jira · Business Intelligence platform issues</h1>
+    <div className="page-h"><div className="grow"><h1>Issues and Bugs</h1>
       <p>Tracking and data-quality problems the BI agents found, filed for the Investor Squad under ${JIRA_EPIC}. The list reads Jira live through your Atlassian connector and never changes it. Drafts are created in Jira by Claude only after Amir approves them in chat.</p></div>
       <a className="btn" href=${"https://"+JIRA_SITE+"/browse/"+JIRA_EPIC} target="_blank" rel="noopener"><${Icon} name="ExternalLink" size=${14}/>Open epic in Jira</a></div>
     <div className="jr">
