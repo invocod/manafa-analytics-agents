@@ -805,9 +805,13 @@ function PlatformFunnelPanel({coh}){
 }
 function PlatformDistPanel({daily,R}){
   const rows=daily.rows||[]; const v=["reg_web","reg_ios","reg_android"].map(k=>R.from?sumRange(rows,k,R.from,R.to)||0:0);
+  const total=v.reduce((a,b)=>a+b,0); const labels=["Web","iOS","Android"], cols=["#3A9AF4","#7f8cff","#22c38e"];
   return html`<div className="panel"><div className="panel-h"><h2>Platform distribution</h2><span className="grow"></span><span className="label-data">Data</span></div>
-    ${daily.rows?html`<${ChartC} config=${{type:"doughnut",data:{labels:["Web","iOS","Android"],datasets:[{data:v,backgroundColor:["#3A9AF4","#7f8cff","#22c38e"],borderColor:"#111830",borderWidth:3}]},options:{cutout:"68%",scales:{}}}}/>
-      <div className="small muted" style=${{marginTop:8}}>Registrations by platform, ${R.from} to ${R.to}.</div>`:html`<${BQState} q=${daily}/>`}
+    ${daily.rows?(total?html`<${ChartC} small=${true} config=${{type:"doughnut",data:{labels,datasets:[{data:v,backgroundColor:cols,borderColor:"#111830",borderWidth:3}]},options:{cutout:"66%",scales:{},plugins:{legend:{display:false}}}}}/>
+      <div className="grid" style=${{gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:8,marginTop:10}}>
+        ${labels.map((l,i)=>html`<div key=${l} style=${{borderLeft:"3px solid "+cols[i],paddingLeft:8}}><div className="small muted">${l}</div><div style=${{fontSize:18,fontWeight:600}}>${fmtN(v[i])}</div><div className="small muted">${pct(v[i]/total,0)}</div></div>`)}</div>
+      <div className="small muted" style=${{marginTop:8}}>Registrations by platform, ${R.from} to ${R.to} (${fmtN(total)} total).</div>`
+      :html`<div className="empty">No registrations recorded for ${R.from} to ${R.to}. The backend copy ends ${R.end||"—"}; pick an earlier range.</div>`):html`<${BQState} q=${daily}/>`}
     <${Source}>backend · context.platform<//></div>`;
 }
 function InvestTrendPanel({daily,R}){
