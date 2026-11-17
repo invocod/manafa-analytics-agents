@@ -2,3 +2,5 @@
   decision: deposits watch item set — re-evaluate W46 before any routing to bi-investor-funnel
   decision: *_started and App Install excluded from all WoW math until baselines mature (tqa-008)
 2026-11-16T16:10Z  checked=rebaseline  acted=1  note="Phase 1: re-baselined on production BigQuery; CSV-era state kept under csv_era (history only)"
+2026-11-17T06:08Z  checked=W46(Mon-Wed backend)+GA4+Ads+loop_states  acted=1  note="digest: escalation tqa-012 leads; investments +78% vs median (above range), deposits -29% (below range, 2nd decline); first-investment spike explained (11-02 auto-invest batch); 2 experiment briefs (fx-01, iOS Apple Pay default)"
+  decision: deposits watch item set; first_investments watch closed
