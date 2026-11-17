@@ -7,6 +7,15 @@ Singular cannot export to BigQuery today. **For Singular only**, the loops read 
 - **What it is:** a Singular **ad-network report** (Singular's ETL appends daily, `etl_query_timestamp_utc`). It has spend, impressions, clicks and network-claimed installs plus Singular-attributed `app_install_count`, by date × network × OS × country × campaign × sub-campaign (Google Ads also × sub-network: Search / Display / Search Partners). **It has no conversion events** (no registration, deposit or investment by network). App: "Manafa-App 2025". Currency column `adn_original_currency` (SAR only so far).
 - **PII check (2026-11-17):** none. Columns are campaign-level aggregates. `data_connector_username` / `adn_account_name` are ad-account handles, not customers. Re-check the header each run; if any user/device-level column appears (device ID, IDFA/GAID, user ID, email, phone), **stop and report** — do not process.
 
+## Daily read: the `mbi_summary` tab (added 2026-11-17, user approved)
+Loops read **`mbi_summary`** (sheetId 601531578), not raw `Sheet1` rows. It is formulas only; Sheet1 is never written.
+- `A1` = QUERY: one row per `date × source × os × currency` with `impressions, clicks, network_installs, cost, attributed_installs, rows` (read `mbi_summary!A:J`).
+- `L1:M12` = checks: `header`, `data_rows`, `min_date`, `max_date`, `max_etl_utc`, `duplicate_grain_rows`, `currencies`, `cost_total_check` (SUMPRODUCT over Sheet1), `installs_check` (network / attributed), `table_cost_total`, `table_rows_total`.
+- **Gate (all must hold, else report "stale/invalid data — Singular sheet" and skip the Singular section):** header equals the column list above and has no PII-like column; `duplicate_grain_rows` = 0; `currencies` = SAR only (otherwise split by currency); `table_cost_total` = `cost_total_check` and `table_rows_total` = `data_rows` (two independent computations); `max_date` ≥ run date − 2.
+- Need campaign-level detail (e.g. tqa-018)? Read only the needed columns of Sheet1 for the needed dates.
+- If someone deletes or edits the tab, rebuild it from this section; never put formulas in Sheet1.
+- Check at creation (2026-11-17): 671 rows, 2026-10-11 → 2026-11-16, 0 duplicates, SAR, cost 119,513.29, installs 3,389 / 9,928 — identical to the Chrome read.
+
 ## Columns
 `date, etl_query_timestamp_utc, app, source, os, platform, country_field, adn_campaign_id, adn_campaign_name, adn_account_id, adn_original_currency, adn_campaign_url, adn_sub_campaign_name, adn_sub_adnetwork_name, adn_account_name, adn_sub_campaign_id, data_connector_source_name, data_connector_id, data_connector_username, data_connector_timestamp_utc, adn_impressions, adn_clicks, adn_installs, adn_cost, adn_original_cost, app_install_count`
 
