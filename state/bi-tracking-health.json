@@ -169,6 +169,15 @@
       "owner_suggestion": "backend + event-standard owner",
       "what": "Backend changed investment_completed on 2026-10-26 (mixed day; complete from 10-27), all platforms: payment_method 'opportunities.ewallet' -> 'wallet'; auto-invest investments were all labelled platform 'web' before (22 Oct: 3,234/3,234) and carry the user's device after. Web investments 6,455 (W43) -> 257 (W44). Investment-event platform splits are not comparable across 26 Oct. payment_method is not a standard v2.1 param for investment_completed.",
       "confirming_check": "backend changelog for 2026-10-26; decide the intended platform for server-executed (auto-invest) investments; add/remove payment_method in the standard"
+    },
+    {
+      "id": "tqa-018",
+      "found": "2026-11-17",
+      "severity": "med",
+      "status": "open",
+      "owner_suggestion": "performance marketing (Google Ads / Singular connector owner)",
+      "what": "Google Ads cost, Singular sheet vs BigQuery google_ads, W46 (9-15 Nov): 'Minto | App installs - Android' 2,732.27 SAR (sheet) vs 1,257.80 SAR (BQ) = 2.17x, clicks 1,518 vs 1,487. Web (Above 5Mn) 3,693.17 vs 3,693.17 and iOS 2,713.45 vs 2,612.53 match. Gap is daily and steady. Same campaign as tqa-016 (Android ~2x).",
+      "confirming_check": "compare the Android campaign cost in the Google Ads UI vs Singular for one day; check whether Singular's Android connector pulls a second account/ID or double-counts sub-campaign rows"
     }
   ],
   "baselines": {

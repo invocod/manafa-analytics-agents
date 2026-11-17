@@ -44,5 +44,8 @@ Source: `event_delivery_health_daily.sql`. Degraded share per platform/vendor/ev
 ## Bands (all loops)
 Same weekday, **median ± max(3 × 1.4826 × MAD, 30% of median)**; provisional until 8 same-weekday points. Weekly metrics: trailing 4-week median and range. Bands live in each loop's state and are refreshed from production data only.
 
+## Singular (own section only — Google Sheet exception)
+Source: `context/singular-sheet.md`. Metrics: `singular_spend` = SUM(adn_cost) by currency; `singular_network_installs` = SUM(adn_installs) (network-claimed); `singular_attributed_installs` = SUM(app_install_count); `singular_cpi` = singular_spend / singular_attributed_installs, same window, same rows, networks with installs reported only (Twitter excluded). Riyadh-date as given by the sheet; exclude the trailing 72 h. Never combined with GA4, Google Ads (BigQuery) or backend numbers.
+
 ## Not available (named, never estimated)
-Singular attribution, Meta/TikTok/Snapchat spend, GA4 platform/stream split, channel attribution of backend conversions (tqa-014), anything from `gold` (tqa-012).
+Singular conversion events (registration/deposit/investment by network — not in the sheet), Meta/TikTok/Snapchat spend, GA4 platform/stream split, channel attribution of backend conversions (tqa-014), anything from `gold` (tqa-012).

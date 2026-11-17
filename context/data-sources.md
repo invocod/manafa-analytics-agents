@@ -1,6 +1,6 @@
 # Data Sources & Access
 
-**Current reality (updated 2026-11-16): BigQuery is the only source of truth** (`databases-472111`, `me-central2` / Saudi Arabia only). CSV/Excel exports in `data/exports/` are ignored by every loop. Singular, Meta, TikTok and Snapchat are **not configured** until their data lands in BigQuery (in me-central2).
+**Current reality (updated 2026-11-16): BigQuery is the only source of truth** (`databases-472111`, `me-central2` / Saudi Arabia only). CSV/Excel exports in `data/exports/` are ignored by every loop. Meta, TikTok and Snapchat platform data are **not configured** until they land in BigQuery (in me-central2). **Exception: Singular is read from its Google Sheet** (user decision, 2026-11-17; `context/singular-sheet.md`).
 
 ## Retired: CSV sources (ignored since 2026-11-16)
 GA4, Singular and Google Ads CSV drops under `data/exports/` are no longer read. The files stay for history only. Do not use them to fill gaps.
@@ -18,11 +18,11 @@ GA4, Singular and Google Ads CSV drops under `data/exports/` are no longer read.
 | Investments, investors, leads | `gold.fact_investment`, `gold.dim_investor`, `gold.fact_lead` | dwh build 2026-11-11 |
 | GA4 (product analytics) | `GA4.p_ga4_Events_413046941`, `p_ga4_TrafficAcquisition_…`, `p_ga4_UserAcquisition_…`, `p_ga4_LandingPage_…`, `p_ga4_PagesAndScreens_…`, `p_ga4_TechDetails_…` (property 413046941) | **GA4 Data Transfer (report-level aggregates, daily partitions)**, not the raw `events_*` export; 2026-11-06 → 2026-11-15 only |
 | Google Ads (claims + spend) | `google_ads.p_ads_CampaignStats_3343082801`, `p_ads_CampaignConversionStats_…`, `p_ads_Campaign_…` (customer 3343082801) | Data Transfer; 2026-11-07 → 2026-11-15; cost in `metrics_cost_micros` |
-| Singular | — not in BigQuery yet → **not configured** (ask for the Singular → BigQuery export in me-central2) | |
+| Singular | **Google Sheet** `1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg` (exception; read via signed-in Chrome, see `context/singular-sheet.md`). Ad-network report: spend/clicks/installs by network × campaign; no conversion events | Singular ETL appends daily; 72-hour rule |
 
 - **Query surface now: `sql/readonly/*.sql`** (read-only SELECTs, validated 2026-11-16). Access is read-only, so the `marketing_mart` dataset (`sql/marketing_mart/`) is deferred to the deploy phase.
 - **Not for marketing loops:** `stg_staging_financing` (staging env), `curated_v1`, `gold_prod_snapshot`, `*_test`, `*_poc`, `*_scratch`, `sama_mart`, `silver` (contains raw customer tables, so don't query it).
-- **Open items at connect:** (1) GA4 and Google Ads transfers hold ~10 days, so request a backfill (8+ weeks) for baselines. (2) The raw GA4 event export (`analytics_413046941`) is not in me-central2; confirm whether it exists and create it in me-central2 if needed. (3) The backend replica lags ~3–4 days (fits the 72-hour rule, but check before each run). (4) Singular → BigQuery is still pending. (5) CSVs are retired (user decision, 2026-11-16). Loops read BigQuery only.
+- **Open items at connect:** (1) GA4 and Google Ads transfers hold ~10 days, so request a backfill (8+ weeks) for baselines. (2) The raw GA4 event export (`analytics_413046941`) is not in me-central2; confirm whether it exists and create it in me-central2 if needed. (3) The backend replica lags ~3–4 days (fits the 72-hour rule, but check before each run). (4) Singular → BigQuery is still pending; until then the Singular Google Sheet is the Singular source (2026-11-17). (5) CSVs are retired (user decision, 2026-11-16). Loops read BigQuery only.
 
 ### Not active (no data yet)
 Meta / TikTok / Snapchat exports (`data/exports/meta|tiktok|snapchat/`) and direct backend CSVs (`data/exports/backend/`) — folders exist; loops treat them as **not configured** (skipped and named in "not covered"), distinct from a configured source gone **stale**.
