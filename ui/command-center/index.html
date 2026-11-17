@@ -883,8 +883,7 @@ function AgentsView({ctx}){
   return html`<div>
     <div className="page-h"><div className="grow"><h1>AI Agent Command Center</h1>
       <p>Seven loop agents, orchestrated by Claude in the Manafa BI project. Every status, step and log line here was written by an agent while it ran. Nothing is simulated: where a step count isn't reported, progress shows as activity without a percentage.</p></div>
-      ${active?html`<span className="chip"><span className="dot" style=${{background:"var(--brand-2)"}}></span>Live run ${active.id}</span>`:html`<span className="chip"><span className="dot"></span>No run in progress</span>`}
-      <button className="btn primary" onClick=${ctx.openRunDialog}><${Icon} name="Play" size=${15}/>Run Automation</button></div>
+      ${active?html`<span className="chip"><span className="dot" style=${{background:"var(--brand-2)"}}></span>Live run ${active.id}</span>`:html`<span className="chip"><span className="dot"></span>No run in progress</span>`}</div>
     <div className="grid g3" style=${{marginBottom:14}}>
       <div className="panel span2"><div className="panel-h"><h2>Orchestration</h2><span className="grow"></span><span className="small muted">${run?`Run ${run.id} · ${fmtTs(run.started_at)}`:"No runs yet"}</span></div>
         <${OrchMap} agents=${agents} run=${run} onPick=${ctx.openAgent}/></div>
