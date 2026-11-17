@@ -31,3 +31,16 @@ The page shows only what loops write here. **Never write a status, step, percent
 Write at step boundaries only (the page polls live, so every write appears within seconds). Each write is a `db_write` `merge` on `runs/<run-id>` with the latest `ifVersion`; `events` is an array, so send the whole updated array. Keep `events` under ~400 items per run.
 
 If the Command Center can't be written (tool missing, refusal), run the loop anyway and note "command center not updated" in the run log. The repo stays the system of record.
+
+## Ask the data (chat) — added 2026-11-17
+
+A chat view (`#ask`) where Amir asks questions in plain words. Claude answers on the viewer's own account through the page's `sample` capability (declared 17 Nov, approved by Amir) and can reach data only through four read-only page tools:
+
+| Tool | Reads | Guard (enforced in the page, before the call) |
+|---|---|---|
+| `run_bigquery` | BigQuery `databases-472111` (me-central2) via `execute_sql_readonly` | SELECT only, one statement; tables limited to `manafa_financing.mi_analytics_events` / `mi_analytics_event_deliveries`, `GA4.p_ga4_*_413046941`, `google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801`, GA4/google_ads `INFORMATION_SCHEMA.COLUMNS`; gold/silver/curated/reporting/dashboard_views/sama_mart/stg/test/poc blocked; no whole payload/context/attribution JSON, no device or click identifiers; backend queries must aggregate; results with ID-like columns, event timestamps, >1,000 backend rows, or values shaped like mobiles / national IDs / IBANs / emails are withheld |
+| `singular_summary` | Singular sheet (`mbi_summary`, or Sheet1 for campaigns, header-checked) | Aggregated in the page, always split by currency |
+| `search_jira` | Jira JQL, read-only, max 50 | — |
+| `read_command_center` | This page's issues / reports / runs | — |
+
+Every answer shows its sources: each query's SQL / range / JQL, row count, duration, bytes scanned and a result preview. The instructions sent with each question carry the CLAUDE.md rules (backend = conversion truth, no blending sources, 72-hour window, ISO weeks in Riyadh time, Observed vs Inferred, aggregates only) and the open tracking issues. The chat history is kept in the viewer's own browser only. Answers are decision-support.

@@ -298,6 +298,43 @@ pre.code{background:#0b1124;border:1px solid var(--line);border-radius:8px;paddi
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+
+/* Ask the data (chat) */
+.ask{max-width:980px;display:flex;flex-direction:column;min-height:calc(100vh - 150px)}
+.ask-thread{flex:1;display:flex;flex-direction:column;gap:18px;padding-bottom:12px}
+.ask-empty{border:1px dashed #34406b;border-radius:var(--r);padding:28px 22px;text-align:center}
+.ask-ic{width:42px;height:42px;border-radius:12px;margin:0 auto 10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--purple));color:#fff}
+.ask-sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.ask-chip{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;text-align:left;max-width:100%}
+.ask-chip:hover:not(:disabled){border-color:var(--brand-2);background:var(--surface-2)}
+.ask-chip:disabled{opacity:.5;cursor:default}
+.ask-u{display:flex;justify-content:flex-end}
+.ask-u .b{background:var(--brand);color:#fff;border-radius:14px 14px 4px 14px;padding:9px 13px;max-width:78%;white-space:pre-wrap;overflow-wrap:anywhere}
+.ask-a{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.ask-av{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);color:var(--brand-2);border:1px solid var(--line)}
+.ask-body{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 14px}
+.ask-md{max-width:none}
+.ask-md > p:first-child{margin-top:0}
+.ask-md table{width:auto}
+.ask-think{display:flex;align-items:center;gap:8px;font-size:13px}
+.ask-steps{border:1px solid var(--line);border-radius:8px;background:#0d1430;margin-bottom:10px}
+.ask-steps > summary{cursor:pointer;padding:7px 10px;font-size:12.5px;display:flex;align-items:center;gap:6px;list-style:none}
+.ask-steps > summary::-webkit-details-marker{display:none}
+.ask-step{border-top:1px solid var(--line);padding:8px 10px}
+.ask-step-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ask-step-h .t{flex:1;min-width:160px;font-size:12.5px}
+.ask-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--idle)}
+.ask-dot.ok{background:var(--ok)} .ask-dot.err{background:var(--err)}
+.ask-dot.running{background:var(--brand-2);animation:askp 1.1s ease-in-out infinite}
+@keyframes askp{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.ask-dot.running{animation:none}}
+.ask-code{margin:6px 0 0;padding:8px 10px;background:#080d1f;border:1px solid var(--line);border-radius:6px;font:11.5px/1.5 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto;color:#c9d2f0}
+.ask-prev{margin-top:6px}
+.ask-prev summary{cursor:pointer}
+.ask-prev table{font-size:11.5px;margin-top:6px}
+.ask-comp{position:sticky;bottom:0;display:flex;gap:8px;align-items:flex-end;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 -8px 24px rgba(10,15,30,.8)}
+.ask-comp textarea{flex:1;resize:vertical;min-height:44px;max-height:220px;background:transparent;border:0;color:var(--text);font:inherit;outline:none;padding:6px 4px}
+.ask-comp:focus-within{border-color:var(--brand-2)}
 </style>
 </head>
 <body>
@@ -328,6 +365,7 @@ const SINGULAR_SHEET = "1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg";
 const SINGULAR_HEADER = "date,etl_query_timestamp_utc,app,source,os,platform,country_field,adn_campaign_id,adn_campaign_name,adn_account_id,adn_original_currency,adn_campaign_url,adn_sub_campaign_name,adn_sub_adnetwork_name,adn_account_name,adn_sub_campaign_id,data_connector_source_name,data_connector_id,data_connector_username,data_connector_timestamp_utc,adn_impressions,adn_clicks,adn_installs,adn_cost,adn_original_cost,app_install_count";
 const NAV = [
   ["overview","Overview","LayoutDashboard"],
+  ["ask","Ask the data","MessagesSquare"],
   ["agents","AI Agent Command Center","Bot"],
   ["history","Execution History","History"],
   ["analytics","Analytics Dashboard","ChartLine"],
@@ -675,6 +713,293 @@ function useHash(){
   return v;
 }
 
+/* ---------------- Ask the data (chat) ----------------
+   Claude answers on the viewer's own account through the `sample` capability.
+   It can only reach data through the read-only page tools below; every query
+   is checked here before it runs (allowed tables, no raw JSON/device keys,
+   aggregates only on the backend ledger, no identifiers in the result). */
+const ASK_STORE = "mbi.ask.v1";
+const ASK_DATASETS = ["GA4","batch_logs","bide2270_pc_test","bide2272_masking_poc","curated","curated_v1","dashboard_views","etl_logs","gold","gold_prod_snapshot","google_ads","manafa_financing","manafa_financing_tag_test","reporting","sama_mart","silver","stg_staging_financing"];
+const ASK_TABLES = [
+  /^databases-472111\.manafa_financing\.mi_analytics_events$/,
+  /^databases-472111\.manafa_financing\.mi_analytics_event_deliveries$/,
+  /^databases-472111\.GA4\.p_ga4_[A-Za-z]+_413046941$/,
+  /^databases-472111\.google_ads\.p_ads_(Campaign|CampaignStats|CampaignConversionStats)_3343082801$/,
+  /^databases-472111\.(GA4|google_ads)\.INFORMATION_SCHEMA\.(COLUMNS|TABLES)$/i,
+];
+const ASK_ID_COLS_OK = new Set(["campaign_id","customer_id","package_id","opportunity_id","property_id"]);
+const ASK_FORBIDDEN_KEYS = /\b(anonymous_id|user_ref|ga_client_id|ga_session_id|ga_session_started_at|singular_sdid|idfv|analytics_device_id|event_uuid|lead_id|click_id|acquisition_click_id|last_click_id|utm_campaign_id|wallet_id|entity_bank_id|inviter_id|invitee_id|investment_id|device_last_seen_at|singular_session_seen_at)\b/i;
+
+function askCheckSql(raw){
+  let s = String(raw||"").trim().replace(/;\s*$/,"");
+  if(!s) throw new Error("Empty query.");
+  if(s.length>12000) throw new Error("Query too long; keep it under 12,000 characters.");
+  // strip comments and string literals; join split backtick paths
+  let t = s.replace(/'(?:\\.|[^'\\])*'/g,"''").replace(/"(?:\\.|[^"\\])*"/g,'""');
+  t = t.replace(/--[^\n]*/g," ").replace(/\/\*[\s\S]*?\*\//g," ").replace(/#[^\n]*/g," ").replace(/`\s*\.\s*`/g,".");
+  if(t.includes(";")) throw new Error("One statement only.");
+  if(!/^\s*\(?\s*(WITH|SELECT)\b/i.test(t)) throw new Error("Only SELECT queries are allowed.");
+  if(/\b(INSERT|UPDATE|DELETE|MERGE|CREATE|DROP|ALTER|TRUNCATE|GRANT|REVOKE|EXPORT|LOAD|CALL|DECLARE|EXECUTE|BEGIN|SET)\b(?!\s*\()/i.test(t.replace(/`[^`]*`/g,"")))
+    throw new Error("Only read-only SELECT queries are allowed.");
+  const tables = [];
+  const outside = t.replace(/`([^`]*)`/g,(m,id)=>{ if(id.includes(".")) tables.push(id); return " _q_ "; });
+  for(const id of tables){ if(!ASK_TABLES.some(r=>r.test(id))) throw new Error("Table not allowed: "+id+". Allowed: manafa_financing.mi_analytics_events / mi_analytics_event_deliveries, GA4.p_ga4_*_413046941, google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801, and GA4/google_ads INFORMATION_SCHEMA.COLUMNS."); }
+  const dsRe = new RegExp("\\b("+ASK_DATASETS.join("|")+"|INFORMATION_SCHEMA|databases-472111|region-[\\w-]+)\\s*\\.","i");
+  if(dsRe.test(outside)) throw new Error("Write every table as a full backticked path, e.g. `databases-472111.GA4.p_ga4_Events_413046941`.");
+  if(/\b(FROM|JOIN)\s+[A-Za-z_][\w-]*\s*\.\s*[A-Za-z_]/i.test(outside)) throw new Error("Write every table as a full backticked path.");
+  if(!tables.length) throw new Error("The query reads no allowed table.");
+  // personal / device keys and whole JSON blobs
+  const noDev = outside.replace(/\bvendor_keys\s*\.\s*singular_device\s*\.\s*(make|model|os_version)\b/gi," _ok_ ");
+  if(/\bvendor_keys\b/i.test(noDev)) throw new Error("vendor_keys may only be read as vendor_keys.singular_device.make / model / os_version.");
+  if(ASK_FORBIDDEN_KEYS.test(noDev)) throw new Error("That field is a personal or device identifier and can't be queried here.");
+  if(/\b(payload|context|attribution)\b(?!\s*\.)(?!\s*,\s*'')/i.test(noDev.replace(/\bAS\s+(payload|context|attribution)\b/gi,""))) throw new Error("Read single JSON fields (JSON_VALUE(payload.amount)), never whole payload / context / attribution.");
+  const backend = tables.some(x=>/manafa_financing\./.test(x));
+  if(backend){
+    if(!/\b(COUNT|COUNTIF|SUM|AVG|MIN|MAX|APPROX_COUNT_DISTINCT|APPROX_QUANTILES|PERCENTILE_CONT|STDDEV)\s*\(/i.test(outside)) throw new Error("Backend-ledger queries must aggregate (COUNT, SUM, …); row-level records can't be returned.");
+    const aggN=(outside.match(/\b(ARRAY_AGG|STRING_AGG)\s*\(/gi)||[]).length, oneN=(outside.match(/LIMIT\s+1\s*\)\s*\[\s*(SAFE_)?OFFSET\s*\(\s*0\s*\)\s*\]/gi)||[]).length;
+    if(aggN>oneN) throw new Error("ARRAY_AGG / STRING_AGG can't list values from the backend ledger.");
+  }
+  return s;
+}
+const ASK_ID_RE = /(^|_)(id|ids|uuid|profile|profiles|user|device|client|email|phone|mobile|iban|iqama|national|fullname|firstname|lastname)(_|$)/i;
+const ASK_VAL_RE = [/^(\+?966|0)?5\d{8}$/, /^[12]\d{9}$/, /^SA\d{22}$/i, /[^@\s]+@[^@\s]+\.[a-z]{2,}/i];
+function askCheckResult(p, backend){
+  const fields = (p&&p.schema&&p.schema.fields)||[];
+  if(backend){ const ts=fields.find(f=>f.type==="TIMESTAMP"||f.type==="DATETIME"); if(ts) throw new Error("Backend results can't carry event timestamps ('"+ts.name+"'); aggregate to a date or week.");
+    if(Number(p.totalRows||0)>1000) throw new Error("Backend result has "+p.totalRows+" rows; that looks row-level. Aggregate further (≤1,000 rows)."); }
+  for(const f of fields){ const n=String(f.name||""); if(ASK_ID_RE.test(n) && !ASK_ID_COLS_OK.has(n.toLowerCase())) throw new Error("Result column '"+n+"' looks like an identifier. Return aggregates only (counts, sums, shares), not IDs."); }
+  const strIdx = fields.map((f,i)=>f.type==="STRING"?i:-1).filter(i=>i>=0);
+  for(const r of (p.rows||[])) for(const i of strIdx){ const v=r.f&&r.f[i]&&r.f[i].v; if(typeof v==="string" && ASK_VAL_RE.some(re=>re.test(v.trim()))) throw new Error("The result contains a value that looks like personal data (mobile, national ID, IBAN or email). It was withheld."); }
+}
+function askTrim(rows, max){ const out = rows.slice(0,max); let js = JSON.stringify(out); while(js.length>26000 && out.length>5){ out.splice(Math.floor(out.length*0.7)); js=JSON.stringify(out); } return out; }
+function askNum(v){ const n=Number(String(v??"").replace(/,/g,"")); return isNaN(n)?0:n; }
+function isoWeek(ds){ const d=new Date(ds+"T00:00:00Z"); const day=(d.getUTCDay()+6)%7; d.setUTCDate(d.getUTCDate()-day+3); const y=d.getUTCFullYear(); const j=new Date(Date.UTC(y,0,4)); const w=1+Math.round(((d-j)/864e5-3+((j.getUTCDay()+6)%7))/7); return y+"-W"+String(w).padStart(2,"0"); }
+
+function askTools(ctx, log){
+  const step = (o)=>log(o);
+  const callMcp = async (server, tool, input)=>{ if(!caps.mcp) throw new Error("Connectors aren't available in this view."); try{ return await caps.mcp.callTool(server, tool, input); }catch(e){ throw new Error((e&&e.code?e.code+": ":"")+(e&&e.message||String(e))); } };
+  return [
+    { name:"run_bigquery",
+      description:"Run ONE read-only, aggregated GoogleSQL SELECT on BigQuery project databases-472111 (Saudi region me-central2). Returns {columns, rows (max 200), total_rows}. Use full backticked table paths. The page rejects disallowed tables, personal/device identifiers, and non-aggregated reads of the backend ledger, and tells you why.",
+      inputSchema:{type:"object",properties:{sql:{type:"string",description:"The SELECT statement"},purpose:{type:"string",description:"Short plain-English label for what this query measures (shown to the user)"}},required:["sql","purpose"]},
+      async execute(inp){ const st=step({tool:"BigQuery",label:String(inp.purpose||"Query"),code:String(inp.sql||""),status:"running"}); const t0=Date.now();
+        try{ const sql=askCheckSql(inp.sql);
+          const r=await callMcp(BQ_SERVER,BQ_TOOL,{projectId:PROJECT,query:sql,timeoutMs:60000,labels:{source:"mbi-command-center-chat"}});
+          let p=r.payload; if(typeof p==="string"){ try{p=JSON.parse(p);}catch(e){} }
+          if(p&&p.jobComplete===false) throw new Error("The query didn't finish within 60 s. Narrow the date range or simplify.");
+          askCheckResult(p||{}, /manafa_financing\./.test(sql));
+          const rows=parseBQ(p); const cols=((p&&p.schema&&p.schema.fields)||[]).map(f=>f.name);
+          const out=askTrim(rows,200);
+          st({status:"ok",ms:Date.now()-t0,rowsN:Number(p&&p.totalRows||rows.length),preview:{cols,rows:rows.slice(0,25)},bytes:Number(p&&p.totalBytesProcessed||0)});
+          return {columns:cols,rows:out,total_rows:Number(p&&p.totalRows||rows.length),truncated:out.length<rows.length};
+        }catch(e){ st({status:"err",ms:Date.now()-t0,error:String(e.message||e)}); throw e; } } },
+    { name:"singular_summary",
+      description:"Singular (attribution) figures from the Google Sheet export, aggregated in the page. Returns rows grouped by the dimensions you choose, always split by currency, with impressions, clicks, network_installs (ad network's own count), cost, attributed_installs (Singular's count), plus the sheet's freshness checks. Use group_by 'campaign' only when campaign detail is needed.",
+      inputSchema:{type:"object",properties:{from:{type:"string",description:"YYYY-MM-DD inclusive"},to:{type:"string",description:"YYYY-MM-DD inclusive"},group_by:{type:"array",items:{type:"string",enum:["date","week","source","os","campaign"]}},source_contains:{type:"string",description:"Optional case-insensitive filter on source, e.g. tiktok, adwords, twitter"},os:{type:"string",description:"Optional: iOS, Android or Web"}},required:["from","to","group_by"]},
+      async execute(inp){ const g=(Array.isArray(inp.group_by)?inp.group_by:[]).map(String); const camp=g.includes("campaign");
+        const st=step({tool:"Google Sheets",label:"Singular "+(camp?"campaigns (Sheet1)":"summary (mbi_summary)")+" "+inp.from+" → "+inp.to+(g.length?" by "+g.join(", "):""),code:(camp?"Sheet1!A:Z":"mbi_summary!A:J + L1:M12")+(inp.source_contains?"  source~"+inp.source_contains:"")+(inp.os?"  os="+inp.os:""),status:"running"}); const t0=Date.now();
+        try{
+          const [v,chk]=await Promise.all([callMcp(SHEETS_SERVER,"get_values",{spreadsheetId:SINGULAR_SHEET,range:camp?"Sheet1!A:Z":"mbi_summary!A:J"}), callMcp(SHEETS_SERVER,"get_values",{spreadsheetId:SINGULAR_SHEET,range:"mbi_summary!L1:M12"})]);
+          const vals=parseSheet(v.payload); const checks={}; parseSheet(chk.payload).forEach(r=>{ if(r[0]&&r[0]!=="check"&&r[0]!=="header") checks[r[0]]=r[1]; });
+          if(!vals.length) throw new Error("The sheet returned no rows.");
+          const H=vals[0].map(h=>String(h).trim());
+          if(camp && H.join(",")!==SINGULAR_HEADER) throw new Error("Sheet1 header changed; refusing to read it until the method is checked.");
+          const ix=n=>H.indexOf(n);
+          const map=camp?{date:"date",source:"source",os:"os",currency:"adn_original_currency",campaign:"adn_campaign_name",impressions:"adn_impressions",clicks:"adn_clicks",network_installs:"adn_installs",cost:"adn_cost",attributed_installs:"app_install_count"}
+                        :{date:"date",source:"source",os:"os",currency:"currency",impressions:"impressions",clicks:"clicks",network_installs:"network_installs",cost:"cost",attributed_installs:"attributed_installs"};
+          const from=String(inp.from), to=String(inp.to), sc=String(inp.source_contains||"").toLowerCase(), osf=String(inp.os||"").toLowerCase();
+          const agg=new Map();
+          for(const r of vals.slice(1)){ const d=String(r[ix(map.date)]||"").slice(0,10); if(!d||d<from||d>to) continue;
+            const src=String(r[ix(map.source)]||""), os=String(r[ix(map.os)]||""); if(sc&&!src.toLowerCase().includes(sc)) continue; if(osf&&os.toLowerCase()!==osf) continue;
+            const key={date:d,week:isoWeek(d),source:src,os,campaign:camp?String(r[ix(map.campaign)]||""):undefined}; const cur=String(r[ix(map.currency)]||"").trim()||"(blank)";
+            const k=g.map(x=>key[x]).concat(cur).join("|"); let a=agg.get(k);
+            if(!a){ a={}; g.forEach(x=>a[x]=key[x]); a.currency=cur; a.impressions=0;a.clicks=0;a.network_installs=0;a.network_installs_reported_days=0;a.cost=0;a.attributed_installs=0; agg.set(k,a); }
+            a.impressions+=askNum(r[ix(map.impressions)]); a.clicks+=askNum(r[ix(map.clicks)]); const ni=r[ix(map.network_installs)]; if(ni!==""&&ni!=null){ a.network_installs+=askNum(ni); a.network_installs_reported_days++; }
+            a.cost+=askNum(r[ix(map.cost)]); a.attributed_installs+=askNum(r[ix(map.attributed_installs)]); }
+          const rows=[...agg.values()].map(a=>({...a,cost:Math.round(a.cost*100)/100})).sort((x,y)=>String(x.date||x.week||"").localeCompare(String(y.date||y.week||""))||y.cost-x.cost);
+          const out=askTrim(rows,250);
+          st({status:"ok",ms:Date.now()-t0,rowsN:rows.length,preview:{cols:Object.keys(rows[0]||{}),rows:rows.slice(0,25)}});
+          return {rows:out,total_rows:rows.length,truncated:out.length<rows.length,sheet_checks:checks,note:"Singular cost is in the row's currency; never add currencies together. network_installs blank means the network doesn't report installs."};
+        }catch(e){ st({status:"err",ms:Date.now()-t0,error:String(e.message||e)}); throw e; } } },
+    { name:"search_jira",
+      description:"Read Jira issues (read-only) with JQL on manafaco.atlassian.net. The BI tickets live under epic ISQ-6052 (use: parent = ISQ-6052). Returns key, summary, status, priority, dev assignee, labels, created, resolved.",
+      inputSchema:{type:"object",properties:{jql:{type:"string"}},required:["jql"]},
+      async execute(inp){ const jql=String(inp.jql||""); const st=step({tool:"Jira",label:"Jira search",code:jql,status:"running"}); const t0=Date.now();
+        try{ const r=await callMcp(JIRA_SERVER,"searchJiraIssuesUsingJql",{cloudId:JIRA_SITE,jql,fields:JIRA_FIELDS,maxResults:50,view:"full"});
+          const rows=parseJira(r.payload).map(x=>({key:x.key,summary:x.summary,status:x.status,priority:x.priority,dev:x.dev,labels:x.labels,created:x.created&&x.created.slice(0,10),resolved:x.resolved&&x.resolved.slice(0,10)}));
+          st({status:"ok",ms:Date.now()-t0,rowsN:rows.length,preview:{cols:["key","summary","status","dev"],rows:rows.slice(0,25)}});
+          return {issues:askTrim(rows,50),total:rows.length};
+        }catch(e){ st({status:"err",ms:Date.now()-t0,error:String(e.message||e)}); throw e; } } },
+    { name:"read_command_center",
+      description:"Read what the BI agents already recorded in this Command Center: 'issues' (tracking/data-quality issues with status and severity), 'reports' (latest loop reports with verdicts and findings), or 'runs' (recent loop runs). Cheap; use it before re-deriving something an agent already found.",
+      inputSchema:{type:"object",properties:{what:{type:"string",enum:["issues","reports","runs"]}},required:["what"]},
+      async execute(inp){ const w=String(inp.what); const st=step({tool:"Command Center",label:"Read "+w,code:"db: "+w,status:"running"});
+        let rows=[];
+        if(w==="issues") rows=ctx.issuesQ.docs.map(i=>({id:i.id,title:i.title||i.what,status:i.status,severity:i.severity,area:i.area,found:i.found,summary:String(i.summary||i.detail||i.why||"").slice(0,400)}));
+        else if(w==="reports") rows=ctx.reportsQ.docs.slice(0,15).map(r=>({id:r.id,loop:r.loop,title:r.title,week:r.week,verdict:r.verdict,created:r.created,findings:(r.findings||[]).slice(0,6),actions:(r.actions||[]).slice(0,4)}));
+        else if(w==="runs") rows=ctx.runsQ.docs.slice(0,12).map(r=>({id:r.id,status:r.status,summary:r.summary,started_at:r.started_at,agents:Object.fromEntries(Object.entries(r.agents||{}).map(([k,a])=>[k,{status:a.status,verdict:a.verdict}]))}));
+        else { st({status:"err",error:"unknown collection"}); throw new Error("what must be issues, reports or runs"); }
+        st({status:"ok",ms:0,rowsN:rows.length});
+        return {rows:askTrim(rows,60)}; } },
+  ];
+}
+
+function askRules(ctx){
+  const today = new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Riyadh"});
+  const open = ctx.issuesQ.docs.filter(i=>i.status!=="resolved").map(i=>`- ${i.id} (${i.severity||"?"}): ${String(i.title||i.what||"").slice(0,140)}`).join("\n");
+  return `You are the data analyst inside Manafa's BI Command Center. Manafa is a CMA-regulated Saudi investment/crowdfunding platform. Amir (Engineering Manager) asks questions about users, funnel, channels, campaigns and tracking. Answer them with real numbers fetched through your tools. Today is ${today} (Asia/Riyadh).
+
+TOOLS: run_bigquery (read-only SQL), singular_summary (Singular sheet), search_jira, read_command_center. Fetch before you state any number; never estimate or recall figures. If a tool returns an error, fix the query and retry, or say plainly what you couldn't get. Use as few tool calls as you can (you have only a handful of rounds): combine metrics into one query with UNION ALL / conditional aggregates.
+
+DATA (BigQuery project databases-472111, region me-central2 — always use full backticked paths):
+1. Backend ledger = conversion truth: \`databases-472111.manafa_financing.mi_analytics_events\`
+   columns: event_name, subject_type, profile_id, user_id, analytics_user_id, payload JSON, context JSON, attribution JSON, occurred_at TIMESTAMP (UTC; convert with DATE(occurred_at,'Asia/Riyadh')).
+   events: registration_completed, login_completed, phone_verified, email_verified, kyc_completed, identity_verified, deposit_success, deposit_failed, investment_completed, investment_cancelled, withdrawal_completed, withdrawal_settled, withdrawal_failed, withdrawal_reversed, auto_invest_enabled, auto_invest_disabled, bank_account_added, bank_account_removed, passcode_enabled, passcode_changed, referral_reward_earned, profile_updated, notification_preference_updated.
+   payload keys: amount, currency, is_auto_invested, is_first_investment, method, payment_method, failure_reason, reason, status, flow, verification_provider, kyc_duration_seconds, strategy_name, package_id, opportunity_id, risk_profile, utm_source, utm_medium, utm_campaign, utm_content, channel, source_funnel.
+   context keys: platform (ios/android/web), language, app_version, entity_type, role_key, lifecycle.is_new_user, lifecycle.days_since_registration, vendor_keys.singular_device.make/model/os_version.
+   attribution keys: acquisition_source, acquisition_medium, acquisition_campaign, acquisition_content, first_platform, first_touch_at, last_source, last_medium, last_campaign, last_touch_at.
+   Read JSON with JSON_VALUE(payload.amount), SAFE_CAST(... AS NUMERIC/BOOL). Count people with COUNT(DISTINCT profile_id). Amounts: SUM only where currency='SAR' (never add currencies).
+   Delivery log: \`databases-472111.manafa_financing.mi_analytics_event_deliveries\` (analytics_event_id, channel ga4/singular, status, degraded_reason, attempts) — for "did events reach GA4/Singular".
+2. GA4 (product analytics; date = DATE(_PARTITIONTIME); inside a CTE select DATE(_PARTITIONTIME) AS pd) — tables \`databases-472111.GA4.p_ga4_<Name>_413046941\`:
+   Events(eventName,eventCount,eventCountPerUser,totalUsers) · TrafficAcquisition(sessionDefaultChannelGroup,sessionSource,sessionMedium,sessionSourceMedium,sessionCampaignName,sessions,engagedSessions,engagementRate,keyEvents) · UserAcquisition(firstUserDefaultChannelGroup,firstUserSource,firstUserMedium,firstUserCampaignName,newUsers,activeUsers,totalUsers,keyEvents) · TechDetails(platform,deviceCategory,operatingSystem,operatingSystemWithVersion,appVersion,browser,screenResolution,activeUsers,newUsers,engagedSessions,eventCount,userEngagementDuration) · DemographicDetails(country,region,city,language,userAgeBracket,userGender,brandingInterest,activeUsers,newUsers) · PagesAndScreens(unifiedPagePathScreen,unifiedScreenName,screenPageViews,activeUsers,userEngagementDuration) · LandingPage(landingPage,sessions,newUsers,keyEvents) · Audiences(audienceName,sessions,totalUsers).
+   activeUsers summed over days = user-days, not unique users; say so.
+3. Google Ads (account 3343082801, SAR): \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\` (campaign_id, segments_date, segments_device, segments_ad_network_type, metrics_cost_micros/1e6 = SAR, metrics_clicks, metrics_impressions, metrics_conversions), \`...p_ads_CampaignConversionStats_3343082801\` (campaign_id, segments_date, segments_conversion_action_name, metrics_conversions), \`...p_ads_Campaign_3343082801\` (campaign_id, campaign_name, campaign_status — a daily snapshot: take the latest _PARTITIONTIME per campaign_id). Filter stats on segments_date and also DATE(_PARTITIONTIME) >= start date.
+4. Singular (attribution) = singular_summary tool only. Google Ads cost in Singular is unreliable (tqa-018): use BigQuery for Google Ads.
+5. Unknown columns: query \`databases-472111.GA4.INFORMATION_SCHEMA.COLUMNS\` (or google_ads).
+Never use gold, silver, curated, reporting, dashboard_views, sama_mart, stg_*, *_test or *_poc — the page blocks them.
+
+RULES:
+- Backend events count conversions; GA4, Google Ads and Singular only explain them. Never add, average or divide one source's number by another's; report each source in its own section, labelled. Cross-source comparison only as a data-quality note.
+- Before answering about recent days, check freshness (MAX date) of the source you use. The backend replica has lagged recently. Never judge the last 3 days (conversions lag up to 72 h): flag them as incomplete.
+- Weeks are ISO weeks (Mon–Sun), Riyadh time. Name exact date ranges.
+- Compute with SQL; don't eyeball. For any headline number, sanity-check it (e.g. total vs sum of parts).
+- Privacy (SAMA/PDPL): aggregates only. Never output IDs, names, mobiles, emails, IBANs, national IDs or single transactions. If asked for those, decline and offer an aggregate.
+- Mark each finding Observed (straight from data) or Inferred (your reasoning). Say "I couldn't tell" rather than invent a cause.
+- Everything is decision-support for a human; don't claim to change anything.
+
+KNOWN OPEN ISSUES (mention when they affect the answer):
+${open||"- (none loaded)"}
+
+ANSWER FORMAT (markdown; the page renders ## headings, tables, lists, **bold**, \`code\`):
+1. First line: the direct answer in one or two sentences with the key number(s) in **bold**.
+2. ## Numbers — one table per source, with the source and date range in the heading or a row.
+3. ## How I got this — sources, date ranges, filters and definitions used (the SQL itself is shown to the user separately; don't paste it).
+4. ## Caveats — freshness, the 72-hour window, known issues, Observed vs Inferred.
+5. Optionally ## Next question to ask — one follow-up worth asking.
+Keep it tight; no preamble.`;
+}
+
+const ASK_SUGGEST = [
+  "How many registrations, deposits and investments did we get last week, by platform?",
+  "What share of last week's investments were auto-invest, and how much SAR did they total?",
+  "Which Google Ads campaigns spent the most last week, and what did they claim?",
+  "How has TikTok cost per install moved over the last 5 weeks in Singular?",
+  "Which app versions are our iOS and Android users on right now?",
+  "Which open Jira tickets under ISQ-6052 are assigned to backend?",
+];
+
+function askLoad(){ try{ const v=JSON.parse(localStorage.getItem(ASK_STORE)||"[]"); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+function askSave(m){ try{ localStorage.setItem(ASK_STORE, JSON.stringify(m.slice(-30).map(x=>({...x,steps:(x.steps||[]).map(s=>({...s,preview:s.preview&&{cols:s.preview.cols,rows:s.preview.rows.slice(0,10)}}))})))); }catch(e){} }
+const ASK_ERR = {
+  not_granted:"Claude isn't allowed for this page in your view. Allow it when the prompt appears, or reload the page to be asked again.",
+  sampling_disabled:"Claude isn't available for this account here.", not_declared:"This page no longer has Claude enabled.", capability_disabled:"Claude can't run in this view.", capability_removed:"This viewer app is too old for the chat.", tools_unavailable:"This view can't run the data tools the chat needs. Open the page in claude.ai.",
+  rate_limited:"Too many questions at once, or your usage limit was reached. Try again in a moment.", session_expired:"Your session expired. Sign in again and retry.",
+  refused:"Claude declined this question. Rephrase it.", empty_completion:"No answer came back. Try a narrower question.", prompt_too_large:"The conversation got too long. Clear the chat and ask again.",
+  upstream_error:"The answer was interrupted by a connection problem. Try again.",
+};
+
+function AskSteps({steps,live}){
+  if(!steps||!steps.length) return null;
+  const okN=steps.filter(s=>s.status==="ok").length;
+  return html`<details className="ask-steps" open=${live}>
+    <summary><${Icon} name="Database" size=${13}/> ${live?"Working…":"Sources & queries"} <span className="muted">· ${steps.length} call${steps.length>1?"s":""}${okN!==steps.length?" · "+(steps.length-okN)+" failed or retried":""}</span></summary>
+    ${steps.map((s,i)=>html`<div key=${i} className=${"ask-step "+s.status}>
+      <div className="ask-step-h"><span className=${"ask-dot "+s.status}></span><span className="label-data">${s.tool}</span><span className="t">${s.label}</span>
+        <span className="muted small">${s.status==="running"?"running…":s.status==="ok"?(s.rowsN!=null?fmtN(s.rowsN)+" row"+(s.rowsN===1?"":"s"):"")+(s.ms?" · "+fmtDur(s.ms):"")+(s.bytes?" · "+(s.bytes/1048576).toFixed(1)+" MB scanned":""):"error"}</span>
+        ${s.code?html`<button className="btn ghost sm" title="Copy" onClick=${()=>{ try{navigator.clipboard.writeText(s.code);}catch(e){} }}><${Icon} name="Copy" size=${12}/></button>`:null}</div>
+      ${s.code?html`<pre className="ask-code">${s.code}</pre>`:null}
+      ${s.error?html`<div className="note err" style=${{margin:"6px 0"}}>${s.error}</div>`:null}
+      ${s.preview&&s.preview.rows&&s.preview.rows.length?html`<details className="ask-prev"><summary className="small muted">Result preview (${Math.min(s.preview.rows.length,25)} of ${fmtN(s.rowsN)})</summary><div className="tablewrap"><table><thead><tr>${s.preview.cols.map(c=>html`<th key=${c}>${c}</th>`)}</tr></thead>
+        <tbody>${s.preview.rows.map((r,j)=>html`<tr key=${j}>${s.preview.cols.map(c=>html`<td key=${c}>${r[c]==null?"—":typeof r[c]==="object"?JSON.stringify(r[c]):String(r[c])}</td>`)}</tr>`)}</tbody></table></div></details>`:null}
+    </div>`)}
+  </details>`;
+}
+
+function AskView({ctx}){
+  const [msgs,setMsgs]=useState(askLoad);
+  const [input,setInput]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [sample,setSample]=useState(undefined);
+  const ctlRef=useRef(null); const endRef=useRef(null); const boxRef=useRef(null);
+  useEffect(()=>{ let alive=true; (async()=>{ const s=(window.claude&&claude.use)?await claude.use("sample").catch(()=>null):null; if(alive) setSample(()=>s||null); })(); return ()=>{alive=false;}; },[]);
+  useEffect(()=>{ askSave(msgs); },[msgs]);
+  useEffect(()=>{ endRef.current&&endRef.current.scrollIntoView({block:"end"}); },[msgs.length, busy]);
+  useEffect(()=>()=>{ ctlRef.current&&ctlRef.current.abort(); },[]);
+  const patchLast=f=>setMsgs(m=>{ const c=m.slice(); c[c.length-1]=f(c[c.length-1]); return c; });
+
+  const ask=async(q)=>{
+    q=String(q||"").trim(); if(!q||busy||!sample) return;
+    setInput(""); setBusy(true);
+    const history=msgs.filter(m=>m.text&&!m.error).slice(-8);
+    const turns=[{role:"user",content:askRules(ctx)}];
+    history.forEach(m=>turns.push(m.role==="user"?{role:"user",content:m.text}:{role:"assistant",content:m.text+((m.steps||[]).length?"\n\n[queries used: "+m.steps.filter(s=>s.status==="ok").map(s=>s.tool+" — "+s.label).join("; ")+"]":"")}));
+    turns.push({role:"user",content:q});
+    const t0=Date.now();
+    setMsgs(m=>[...m,{role:"user",text:q,ts:t0},{role:"assistant",text:"",steps:[],ts:t0,pending:true}]);
+    let sid=0;
+    const log=o=>{ const id=++sid; setMsgs(m=>{ const c=m.slice(); const a={...c[c.length-1]}; a.steps=[...(a.steps||[]),{...o,id}]; c[c.length-1]=a; return c; });
+      return upd=>setMsgs(m=>{ const c=m.slice(); const a={...c[c.length-1]}; a.steps=(a.steps||[]).map(s=>s.id===id?{...s,...upd}:s); c[c.length-1]=a; return c; }); };
+    const ctl=new AbortController(); ctlRef.current=ctl;
+    try{
+      const r=await sample(turns,{signal:ctl.signal,cache:false,modelTier:"complex",tools:askTools(ctx,log),onText:({text})=>patchLast(a=>({...a,text}))});
+      patchLast(a=>({...a,text:r.text,pending:false,ms:Date.now()-t0,truncated:r.truncated,tier:r.modelTierApplied}));
+    }catch(e){
+      const code=e&&e.code||"upstream_error";
+      if(code==="cancelled") patchLast(a=>({...a,text:(e.text||a.text||""),pending:false,stopped:true,ms:Date.now()-t0}));
+      else { if(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(code)) setSample(null);
+        patchLast(a=>({...a,text:code==="refused"?"":(e.text||a.text||""),pending:false,error:ASK_ERR[code]||ASK_ERR.upstream_error,ms:Date.now()-t0})); }
+    }
+    ctlRef.current=null; setBusy(false); setTimeout(()=>boxRef.current&&boxRef.current.focus(),0);
+  };
+  const stop=()=>{ ctlRef.current&&ctlRef.current.abort(); };
+  const clear=()=>{ if(busy) return; setMsgs([]); };
+
+  return html`<div className="ask">
+    <div className="page-h"><div className="grow"><h1>Ask the data</h1>
+      <p>Ask in plain words. Claude answers with live numbers from BigQuery (backend, GA4, Google Ads), the Singular sheet and Jira, through your own read-only connectors, and shows every query it ran. Aggregates only; no personal data. Decision-support, not a decision.</p></div>
+      ${msgs.length?html`<button className="btn" onClick=${clear} disabled=${busy}><${Icon} name="Trash2" size=${14}/>Clear chat</button>`:null}</div>
+    ${sample===null?html`<div className="note warn" style=${{marginBottom:14}}>Chat needs Claude enabled for this page in your view. Open the Command Center in claude.ai and allow Claude when asked.</div>`:null}
+    <div className="ask-thread" role="log" aria-live="polite">
+      ${!msgs.length?html`<div className="ask-empty"><div className="ask-ic"><${Icon} name="Sparkles" size=${22}/></div>
+        <div style=${{fontWeight:600,marginBottom:4}}>What would you like to know?</div>
+        <div className="small muted" style=${{marginBottom:14}}>Each answer runs real queries; a typical question takes 30–90 seconds.</div>
+        <div className="ask-sugg">${ASK_SUGGEST.map(s=>html`<button key=${s} className="ask-chip" disabled=${!sample||busy} onClick=${()=>ask(s)}>${s}</button>`)}</div></div>`:null}
+      ${msgs.map((m,i)=>m.role==="user"
+        ? html`<div key=${i} className="ask-u"><div className="b">${m.text}</div></div>`
+        : html`<div key=${i} className="ask-a">
+            <div className="ask-av"><${Icon} name="Sparkles" size=${14}/></div>
+            <div className="ask-body">
+              <${AskSteps} steps=${m.steps} live=${!!m.pending}/>
+              ${m.text?html`<div className="md ask-md" dangerouslySetInnerHTML=${{__html:mdToHtml(m.text)}}></div>`
+                :m.pending?html`<div className="muted ask-think"><span className="ask-dot running"></span>${(m.steps||[]).some(s=>s.status==="running")?"Fetching data…":"Thinking…"}</div>`:null}
+              ${m.error?html`<div className="note err" style=${{marginTop:8}}>${m.error}</div>`:null}
+              ${m.stopped?html`<div className="small muted" style=${{marginTop:6}}>Stopped.</div>`:null}
+              ${m.truncated?html`<div className="small muted" style=${{marginTop:6}}>The answer was cut short; ask for less at once.</div>`:null}
+              ${!m.pending&&m.ms?html`<div className="small muted" style=${{marginTop:8}}>${fmtTs(m.ts)} · ${fmtDur(m.ms)}${(m.steps||[]).length?" · "+m.steps.filter(s=>s.status==="ok").length+" data call"+(m.steps.filter(s=>s.status==="ok").length===1?"":"s"):""}</div>`:null}
+            </div></div>`)}
+      <div ref=${endRef}></div>
+    </div>
+    <form className="ask-comp" onSubmit=${e=>{e.preventDefault(); ask(input);}}>
+      <textarea ref=${boxRef} rows="2" value=${input} disabled=${!sample} placeholder=${sample===undefined?"Connecting…":sample?"Ask about users, funnel, channels, campaigns or tracking…":"Chat unavailable in this view"}
+        aria-label="Your question" onInput=${e=>setInput(e.target.value)}
+        onKeyDown=${e=>{ if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); ask(input);} }}></textarea>
+      ${busy?html`<button type="button" className="btn" onClick=${stop}><${Icon} name="Square" size=${13}/>Stop</button>`
+        :html`<button type="submit" className="btn primary" disabled=${!sample||!input.trim()}><${Icon} name="Send" size=${14}/>Ask</button>`}
+    </form>
+    <div className="small muted" style=${{marginTop:6}}>Enter to send · Shift+Enter for a new line · Answers use your own Claude usage and connectors.</div>
+  </div>`;
+}
+
 function App(){
   const view = useHash();
   const [collapsed,setCollapsed]=useState(()=>{ try{return localStorage.getItem("mbi.side")==="1";}catch(e){return false;} });
@@ -696,7 +1021,7 @@ function App(){
   const runs = runsQ.docs;
   const activeRun = runs.find(r=>ACTIVE.has(r.status));
 
-  const V = {overview:Overview,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,users:UsersView,singular:SingularView,quality:QualityView,jira:JiraView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
+  const V = {overview:Overview,ask:AskView,agents:AgentsView,history:HistoryView,analytics:AnalyticsView,users:UsersView,singular:SingularView,quality:QualityView,jira:JiraView,reports:ReportsView,config:ConfigView,system:SystemView}[view];
   return html`<div className="app">
     <aside className=${"side"+(collapsed?" collapsed":"")+(mobile?" mobile-open":"")} aria-label="Main navigation">
       <div className="brand"><div className="logo">M</div>${!collapsed&&html`<div><div style=${{fontWeight:600}}>Manafa BI</div><div className="small muted">Command Center</div></div>`}</div>
