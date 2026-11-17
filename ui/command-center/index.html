@@ -355,6 +355,7 @@ function useDbDoc(path){
 
 /* ---------------- BigQuery (read-only, via viewer's connector) ---------------- */
 const bqStore = new Map(); // key -> {state, subs:Set, unsub}
+const bqGlobal = new Set(); const bqNotify = () => bqGlobal.forEach(f=>f());
 function parseBQ(payload){
   let p = payload;
   if(typeof p === "string"){ try{ p = JSON.parse(p); }catch(e){ return []; } }
@@ -374,7 +375,7 @@ function bqWatch(key, sql){
   if(e) return e;
   e = {state:{status:"loading",rows:null,error:null,storedAt:null}, subs:new Set(), unsub:null};
   bqStore.set(key,e);
-  const set = s => { e.state={...e.state,...s}; e.subs.forEach(f=>f(e.state)); };
+  const set = s => { e.state={...e.state,...s}; e.subs.forEach(f=>f(e.state)); bqNotify(); };
   const start = () => {
     if(caps.mcp===undefined) return;
     if(!caps.mcp){ set({status:"nomcp"}); return; }
@@ -385,8 +386,10 @@ function bqWatch(key, sql){
           set({status:"ok", rows:parseBQ(res.payload), error:null, storedAt:(res.cache&&res.cache.storedAt)||Date.now()});
         } else {
           const code = ev.error && ev.error.code;
-          const deny = ["needs_reauth","server_not_connected","blocked_by_policy","approval_required","not_in_manifest","not_granted","selection_required"].includes(code);
-          set({status: deny ? "denied" : (e.state.rows ? "stale" : "error"), error:ev.error||{code:"upstream_error"}, rows: deny ? null : e.state.rows});
+          const retract = ["needs_reauth","server_not_connected","blocked_by_policy","not_in_manifest","not_granted","selection_required"].includes(code);
+          if(retract) set({status:"denied", error:ev.error, rows:null});
+          else if(code==="approval_required") set({status: e.state.rows ? "approval" : "denied", error:ev.error});
+          else set({status: e.state.rows ? "stale" : "error", error:ev.error||{code:"upstream_error"}});
         }
       }, {refetchInterval:300000, cache:{staleTime:240000, gcTime:86400000}});
     }catch(err){ set({status:"error",error:{code:"bad_request",message:String(err)}}); }
@@ -500,7 +503,7 @@ function BQState({q,label="BigQuery"}){
   if(q.status==="error") return html`<div className="note err">${label} didn't answer (${esc(q.error&&q.error.code)}). It will retry on the next refresh. ${q.error&&q.error.code==="tool_error"?html`<div className="mono" style=${{marginTop:6}}>${String(q.error.message||"").slice(0,240)}</div>`:null}</div>`;
   return null;
 }
-function Fresh({q}){ if(!q.storedAt) return null; return html`<span className="src">${q.status==="stale"?"⚠ showing last data · ":""}updated ${fmtTs(q.storedAt)}</span>`; }
+function Fresh({q}){ if(!q.storedAt) return null; return html`<span className="src">${q.status==="stale"||q.status==="approval"?"⚠ showing last data · ":""}updated ${fmtTs(q.storedAt)}</span>`; }
 
 /* Chart.js wrapper */
 Chart.defaults.color="#8b93b0"; Chart.defaults.font.family="Inter, system-ui, sans-serif"; Chart.defaults.font.size=11;
@@ -598,12 +601,32 @@ function App(){
     <div className="main">
       <${TopBar} ctx=${ctx} activeRun=${activeRun} highOpen=${highOpen} openIssues=${openIssues} onMenu=${()=>setMobile(!mobile)}/>
       <main className="content" id="main">
-        <div className="view" key=${view}><${V} ctx=${ctx}/></div>
+        <${BQBanner}/><div className="view" key=${view}><${V} ctx=${ctx}/></div>
       </main>
     </div>
     ${runOpen&&html`<${RunDialog} agents=${agentsQ.docs} onClose=${()=>setRunOpen(false)}/>`}
     ${drawer&&html`<${Drawer} d=${drawer} ctx=${ctx} onClose=${()=>setDrawer(null)}/>`}
   </div>`;
+}
+
+
+function BQBanner(){
+  const [,t]=useState(0); const [busy,setBusy]=useState(false); const [msg,setMsg]=useState("");
+  useEffect(()=>{ const f=()=>t(x=>x+1); bqGlobal.add(f); return ()=>bqGlobal.delete(f); },[]);
+  const all=[...bqStore.values()]; const approval=all.filter(e=>e.state.status==="approval"||(e.state.status==="denied"&&e.state.error&&e.state.error.code==="approval_required"));
+  const lost=all.find(e=>e.state.status==="denied"&&e.state.error&&e.state.error.code!=="approval_required");
+  const stale=all.filter(e=>e.state.status==="stale");
+  const refresh=async()=>{ setBusy(true); setMsg(""); let ok=0, fail=null;
+    for(const e of all){ try{ const r=await caps.mcp.callTool(BQ_SERVER,BQ_TOOL,{projectId:PROJECT,query:e.sql}); e.state={...e.state,status:"ok",rows:parseBQ(r.payload),error:null,storedAt:Date.now()}; e.subs.forEach(f=>f(e.state)); ok++; }
+      catch(err){ fail=err&&err.code||"error"; if(fail==="approval_required"||fail==="needs_reauth") break; } }
+    bqNotify(); setBusy(false); if(fail) setMsg(fail==="approval_required"?"Approval was declined or couldn't be asked here. Open the page in claude.ai and try again.":"Some queries didn't refresh ("+fail+"). The last data stays on screen."); };
+  if(!approval.length && !lost && !stale.length) return null;
+  if(lost){ const c=lost.state.error.code; const m=c==="needs_reauth"?"Your BigQuery connection expired. Reconnect Google Cloud BigQuery in claude.ai Settings → Connectors.":c==="server_not_connected"?"Add the Google Cloud BigQuery connector in claude.ai Settings → Connectors to see live data.":c==="selection_required"?"Choose which BigQuery connector this page should use in the claude.ai prompt.":c==="blocked_by_policy"?"Your organization's policy blocks this BigQuery tool for you.":"BigQuery access is turned off for this page in your view.";
+    return html`<div className="note warn" style=${{marginBottom:14}}>${m}</div>`; }
+  if(approval.length) return html`<div className="note warn" style=${{marginBottom:14,display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
+    <span style=${{flex:1,minWidth:240}}>BigQuery needs your approval again to refresh live data. The last data stays on screen until then.${msg?html`<br/>${msg}`:null}</span>
+    <button className="btn sm" disabled=${busy} onClick=${refresh}><${Icon} name="RefreshCw" size=${13}/>${busy?"Refreshing…":"Allow and refresh"}</button></div>`;
+  return html`<div className="note" style=${{marginBottom:14,display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}><span style=${{flex:1,minWidth:240}}>A live refresh didn't complete; showing the last data loaded.${msg?html`<br/>${msg}`:null}</span><button className="btn sm" disabled=${busy} onClick=${refresh}><${Icon} name="RefreshCw" size=${13}/>${busy?"Refreshing…":"Refresh now"}</button></div>`;
 }
 
 function TopBar({ctx,activeRun,highOpen,openIssues,onMenu}){
@@ -726,7 +749,7 @@ function Overview({ctx}){
     <div className="page-h"><div className="grow"><h1>Executive overview</h1>
       <p>Production backend events are the source of truth for every funnel number here. "Latest day" is the newest complete day in the backend copy${R.end?html` (<b>${R.end}</b>)`:""}; the replica runs about 3–4 days behind.</p></div>
       <${RangeBar} R=${R}/></div>
-    ${daily.status!=="ok"&&daily.status!=="stale"?html`<div style=${{marginBottom:14}}><${BQState} q=${daily}/></div>`:null}
+    ${!daily.rows?html`<div style=${{marginBottom:14}}><${BQState} q=${daily}/></div>`:null}
     <div className="grid g4" style=${{marginBottom:14}}>
       ${loading?[1,2,3,4,5,6,7,8].map(i=>html`<div className="panel" key=${i}><${Skel} h=${12} w="50%"/><div style=${{height:10}}></div><${Skel} h=${28} w="60%"/><div style=${{height:10}}></div><${Skel} h=${30}/></div>`):html`
       <${KPI} icon="UserPlus" label="New registrations" value=${S("reg")} prev=${P("reg")} spark=${spk("reg")} src="backend · registration_completed"/>
@@ -756,7 +779,7 @@ function FunnelPanel({coh}){
   const C=cohortAgg(coh.rows); const ws=C.weeks.slice(-3);
   const t=ws.reduce((a,w)=>{const x=C.byW[w]; a.n+=x.n;a.k+=x.kyc14;a.d+=x.dep14;a.i+=x.inv14; return a;},{n:0,k:0,d:0,i:0});
   return html`<div className="panel"><div className="panel-h"><h2>Registration funnel</h2><span className="grow"></span><span className="label-data">Data</span></div>
-    ${coh.status==="ok"||coh.status==="stale"?(t.n?html`
+    ${coh.rows?(t.n?html`
       <${ChartC} config=${{type:"bar",data:{labels:["Registered","KYC (14d)","First deposit (14d)","First investment (14d)"],datasets:[{data:[t.n,t.k,t.d,t.i],backgroundColor:["#293AE0","#3A9AF4","#22c38e","#f2b136"],borderRadius:6,barThickness:22}]},
         options:{indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:c=>c.dataIndex?pct(c.raw/t.n)+" of registrations":""}}},scales:{x:gridY,y:{...gridX,ticks:{autoSkip:false}}}}}}/>
       <div className="small muted" style=${{marginTop:8}}>Closed cohorts ${ws[0]} to ${ws[ws.length-1]} (${fmtN(t.n)} registrations). Open cohorts are left out, not counted as failures.</div>`
@@ -767,7 +790,7 @@ function PlatformFunnelPanel({coh}){
   const plats=["web","ios","android"]; const ws=cohortAgg(coh.rows).weeks.slice(-3);
   const rate=(p,k)=>{ const C=cohortAgg(coh.rows,p); let n=0,v=0; ws.forEach(w=>{ if(C.byW[w]){n+=C.byW[w].n;v+=C.byW[w][k];} }); return n?+(v/n*100).toFixed(1):null; };
   return html`<div className="panel"><div className="panel-h"><h2>Conversion funnel by platform</h2><span className="grow"></span><span className="label-data">Data</span></div>
-    ${coh.status==="ok"||coh.status==="stale"?html`<${ChartC} config=${{type:"bar",data:{labels:["Web","iOS","Android"],datasets:[
+    ${coh.rows?html`<${ChartC} config=${{type:"bar",data:{labels:["Web","iOS","Android"],datasets:[
       {label:"KYC %",data:plats.map(p=>rate(p,"kyc14")),backgroundColor:"#3A9AF4",borderRadius:5},
       {label:"Deposit %",data:plats.map(p=>rate(p,"dep14")),backgroundColor:"#22c38e",borderRadius:5},
       {label:"Investment %",data:plats.map(p=>rate(p,"inv14")),backgroundColor:"#f2b136",borderRadius:5}]},
@@ -778,14 +801,14 @@ function PlatformFunnelPanel({coh}){
 function PlatformDistPanel({daily,R}){
   const rows=daily.rows||[]; const v=["reg_web","reg_ios","reg_android"].map(k=>R.from?sumRange(rows,k,R.from,R.to)||0:0);
   return html`<div className="panel"><div className="panel-h"><h2>Platform distribution</h2><span className="grow"></span><span className="label-data">Data</span></div>
-    ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"doughnut",data:{labels:["Web","iOS","Android"],datasets:[{data:v,backgroundColor:["#3A9AF4","#7f8cff","#22c38e"],borderColor:"#111830",borderWidth:3}]},options:{cutout:"68%",scales:{}}}}/>
+    ${daily.rows?html`<${ChartC} config=${{type:"doughnut",data:{labels:["Web","iOS","Android"],datasets:[{data:v,backgroundColor:["#3A9AF4","#7f8cff","#22c38e"],borderColor:"#111830",borderWidth:3}]},options:{cutout:"68%",scales:{}}}}/>
       <div className="small muted" style=${{marginTop:8}}>Registrations by platform, ${R.from} to ${R.to}.</div>`:html`<${BQState} q=${daily}/>`}
     <${Source}>backend · context.platform<//></div>`;
 }
 function InvestTrendPanel({daily,R}){
   const rows=(daily.rows||[]).filter(x=>R.end&&x.d<=R.end).slice(-45);
   return html`<div className="panel"><div className="panel-h"><h2>Investment trends</h2><span className="grow"></span><${Fresh} q=${daily}/><span className="label-data">Data</span></div>
-    ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{data:{labels:rows.map(x=>x.d.slice(5)),datasets:[
+    ${daily.rows?html`<${ChartC} config=${{data:{labels:rows.map(x=>x.d.slice(5)),datasets:[
       {type:"bar",label:"Investments",data:rows.map(x=>x.inv),backgroundColor:"rgba(58,154,244,.55)",borderRadius:3,yAxisID:"y"},
       {type:"line",label:"Volume (SAR)",data:rows.map(x=>x.inv_sar),borderColor:"#f2b136",backgroundColor:"#f2b136",pointRadius:0,tension:.3,yAxisID:"y1"},
       {type:"line",label:"Registrations",data:rows.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3,yAxisID:"y"}]},
@@ -800,7 +823,7 @@ function ChannelPanel({ga4,R}){
   const top=Object.entries(by).sort((a,b)=>b[1].s-a[1].s).slice(0,7);
   const ds=[...days].sort();
   return html`<div className="panel"><div className="panel-h"><h2>Channel performance</h2><span className="grow"></span><span className="label-data">GA4</span></div>
-    ${ga4.status==="ok"||ga4.status==="stale"?html`<div className="tablewrap"><table><thead><tr><th>Channel</th><th style=${{textAlign:"right"}}>Sessions</th><th style=${{textAlign:"right"}}>Engaged</th></tr></thead>
+    ${ga4.rows?html`<div className="tablewrap"><table><thead><tr><th>Channel</th><th style=${{textAlign:"right"}}>Sessions</th><th style=${{textAlign:"right"}}>Engaged</th></tr></thead>
       <tbody>${top.map(([k,v])=>html`<tr key=${k}><td>${k}</td><td style=${{textAlign:"right"}}>${fmtN(v.s)}</td><td style=${{textAlign:"right"}}>${pct(v.e/v.s,0)}</td></tr>`)}</tbody></table></div>
       <div className="small muted" style=${{marginTop:8}}>${ds[0]} to ${ds[ds.length-1]}. GA4 has no web/app split yet, and app sessions land in Direct or Unassigned (tqa-001).</div>`:html`<${BQState} q=${ga4} label="GA4"/>`}
     <${Source}>GA4 transfer · session channel group<//></div>`;
@@ -810,7 +833,7 @@ function AcqTrendPanel({ga4}){
   const tot={}; rows.forEach(r=>tot[r.ch]=(tot[r.ch]||0)+r.sessions);
   const chs=Object.entries(tot).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
   return html`<div className="panel"><div className="panel-h"><h2>User acquisition trends</h2><span className="grow"></span><${Fresh} q=${ga4}/><span className="label-data">GA4</span></div>
-    ${ga4.status==="ok"||ga4.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:days.map(d=>d.slice(5)),datasets:chs.map((c,i)=>({label:c,data:days.map(d=>{const r=rows.find(x=>x.d===d&&x.ch===c);return r?r.sessions:0;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i]+"22",fill:i===0,pointRadius:0,tension:.3}))},
+    ${ga4.rows?html`<${ChartC} config=${{type:"line",data:{labels:days.map(d=>d.slice(5)),datasets:chs.map((c,i)=>({label:c,data:days.map(d=>{const r=rows.find(x=>x.d===d&&x.ch===c);return r?r.sessions:0;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i]+"22",fill:i===0,pointRadius:0,tension:.3}))},
       options:{scales:{x:gridX,y:gridY}}}}/>
       <div className="small muted" style=${{marginTop:8}}>Sessions by channel group since the GA4 transfer started (${days[0]||"—"}). A backfill is requested for longer history.</div>`:html`<${BQState} q=${ga4} label="GA4"/>`}
     <${Source}>GA4 transfer<//></div>`;
@@ -1045,19 +1068,19 @@ function AnalyticsView(){
     <div className="page-h"><div className="grow"><h1>Analytics dashboard</h1><p>Each source keeps its own section and its own numbers. Backend events count conversions; Google Ads numbers are the platform's own claims.</p></div></div>
     <div className="grid g2">
       <div className="panel span2"><div className="panel-h"><h2>Investor cohorts by platform (14-day window)</h2><span className="grow"></span><${Fresh} q=${coh}/><span className="label-data">Data</span></div>
-        ${coh.status==="ok"||coh.status==="stale"?html`<div className="tablewrap"><table><thead><tr><th>Registration week</th>${plats.map(p=>html`<th key=${p} colSpan="4">${p==="ios"?"iOS":p==="android"?"Android":"Web"}</th>`)}</tr>
+        ${coh.rows?html`<div className="tablewrap"><table><thead><tr><th>Registration week</th>${plats.map(p=>html`<th key=${p} colSpan="4">${p==="ios"?"iOS":p==="android"?"Android":"Web"}</th>`)}</tr>
           <tr><th></th>${plats.map(p=>["Reg","KYC","Dep","Inv"].map(h=>html`<th key=${p+h} style=${{textAlign:"right"}}>${h}</th>`))}</tr></thead>
           <tbody>${weeks.map(w=>html`<tr key=${w}><td className="mono">${w}</td>${plats.map(p=>{ const r=all.find(x=>x.cohort_week===w&&x.platform===p); const closed=r&&r.age>=20;
             return r?[html`<td key=${p+"n"} style=${{textAlign:"right"}}>${fmtN(r.n)}</td>`,...["kyc14","dep14","inv14"].map(k=>html`<td key=${p+k} style=${{textAlign:"right"}} className=${closed?"":"muted"}>${closed?pct(r[k]/r.n,1):"pending"}</td>`)]:[1,2,3,4].map(i=>html`<td key=${p+i}>—</td>`); })}</tr>`)}</tbody></table></div>
           <div className="small muted" style=${{marginTop:8}}>A cohort's rates show once its 14-day window has closed in the data.</div>`:html`<${BQState} q=${coh}/>`}
         <${Source}>backend cohorts<//></div>
       <div className="panel"><div className="panel-h"><h2>Deposits by currency</h2><span className="grow"></span><span className="label-data">Data</span></div>
-        ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"bar",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"SAR",data:r45.map(x=>x.dep_sar),backgroundColor:"#22c38e",borderRadius:3},{label:"USD",data:r45.map(x=>x.dep_usd),backgroundColor:"#7f8cff",borderRadius:3}]},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>fmtSAR(v)}}}}}}/>
+        ${daily.rows?html`<${ChartC} config=${{type:"bar",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"SAR",data:r45.map(x=>x.dep_sar),backgroundColor:"#22c38e",borderRadius:3},{label:"USD",data:r45.map(x=>x.dep_usd),backgroundColor:"#7f8cff",borderRadius:3}]},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>fmtSAR(v)}}}}}}/>
           <div className="small muted" style=${{marginTop:8}}>Amounts in their own currency. They are never added together.</div>`:html`<${BQState} q=${daily}/>`}<${Source}>backend · deposit_success<//></div>
       <div className="panel"><div className="panel-h"><h2>KYC and identity verification</h2><span className="grow"></span><span className="label-data">Data</span></div>
-        ${daily.status==="ok"||daily.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"identity_verified",data:r45.map(x=>x.idv),borderColor:"#7f8cff",pointRadius:0,tension:.3},{label:"kyc_completed",data:r45.map(x=>x.kyc),borderColor:"#3A9AF4",pointRadius:0,tension:.3},{label:"registration_completed",data:r45.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3}]},options:{scales:{x:gridX,y:gridY}}}}/>`:html`<${BQState} q=${daily}/>`}<${Source}>backend events<//></div>
+        ${daily.rows?html`<${ChartC} config=${{type:"line",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"identity_verified",data:r45.map(x=>x.idv),borderColor:"#7f8cff",pointRadius:0,tension:.3},{label:"kyc_completed",data:r45.map(x=>x.kyc),borderColor:"#3A9AF4",pointRadius:0,tension:.3},{label:"registration_completed",data:r45.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3}]},options:{scales:{x:gridX,y:gridY}}}}/>`:html`<${BQState} q=${daily}/>`}<${Source}>backend events<//></div>
       <div className="panel span2"><div className="panel-h"><h2>Google Ads</h2><span className="grow"></span><${Fresh} q=${ads}/><span className="label-data">Google Ads</span></div>
-        ${ads.status==="ok"||ads.status==="stale"?html`<div className="grid g4" style=${{marginBottom:12}}>
+        ${ads.rows?html`<div className="grid g4" style=${{marginBottom:12}}>
             ${[["Spend","spend",v=>fmtSAR(v)+" SAR"],["Clicks","clicks",fmtN],["Impressions","impr",fmtN],["Claimed conversions","conv",fmtN]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}, last 7 days</div><div style=${{fontSize:20,fontWeight:600}}>${f(ad.slice(-7).reduce((s,x)=>s+(x[k]||0),0))}</div></div>`)}</div>
           <${ChartC} small=${true} config=${{data:{labels:ad.map(x=>x.d.slice(5)),datasets:[{type:"bar",label:"Spend (SAR)",data:ad.map(x=>x.spend),backgroundColor:"rgba(58,154,244,.55)",borderRadius:3,yAxisID:"y"},{type:"line",label:"Claimed conversions",data:ad.map(x=>x.conv),borderColor:"#f2b136",pointRadius:2,yAxisID:"y1"}]},options:{scales:{x:gridX,y:gridY,y1:{...gridY,position:"right",grid:{display:false}}}}}}/>
           <div className="small muted" style=${{marginTop:8}}>Claimed conversions are Google's count and include a GA4-imported KYC action that GA4 double-counts (tqa-016). History starts ${ad[0]?ad[0].d:"—"}.</div>`:html`<${BQState} q=${ads} label="Google Ads"/>`}
@@ -1087,7 +1110,7 @@ function QualityView({ctx}){
     </div>
     <div className="grid g2">
       <div className="panel span2"><div className="panel-h"><h2>GA4 delivery health: events sent without a client ID</h2><span className="grow"></span><${Fresh} q=${del}/><span className="label-data">Data</span></div>
-        ${del.status==="ok"||del.status==="stale"?html`<${ChartC} config=${{type:"line",data:{labels:weeks,datasets:["web","ios","android"].map((p,i)=>({label:p,data:weeks.map(w=>{const r=(del.rows||[]).find(x=>x.wk===w&&x.platform===p); return r?+(r.degraded/r.n*100).toFixed(1):null;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i],tension:.25,pointRadius:3}))},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>v+"%"}}}}}}/>
+        ${del.rows?html`<${ChartC} config=${{type:"line",data:{labels:weeks,datasets:["web","ios","android"].map((p,i)=>({label:p,data:weeks.map(w=>{const r=(del.rows||[]).find(x=>x.wk===w&&x.platform===p); return r?+(r.degraded/r.n*100).toFixed(1):null;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i],tension:.25,pointRadius:3}))},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>v+"%"}}}}}}/>
           <div className="small muted" style=${{marginTop:8}}>Share of backend events delivered to GA4 as "degraded" each week. Web stepped up in the week of 26 Oct (tqa-013). The latest week may be partial.</div>`:html`<${BQState} q=${del}/>`}
         <${Source}>backend · mi_analytics_event_deliveries<//></div>
     </div></div>`;
@@ -1105,7 +1128,7 @@ function ReportsView({ctx}){
   return html`<div>
     <div className="page-h"><div className="grow"><h1>Reports & business insights</h1><p><span className="label-data">Data</span> marks numbers queried from a source. <span className="label-ai">AI-generated</span> marks an agent's interpretation or recommendation, which a named person reviews before acting on it.</p></div></div>
     <div className="panel" style=${{marginBottom:14}}><div className="panel-h"><h2>Key business metrics, last 7 complete days</h2><span className="grow"></span><span className="label-data">Data</span></div>
-      ${daily.status==="ok"||daily.status==="stale"?html`<div className="grid g4">${[["Registrations","reg"],["KYC completed","kyc"],["Deposits","dep"],["First investments","first_inv"],["Investments","inv"],["Auto-invest enabled","ai_on"],["Deposit volume (SAR)","dep_sar",fmtSAR],["Investment volume (SAR)","inv_sar",fmtSAR]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}</div><div style=${{display:"flex",gap:8,alignItems:"baseline"}}><b style=${{fontSize:20}}>${(f||fmtN)(wk(k))}</b><${Delta} cur=${wk(k)} prev=${pwk(k)}/></div></div>`)}</div>
+      ${daily.rows?html`<div className="grid g4">${[["Registrations","reg"],["KYC completed","kyc"],["Deposits","dep"],["First investments","first_inv"],["Investments","inv"],["Auto-invest enabled","ai_on"],["Deposit volume (SAR)","dep_sar",fmtSAR],["Investment volume (SAR)","inv_sar",fmtSAR]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}</div><div style=${{display:"flex",gap:8,alignItems:"baseline"}}><b style=${{fontSize:20}}>${(f||fmtN)(wk(k))}</b><${Delta} cur=${wk(k)} prev=${pwk(k)}/></div></div>`)}</div>
       <div className="small muted" style=${{marginTop:8}}>${end?`${addDays(end,-6)} to ${end}, against the 7 days before.`:""}</div>`:html`<${BQState} q=${daily}/>`}</div>
     <div className="grid" style=${{gridTemplateColumns:"minmax(220px,300px) 1fr",gap:14}}>
       <div className="panel"><div className="panel-h"><h2>Reports</h2></div><div className="grid" style=${{gap:6}}>
@@ -1147,7 +1170,7 @@ function SystemView({ctx}){
     <div className="page-h"><div className="grow"><h1>System settings</h1><p>Where the data comes from, how fresh it is, and the rules every agent follows.</p></div></div>
     <div className="grid g2">
       <div className="panel"><div className="panel-h"><h2>Data freshness</h2><span className="grow"></span><${Fresh} q=${f}/></div>
-        ${f.status==="ok"||f.status==="stale"?html`<table><thead><tr><th>Source</th><th>Latest day</th><th>Age</th></tr></thead><tbody>
+        ${f.rows?html`<table><thead><tr><th>Source</th><th>Latest day</th><th>Age</th></tr></thead><tbody>
           ${(f.rows||[]).map(r=>{ const age=r.latest_date?Math.round((Date.parse(today)-Date.parse(r.latest_date))/864e5):null; return html`<tr key=${r.source}><td>${r.source}</td><td className="mono">${r.latest_date||"—"}</td><td><span className=${"st "+(age==null?"st-idle":age>8?"st-failed":age>3?"st-waiting":"st-completed")}>${age==null?"—":age+" d"}</span></td></tr>`; })}
           <tr><td>Singular</td><td colSpan="2"><span className="st st-idle">Not configured (not in BigQuery)</span></td></tr>
           <tr><td>Meta · TikTok · Snapchat · X</td><td colSpan="2"><span className="st st-idle">Not configured</span></td></tr>
