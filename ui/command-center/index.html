@@ -355,6 +355,21 @@ pre.code{background:#0b1124;border:1px solid var(--line);border-radius:8px;paddi
 .bar.queue i{width:100%!important;background:repeating-linear-gradient(90deg,rgba(155,140,242,.45) 0 10px,rgba(155,140,242,.12) 10px 20px);background-size:40px 100%;animation:qstripe 1.2s linear infinite}
 @keyframes qstripe{to{background-position:40px 0}}
 @media (prefers-reduced-motion:reduce){.edge.pending,.node .march,.orch-node .halo,.node.pending .ring,.orch-node.active .ring,.agent.pending::after,.bar.queue i{animation:none}}
+
+/* draft approval */
+.da-row{display:inline-flex;gap:6px;margin-right:4px}
+.da-row .btn.sm{padding:3px 8px;font-size:11.5px;gap:4px}
+.btn.da-ok{border-color:rgba(34,195,142,.45);color:#bdf3df}
+.btn.da-ok:hover{background:rgba(34,195,142,.12)}
+.btn.danger{background:#a83434;border-color:#a83434;color:#fff}
+.btn.danger:hover{background:#c03c3c}
+.btn:disabled{opacity:.55;cursor:default}
+.da-box{position:sticky;top:-1px;z-index:2;background:var(--surface);padding:12px 0 14px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.da-confirm{border:1px solid rgba(58,154,244,.45);background:rgba(58,154,244,.07);border-radius:10px;padding:12px}
+.da-confirm.rej{border-color:rgba(239,90,90,.45);background:rgba(239,90,90,.06)}
+.da-confirm textarea{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);font:inherit;padding:6px 8px;resize:vertical}
+.note.ok-note{border-color:rgba(34,195,142,.45);color:#bdf3df}
+.note a{color:inherit;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -379,6 +394,10 @@ const SHEETS_SERVER = "Google Sheets";
 const JIRA_SERVER = "Atlassian MCP";
 const JIRA_SITE = "manafaco.atlassian.net";
 const JIRA_EPIC = "ISQ-6052";
+const JIRA_PROJECT = "ISQ";
+const JIRA_DEV_FIELD = "customfield_10055";
+/* Dev Assignee by area, confirmed by Amir 2026-11-17 (docs/jira.md) */
+const JIRA_DEVS = {mobile:{name:"AzibMuzammil",accountId:"712020:51fb9b58-a539-4130-9391-d2be6467ad7b"},backend:{name:"Mohammad Khubaib",accountId:"62b0783ecebad33432f5e0ce"},web:{name:"Khalid Shabbir",accountId:"712020:523e0199-eda3-4211-b807-efb682355023"}};
 const JIRA_FIELDS = ["summary","status","priority","labels","created","updated","resolutiondate","statuscategorychangedate","duedate","customfield_10055","issuetype","reporter"];
 const OUTSIDE_SQUAD = {"tqa-012":"Data engineering (DWH)","tqa-016":"Paid media / Google Ads","tqa-018":"Performance marketing / Singular","tqa-002":"Marketing (paid-social tagging)","tqa-003":"Marketing (UTM convention)","tqa-011":"Event-standard owner","tqa-001":"Monitoring","tqa-008":"Monitoring","tqa-009":"Monitoring","tqa-010":"Monitoring"};
 const SINGULAR_SHEET = "1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg";
@@ -1822,6 +1841,70 @@ function JRow({k,cat,title,area,tqa,prio,date,dev,onOpen,extra}){
       ${prio!==undefined?html`<${JPrio} p=${prio}/>`:null}<span className="date">${date}</span><${JAvatar} name=${dev}/></span></div>`;
 }
 function JGroup({cat,label,count,children}){ return html`<div><div className="jr-group"><${JStatusIcon} cat=${cat}/><span>${label}</span><span className="cnt">${count}</span></div>${children}</div>`; }
+
+/* ---- Draft approval (owner only). Approve = create the ticket in Jira; Reject = mark the draft rejected. ---- */
+function jNorm(t){ return String(t||"").toLowerCase().replace(/\s+/g," ").trim(); }
+function jKeyFrom(payload){ const s=typeof payload==="string"?payload:JSON.stringify(payload||{}); const m=s.match(new RegExp("\\b"+JIRA_PROJECT+"-\\d+\\b")); return m?m[0]:null; }
+function jErr(e){ return (e&&e.code?e.code+": ":"")+String(e&&e.message||e||"unknown error").slice(0,400); }
+async function draftPatch(id, data){ if(!caps.db) throw new Error("The Command Center database isn't available in this view."); await caps.db.doc("jira_drafts/"+id).update(data); }
+async function approveDraft(d){
+  if(!caps.mcp) throw new Error("Connectors aren't available in this view. Open the page in claude.ai.");
+  const dev=JIRA_DEVS[d.area]; if(!dev) throw new Error("No Dev Assignee is set up for area '"+d.area+"'.");
+  const now=new Date().toISOString();
+  await draftPatch(d.id,{status:"creating",approved_by:"Amir (Command Center button)",approved_at:now,last_error:null});
+  try{
+    // never duplicate: look for a ticket with the same summary under the epic first
+    const tq=(d.tqa||[])[0];
+    const jql=`parent = ${JIRA_EPIC}`+(tq?` AND labels = "${tq}"`:"")+" ORDER BY created DESC";
+    const found=await caps.mcp.callTool(JIRA_SERVER,"searchJiraIssuesUsingJql",{cloudId:JIRA_SITE,jql,fields:["summary"],maxResults:50,view:"full"});
+    const same=parseJira(found.payload).find(t=>jNorm(t.summary)===jNorm(d.summary));
+    let key=same&&same.key, existed=!!key;
+    if(!key){
+      const fields={}; fields[JIRA_DEV_FIELD]={accountId:dev.accountId};
+      const r=await caps.mcp.callTool(JIRA_SERVER,"createJiraIssue",{cloudId:JIRA_SITE,projectKey:JIRA_PROJECT,issueType:d.issuetype||"Bug",summary:d.summary,description:d.description,contentFormat:"markdown",priority:d.priority,labels:d.labels||["bi-agent"],parent:d.parent||JIRA_EPIC,additional_fields:fields});
+      key=jKeyFrom(r.payload);
+      if(!key) throw new Error("Jira answered without an issue key. Check "+JIRA_EPIC+" in Jira before retrying.");
+    }
+    await draftPatch(d.id,{status:"created",jira_key:key,created_in_jira:new Date().toISOString(),linked_existing:existed||null});
+    try{ reloadAll(); }catch(e){}
+    return {key,existed};
+  }catch(e){
+    await draftPatch(d.id,{status:"staged",last_error:jErr(e),approved_by:null,approved_at:null}).catch(()=>{});
+    throw e;
+  }
+}
+async function rejectDraft(d, reason){ await draftPatch(d.id,{status:"rejected",rejected_by:"Amir (Command Center button)",rejected_at:new Date().toISOString(),reject_reason:String(reason||"").slice(0,500)||null}); }
+
+function DraftActions({d,mode,setMode,onDone}){
+  const [busy,setBusy]=useState(false); const [err,setErr]=useState(null); const [reason,setReason]=useState(""); const [done,setDone]=useState(null);
+  const dev=JIRA_DEVS[d.area];
+  const go=async(kind)=>{ setBusy(true); setErr(null);
+    try{ if(kind==="approve"){ const r=await approveDraft(d); setDone({kind,...r}); } else { await rejectDraft(d,reason); setDone({kind}); } }
+    catch(e){ setErr(jErr(e)); } finally{ setBusy(false); } };
+  if(done) return html`<div className=${"note "+(done.kind==="approve"?"ok-note":"")} role="status">
+      ${done.kind==="approve"?html`${done.existed?"Already in Jira as":"Created"} <a href=${"https://"+JIRA_SITE+"/browse/"+done.key} target="_blank" rel="noopener"><b>${done.key}</b></a> under ${JIRA_EPIC}, Dev Assignee ${dev&&dev.name}. It moves to the live list on the next refresh.`:"Rejected. The draft is hidden from this list; the BI agent won't re-file it unless the problem changes."}
+      <div style=${{marginTop:8}}><button className="btn sm" onClick=${onDone}>Close</button></div></div>`;
+  if(d.status==="creating") return html`<div className="note warn">Creation started${d.approved_at?" at "+fmtTs(d.approved_at):""} but didn't finish. Retrying is safe: it checks ${JIRA_EPIC} for this summary first and links the existing ticket instead of creating a second one.
+      <div style=${{marginTop:8}}><button className="btn sm primary" disabled=${busy} onClick=${()=>go("approve")}>${busy?"Working…":"Retry"}</button></div></div>`;
+  return html`<div className="da">
+    ${d.last_error?html`<div className="note err" style=${{marginBottom:10}}>Last attempt failed: ${d.last_error}</div>`:null}
+    ${err?html`<div className="note err" style=${{marginBottom:10}}>${err}</div>`:null}
+    ${mode==="approve"?html`<div className="da-confirm">
+        <div style=${{fontWeight:600,marginBottom:4}}>Create this ticket in Jira?</div>
+        <div className="small muted" style=${{marginBottom:10}}>Project ${JIRA_PROJECT}, parent ${d.parent||JIRA_EPIC}, ${d.issuetype||"Bug"} · ${d.priority||"—"}, Dev Assignee <b>${dev?dev.name:"—"}</b>, labels ${(d.labels||[]).join(", ")}. It's visible to the squad as soon as it's created.</div>
+        <div style=${{display:"flex",gap:8}}><button className="btn primary" disabled=${busy} onClick=${()=>go("approve")}><${Icon} name="Check" size=${14}/>${busy?"Creating…":"Yes, create "+JIRA_PROJECT+" ticket"}</button>
+          <button className="btn" disabled=${busy} onClick=${()=>setMode(null)}>Cancel</button></div></div>`
+    :mode==="reject"?html`<div className="da-confirm rej">
+        <div style=${{fontWeight:600,marginBottom:6}}>Reject this draft?</div>
+        <label className="small muted" htmlFor=${"rr-"+d.id}>Reason (optional, helps the agent)</label>
+        <textarea id=${"rr-"+d.id} rows="2" value=${reason} onInput=${e=>setReason(e.target.value)} placeholder="e.g. not a squad task, duplicate of …, not worth fixing now"></textarea>
+        <div style=${{display:"flex",gap:8,marginTop:8}}><button className="btn danger" disabled=${busy} onClick=${()=>go("reject")}><${Icon} name="X" size=${14}/>${busy?"Rejecting…":"Reject draft"}</button>
+          <button className="btn" disabled=${busy} onClick=${()=>setMode(null)}>Cancel</button></div></div>`
+    :html`<div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
+        <button className="btn primary" onClick=${()=>setMode("approve")}><${Icon} name="Check" size=${14}/>Approve & create in Jira</button>
+        <button className="btn" onClick=${()=>setMode("reject")}><${Icon} name="X" size=${14}/>Reject</button></div>`}
+  </div>`;
+}
 function JiraView({ctx}){
   const jq=useJira("jira_epic",`key = ${JIRA_EPIC} OR parent = ${JIRA_EPIC} ORDER BY created ASC`);
   const draftsQ=useDbQuery("jira_drafts",db=>db.collection("jira_drafts"));
@@ -1829,7 +1912,13 @@ function JiraView({ctx}){
   useEffect(()=>{ if(!open) return; const f=e=>e.key==="Escape"&&setOpen(null); addEventListener("keydown",f); return ()=>removeEventListener("keydown",f); },[open]);
   const all=jq.rows||[]; const epic=all.find(x=>x.key===JIRA_EPIC); const tickets=all.filter(x=>x.key!==JIRA_EPIC).map(x=>({...x,area:jAreaOf(x.summary),tqa:jTqa(x.labels)}));
   const liveKeys=new Set(tickets.map(t=>t.key));
-  const drafts=draftsQ.docs.filter(d=>d.status==="staged"&&!(d.jira_key&&liveKeys.has(d.jira_key)));
+  const drafts=draftsQ.docs.filter(d=>(d.status==="staged"||d.status==="creating")&&!(d.jira_key&&liveKeys.has(d.jira_key)));
+  const [mode,setMode]=useState(null);
+  const openDraft=(d,m)=>{ setMode(m||null); setOpen({type:"draft",id:d.id}); };
+  const openD = open&&open.type==="draft" ? (draftsQ.docs.find(x=>x.id===open.id)||null) : null;
+  const rowActs=d=>d.status==="creating"?html`<span className="jr-chip" style=${{color:"#e9cf96"}}>Creating…</span>`:html`<span className="da-row" onClick=${e=>e.stopPropagation()} onKeyDown=${e=>e.stopPropagation()}>
+      <button className="btn sm da-ok" title="Approve and create in Jira" onClick=${()=>openDraft(d,"approve")}><${Icon} name="Check" size=${12}/>Approve</button>
+      <button className="btn sm" title="Reject draft" onClick=${()=>openDraft(d,"reject")}><${Icon} name="X" size=${12}/>Reject</button></span>`;
   const fA=x=>area==="all"||x.area===area;
   const PR={Highest:0,High:0,Medium:1,Low:2}; const tk=tickets.filter(fA), dr=drafts.filter(fA).sort((a,b)=>(PR[a.priority]??3)-(PR[b.priority]??3)||String(a.summary).localeCompare(String(b.summary)));
   const order={progress:0,todo:1,done:2}; const groups={};
@@ -1848,18 +1937,18 @@ function JiraView({ctx}){
   const pct=(a,b)=>b?Math.round(100*a/b)+"%":"—";
   const listBody = jq.rows ? html`
       ${dr.length?html`<${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>
-        ${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} onOpen=${()=>setOpen({type:"draft",d})}/>`)}<//>`:null}
+        ${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} extra=${rowActs(d)} onOpen=${()=>openDraft(d)}/>`)}<//>`:null}
       ${gNames.map(g=>html`<${JGroup} key=${g} cat=${groups[g].cat} label=${g} count=${groups[g].items.length}>
         ${groups[g].items.map(t=>html`<${JRow} key=${t.key} k=${t.key} cat=${t.cat} title=${jStrip(t.summary)} area=${t.area} tqa=${t.tqa} prio=${t.priority} date=${jDate(t.created)} dev=${t.dev} onOpen=${()=>setOpen({type:"ticket",t})}/>`)}<//>`)}
       ${!tk.length&&!dr.length?html`<div className="empty">${area==="all"?"No tickets under "+JIRA_EPIC+" yet.":"Nothing for this area."}</div>`:null}
       ${area==="all"&&outside.length?html`<${JGroup} cat="outside" label="Owned outside the squad (no ISQ ticket)" count=${outside.length}>
         ${outside.map(i=>html`<${JRow} key=${i.id} k=${i.id} cat="outside" title=${i.title||i.what||i.id} extra=${html`<span className="jr-chip opt">${OUTSIDE_SQUAD[i.id]}</span>`} date=${i.found?jDate(i.found):"—"} dev=${null} onOpen=${()=>setOpen({type:"outside",i})}/>`)}<//>`:null}`
     : html`<div style=${{padding:16}}>
-        ${dr.length?html`<div style=${{margin:"-16px -16px 16px"}}><${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} onOpen=${()=>setOpen({type:"draft",d})}/>`)}<//></div>`:null}
+        ${dr.length?html`<div style=${{margin:"-16px -16px 16px"}}><${JGroup} cat="staged" label="Awaiting your approval" count=${dr.length}>${dr.map(d=>html`<${JRow} key=${d.id} k="DRAFT" cat="staged" title=${jStrip(d.summary)} area=${d.area} tqa=${d.tqa} prio=${d.priority} date=${jDate(d.created)} dev=${d.dev} extra=${rowActs(d)} onOpen=${()=>openDraft(d)}/>`)}<//></div>`:null}
         <${BQState} q=${jq} label="Jira"/></div>`;
   return html`<div>
     <div className="page-h"><div className="grow"><h1>Issues and Bugs</h1>
-      <p>Tracking and data-quality problems the BI agents found, filed for the Investor Squad under ${JIRA_EPIC}. The list reads Jira live through your Atlassian connector and never changes it. Drafts are created in Jira by Claude only after Amir approves them in chat.</p></div>
+      <p>Tracking and data-quality problems the BI agents found, filed for the Investor Squad under ${JIRA_EPIC}. The list reads Jira live through your Atlassian connector. Drafts reach Jira only when Amir approves them, with Approve here or in chat; Approve creates the ticket under the epic with its Dev Assignee, and Reject keeps it out of Jira.</p></div>
       <a className="btn" href=${"https://"+JIRA_SITE+"/browse/"+JIRA_EPIC} target="_blank" rel="noopener"><${Icon} name="ExternalLink" size=${14}/>Open epic in Jira</a></div>
     <div className="jr">
       <div className="jr-main">
@@ -1902,20 +1991,20 @@ function JiraView({ctx}){
           :html`<div className="small muted">Shows once Jira is readable.</div>`}</div>
       </aside>
     </div>
-    ${open?html`<div className="scrim" onClick=${()=>setOpen(null)}></div><aside className="drawer" role="dialog" aria-modal="true" aria-label="Ticket details">
+    ${open&&!(open.type==="draft"&&!openD)?html`<div className="scrim" onClick=${()=>setOpen(null)}></div><aside className="drawer" role="dialog" aria-modal="true" aria-label="Ticket details">
       <div className="dh"><div style=${{flex:1,minWidth:0}}>
-        <div className="small muted mono">${open.type==="draft"?"DRAFT · "+(open.d.tqa||[]).join(", "):open.type==="ticket"?open.t.key:open.i.id}</div>
-        <h2 style=${{marginTop:4}}>${open.type==="draft"?open.d.summary:open.type==="ticket"?open.t.summary:(open.i.title||open.i.id)}</h2></div>
+        <div className="small muted mono">${open.type==="draft"?"DRAFT · "+(openD.tqa||[]).join(", "):open.type==="ticket"?open.t.key:open.i.id}</div>
+        <h2 style=${{marginTop:4}}>${open.type==="draft"?openD.summary:open.type==="ticket"?open.t.summary:(open.i.title||open.i.id)}</h2></div>
         <button className="icon-btn" onClick=${()=>setOpen(null)} aria-label="Close"><${Icon} name="X"/></button></div>
       <div className="db">
         ${open.type==="draft"?html`<div style=${{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-            <span className="jr-chip"><${JStatusIcon} cat="staged" size=${12}/>Awaiting approval</span>
-            <span className="jr-chip"><span className="d" style=${{background:(J_AREA[open.d.area]||J_AREA.other)[1]}}></span>${(J_AREA[open.d.area]||J_AREA.other)[0]}</span>
-            <span className="jr-chip">${open.d.issuetype} · ${open.d.priority}</span>
-            <span className="jr-chip"><${JAvatar} name=${open.d.dev}/>${open.d.dev}</span>
-            <span className="jr-chip">Parent ${open.d.parent||JIRA_EPIC}</span></div>
-          <div className="note" style=${{marginBottom:12}}>Not in Jira yet. Claude creates it under ${JIRA_EPIC} only after Amir approves the drafts in chat.</div>
-          <div className="jr-md" dangerouslySetInnerHTML=${{__html:mdToHtml(open.d.description)}}></div>`
+            <span className="jr-chip"><${JStatusIcon} cat="staged" size=${12}/>${openD.status==="created"?"Created "+(openD.jira_key||""):openD.status==="rejected"?"Rejected":"Awaiting approval"}</span>
+            <span className="jr-chip"><span className="d" style=${{background:(J_AREA[openD.area]||J_AREA.other)[1]}}></span>${(J_AREA[openD.area]||J_AREA.other)[0]}</span>
+            <span className="jr-chip">${openD.issuetype} · ${openD.priority}</span>
+            <span className="jr-chip"><${JAvatar} name=${openD.dev}/>${openD.dev}</span>
+            <span className="jr-chip">Parent ${openD.parent||JIRA_EPIC}</span></div>
+          <div className="da-box"><${DraftActions} key=${openD.id} d=${openD} mode=${mode} setMode=${setMode} onDone=${()=>setOpen(null)}/></div>
+          <div className="jr-md" dangerouslySetInnerHTML=${{__html:mdToHtml(openD.description)}}></div>`
         :open.type==="ticket"?html`<div className="jr-prop" style=${{marginBottom:14}}>
             <span className="k">Status</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JStatusIcon} cat=${open.t.cat}/>${open.t.status}</span>
             <span className="k">Dev Assignee</span><span style=${{display:"flex",gap:8,alignItems:"center"}}><${JAvatar} name=${open.t.dev}/>${open.t.dev||"—"}</span>
