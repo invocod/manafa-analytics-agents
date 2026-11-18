@@ -26,3 +26,9 @@ Also: the backend log before 2 Oct contains a launch burst (Sep 20–Oct 1), so 
 - What were the goals (registrations, deposits, budget)?
 - What was spent on X and Snapchat, by day?
 - Were there creators or other placements without UTMs?
+
+## Recheck 2026-11-18 (run-20261118-2032) — still blocked
+- O: floor through 15 Nov, first-touch = last-touch: **21 registrations, 13 deposits (6 users), 98 investment events (10 users; 2 first investments)**. All SAR.
+- O: the investment floor above (116 to 11 Nov) is **not reproducible**: the same definition gives 96 to 11 Nov today. Registrations and deposits reproduce. Cause not found; open for tracking-QA.
+- O: attribution coverage measured at 1.5% of registrations in the campaign window (86 of 5,696) and 4.0% in the four closed weeks 19 Oct–15 Nov, replacing the "~5%" above.
+- Blockers unchanged: no goals, no X/Snapchat spend in any configured source (Google Ads BigQuery starts 7 Nov, Singular sheet 11 Oct). Full recheck: `reports/2026/W47/campaign-health-2026-11-18.md`.

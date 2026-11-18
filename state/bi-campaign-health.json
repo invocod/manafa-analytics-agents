@@ -11,38 +11,70 @@
       "blockers": [
         "goals not on record",
         "X/Snapchat spend not in BigQuery",
-        "backend attribution coverage ~5% (tqa-014)"
+        "backend attribution coverage 1.5% in window / 4.0% last 4 closed weeks (tqa-014)"
       ],
       "floor": {
+        "as_of": "2026-11-15",
         "registrations": 21,
-        "deposits": 12,
-        "investments": 116
+        "deposits": 13,
+        "deposit_users": 6,
+        "investments": 98,
+        "investment_users": 10,
+        "first_investments": 2,
+        "first_touch_equals_last_touch": true
       },
+      "floor_history": [
+        {"run": "run-20261116-1654", "as_of": "2026-11-11", "registrations": 21, "deposits": 12, "investments": 116},
+        {"run": "run-20261118-2032", "as_of": "2026-11-11", "registrations": 21, "deposits": 12, "investments": 96, "note": "investments not reproducible vs run-20261116-1654; cause not found; open for tracking-QA"}
+      ],
       "note": "reports/postmortems/national_day_96.md",
-      "rechecked": "2026-11-17: still blocked; Singular sheet starts 2026-10-11, after the campaign ended (~4 Oct), so it cannot supply X/Snapchat spend; no new BigQuery dataset"
+      "rechecked": "2026-11-18: still blocked; no spend source covers 20 Sep-4 Oct (Google Ads BigQuery starts 7 Nov, Singular sheet 11 Oct); floor refreshed; investment floor restated 116 -> 96 (to 11 Nov), flagged"
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "cq-001",
+      "opened": "2026-11-18",
+      "run": "run-20261118-2032",
+      "for": "bi-tracking-health",
+      "question": "national_day_96 investment_completed count to 11 Nov was 116 on 2026-11-16 and 96 on 2026-11-18 with the same definition (acquisition_campaign OR last_campaign). Replica restatement or a different definition in the earlier run?"
     }
   ],
   "active_campaigns_checked": {
-    "date": "2026-11-17",
-    "run": "run-20261117-1109",
+    "date": "2026-11-18",
+    "run": "run-20261118-2032",
+    "judged_through": "2026-11-15",
     "google_ads_serving": [
       "Minto | Above 5Mn",
       "Minto | App promotion - IOS | App installs",
       "Minto | App installs - Android"
     ],
-    "google_ads_last_spend": "2026-11-16",
-    "singular_spending_2026-11-16": [
+    "google_ads_last_spend": "2026-11-17",
+    "google_ads_cost_sar_9_15nov": {"Minto | Above 5Mn": 3693.17, "Minto | App promotion - IOS | App installs": 2612.53, "Minto | App installs - Android": 1256.64},
+    "backend_campaign_tags_active": ["minto_manafa_b2b"],
+    "backend_campaign_tags_sporadic": ["minto_manafa_b2c"],
+    "backend_tags_not_campaigns": ["linkedin_bio"],
+    "singular_spending_2026-11-17": [
       "Minto | App promotion | June 2026 (TikTok iOS)",
       "Minto | Investors | App install (X iOS)"
     ],
-    "singular_note": "'Minto | App promotion | July 2026' shows only sub-1-SAR residual cost on a few days; not treated as a campaign",
+    "singular_note": "'Minto | App promotion | July 2026' shows no cost on 16-17 Nov (residual rows only); not treated as a campaign",
     "singular_sheet": {
-      "max_date": "2026-11-16",
-      "max_etl_utc": "2026-11-17 10:43:00+00:00",
-      "rows": 671,
+      "max_date": "2026-11-17",
+      "max_etl_utc": "2026-11-18 17:05:05+00:00",
+      "rows": 690,
       "duplicate_grain_rows": 0,
-      "currencies": "SAR"
+      "currencies": "SAR",
+      "cost_total_check_sar": 122972.78,
+      "totals_match": true
     }
   },
-  "last_run": "run-20261117-1109"
+  "freshness": {
+    "run": "run-20261118-2032",
+    "backend_events": "2026-11-17",
+    "ga4": "2026-11-17",
+    "google_ads": "2026-11-17"
+  },
+  "last_run": "run-20261118-2032",
+  "last_report": "reports/2026/W47/campaign-health-2026-11-18.md"
 }
