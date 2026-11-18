@@ -18,6 +18,8 @@ Built from four skills in [coreyhaines31/marketingskills](https://github.com/cor
 
 Global rules every loop follows: [CLAUDE.md](CLAUDE.md). Product context and targets: [context/](context/).
 
+**Command Center** (live dashboard, agent runs, Jira drafts, chat): https://claude.ai/artifact/BxUmXzapbW6xFkoUW5zMPM, source `ui/command-center/index.html`, protocol and data rule in [docs/command-center.md](docs/command-center.md). Since 2026-11-18 it reads only GA4 (`google_analytics` raw export), Google Ads and the Singular sheet; its conversions are GA4 server-sent events counted once per `event_uuid`.
+
 ## Adoption order (don't enable everything at once)
 
 1. **Step 1 — trust the data**: `bi-tracking-health` + `bi-weekly-exec-digest`. Run 2–3 weeks, fix what QA finds.
@@ -31,7 +33,7 @@ A loop whose output nobody acts on for weeks is a vanity loop — disable it.
 - [x] Context docs filled (2026-11-11): KYC event `kyc_completed`, ads optimize on registration, no formal targets (loops baseline on trailing 8-week medians), no hard spend cap (pacing alerts), Slack `#marketing-loops`
 - [x] Data sources (updated 2026-11-16): **BigQuery only** (`databases-472111`, me-central2, read-only); CSV drops retired. See `context/data-sources.md` and `context/metrics.md`
 - [ ] Create `#marketing-loops` in Slack and invite the team
-- [x] BigQuery connected (2026-11-16): `databases-472111`, me-central2 (Saudi) only. Backend ledger + GA4 + Google Ads transfers. Remaining work: backfill the transfers, validate backend counts in tracking-QA, Singular → BigQuery
+- [x] BigQuery connected (2026-11-16): `databases-472111`, me-central2 (Saudi) only. Backend ledger + GA4 raw export (`google_analytics`, since 2026-11-18; replaces the GA4 transfer) + Google Ads transfer. Remaining work: backfill the Google Ads transfer, validate backend counts in tracking-QA, Singular → BigQuery
 - [ ] Open items the first runs will settle: reg→deposit lag (bi-investor-funnel measures p75), GA4 custom channel group existence (bi-tracking-health checks)
 - [ ] (When scheduling) attach the BigQuery connector (project `databases-472111`) to each routine
 - [ ] Attach the **Slack connector** to each routine at claude.ai/code/routines (give it the marketing channel)
@@ -45,7 +47,7 @@ Mode now: **local, on demand, read-only BigQuery** (loops run from the Claude pr
 
 - **Phase 0 (lock down), done 2026-11-16:** raw Singular row-level CSVs deleted (PDPL); read-only query library `sql/readonly/` validated on live data; loop skills renamed `bi-*`.
 - **Phase 1 (rebuild on BigQuery), done 2026-11-16:** `context/metrics.md` (one definition per metric; ledger = production `manafa_financing`), production funnel cohorts (`sql/readonly/investor_funnel_cohorts_prod.sql`, 14-day window), `weekly_kpis.sql`, 7 skills rewritten on BigQuery with a shared run-start gate, all loop states re-baselined on production data (CSV-era kept as history), first BigQuery tracking-health run (escalation tqa-012).
-- **Phase 2 (data gaps), requests ready, waiting on owners:** `docs/phase-2-requests.md` (tqa-012 gold fix first; raw GA4 export, backfills, Singular + social spend into BigQuery, tracking fixes tqa-007/013/014/015/016).
+- **Phase 2 (data gaps), requests ready, waiting on owners:** `docs/phase-2-requests.md` (tqa-012 gold fix first; ~~raw GA4 export~~ done 2026-11-18, backfills, Singular + social spend into BigQuery, tracking fixes tqa-007/013/014/015/016).
 - **Phase 3 (new loops):** campaign ROI, creator tracking, cohort payback, search-query mining.
 - **Deploy (when mature):** GitHub remote, `marketing_mart` dataset + `marketing-bi-agent` service account (`sql/marketing_mart/README.md`), scheduled routines, dashboard on the mart.
 

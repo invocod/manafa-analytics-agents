@@ -4,7 +4,7 @@
 - Dev Assignee: Mohammad Khubaib
 - Labels: bi-agent, analytics, tqa-020
 - Tracking: tqa-020
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6083 (approved by Amir 2026-11-18, Command Center button)
 
 ## Problem
 The backend event field `context.lifecycle` doesn't match users' real registration dates:

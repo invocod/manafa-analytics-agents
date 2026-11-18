@@ -11,8 +11,8 @@ Amir sends these; the agent re-checks each one in the next bi-tracking-health ru
 ## B. Warehouse data (needs BigQuery admin / GA4 admin)
 | # | Ask | Owner | Why |
 |---|---|---|---|
-| B1 | **GA4 raw export** (property 413046941) to dataset `analytics_413046941` in **me-central2**, daily + streaming if affordable | GA4 admin + GCP admin | Production-only reporting (exclude QA streams), web/app split, parameter audit, confirm tqa-001/007 |
-| B2 | **Backfill** GA4 Data Transfer and Google Ads Data Transfer to **2026-09-20** (GA4) and 8+ weeks (Ads) | GCP admin | Bands and trends need ≥ 8 weeks; today 9–10 days |
+| B1 | ✅ **Done 2026-11-18:** GA4 raw export lives in dataset `google_analytics` (me-central2, production streams, daily refresh). ~~GA4 raw export (property 413046941) to dataset `analytics_413046941` in **me-central2**, daily + streaming if affordable~~ | GA4 admin + GCP admin | Production-only reporting (exclude QA streams), web/app split, parameter audit, confirm tqa-001/007 |
+| B2 | **Backfill** the GA4 raw export (starts 2026-11-04) and the Google Ads Data Transfer to **2026-09-20** (GA4) and 8+ weeks (Ads). The GA4 Data Transfer is retired. | GCP admin | Bands and trends need ≥ 8 weeks; today 9–10 days |
 | B3 | **Singular → BigQuery** export (aggregated reporting + attribution) into me-central2 | Analytics + GCP admin | App attribution by network/campaign is "not configured" without it |
 | B4 | **Meta, TikTok, Snapchat, X spend** into BigQuery (Data Transfer where supported, else a scheduled loader) in me-central2 | Paid media + GCP admin | CAC/ROI for 4 of 5 paid channels |
 | B5 | Fix the **backend replica lag** (now ~3–4 days, last day partial) or publish its schedule | Data engineering | Weekly loops can't cover the full last week |

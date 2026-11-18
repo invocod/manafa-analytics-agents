@@ -4,7 +4,7 @@
 - Dev Assignee: AzibMuzammil
 - Labels: bi-agent, analytics, ga4, tqa-021
 - Tracking: tqa-021
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6084 (approved by Amir 2026-11-18, Command Center button)
 
 ## Problem
 In GA4, almost every app screen view is reported under the native container class, not the Flutter screen: `FlutterViewController` (iOS) and `MainActivity` (Android).
@@ -32,3 +32,6 @@ Generic classes (`FlutterViewController`, `MainActivity`) are below 20% of app s
 Weekly share of app screen views by class in GA4 Pages & Screens (`bi-tracking-health`).
 
 _Filed by the Manafa BI agent (decision support)._
+
+## Update 2026-11-18 — premise corrected
+The figure above came from the retired GA4 transfer tables. In the raw GA4 export (9–15 Nov), 84.1% of iOS and 78.3% of Android screen views carry a real screen name; only 18,127 iOS and 9,739 Android views are generic. Correction comment posted on ISQ-6084 with Amir's approval (comment 174594), suggesting the ticket be narrowed or closed.

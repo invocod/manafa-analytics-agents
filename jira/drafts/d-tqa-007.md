@@ -37,3 +37,6 @@ GA4 receives about twice as many `registration_completed`, `kyc_completed`, `log
 `bi-tracking-health` compares the weekly GA4 event count with backend `succeeded` deliveries per event. It closes tqa-007 after two clean weeks.
 
 _Filed by the Manafa BI agent (decision support). Report: `reports/2026/W47/tracking-health-2026-11-16.md`._
+
+## Update 2026-11-18 — the duplicate is identifiable
+Raw GA4 export: the server-sent copy carries an `event_uuid` param; the extra copy has no `event_uuid`, no `platform` param, and arrives only on the iOS/Android streams (consistent with Singular / SDK forwarding). W46: registration 437 + 302 copies, kyc 395 + 338, login 16,967 + 15,076; deposits and investments have none. The Command Center now counts one event per `event_uuid`.
