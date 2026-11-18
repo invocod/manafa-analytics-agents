@@ -1,7 +1,7 @@
 {
   "loop": "bi-daily-kpi-watch",
-  "cursor": "2026-11-14 (GA4/Ads); 2026-11-11 (backend)",
-  "cursor_note": "Latest complete Riyadh day checked. Bands provisional (3 weeks of history; loop wants 8).",
+  "cursor": "2026-11-15 (backend, GA4, Ads)",
+  "cursor_note": "Latest Riyadh day judged (72-hour rule). Backend replica reaches 17 Nov (partial), GA4 and Ads reach 17 Nov. Bands provisional (5-7 same-weekday points; loop wants 8).",
   "active_anomalies": [
     {
       "id": "an-001",
@@ -10,355 +10,141 @@
       "status": "routed-to-tracking-qa | closed 2026-11-16: CSV-era anomaly, superseded",
       "read": "tracking artifact — install event started being recorded ~Oct 30-Nov 2; baselines valid from 2026-11-03",
       "filed_as": "tqa-008"
+    },
+    {
+      "id": "an-002",
+      "metric": "backend registration_completed + kyc_completed",
+      "since": "2026-11-13",
+      "status": "alerted 2026-11-18 (report only, Slack unavailable) | closed on detection: back in band Sat 14 and Sun 15 Nov",
+      "values": {"registration_completed": "54 vs [61,132]", "kyc_completed": "85 vs [100,189]"},
+      "read": "real demand dip — backend, GA4 sessions (2,136), GA4 server-sent registrations (40) and Ads spend (816 SAR) all fell the same day; no zero hour; recovered next day",
+      "routed_to": "bi-weekly-exec-digest (demand note); bi-tracking-health filed the same day as a watch on 2026-11-18 (tracking-health-2026-11-18b)",
+      "report": "reports/2026/W47/daily-kpi-watch-2026-11-18.md"
     }
   ],
   "renamed_from": "analytics-anomaly (2026-11-16)",
   "csv_era": {
     "baselines_riyadh_daily": {
-      "registration_completed": {
-        "median": 86,
-        "band": [
-          55,
-          118
-        ]
-      },
-      "kyc_completed": {
-        "median": 74,
-        "band": [
-          55,
-          94
-        ]
-      },
-      "deposit_success": {
-        "median": 92,
-        "band": [
-          20,
-          164
-        ]
-      },
-      "investment_completed": {
-        "median": 574,
-        "band": [
-          0,
-          1171
-        ],
-        "note": "offering-driven spikes are expected shape"
-      },
-      "sessions_singular": {
-        "median": 3517,
-        "band": [
-          1140,
-          6066
-        ]
-      },
-      "app_install": {
-        "note": "baseline only from 2026-11-03 (see an-001)"
-      }
+      "registration_completed": {"median": 86, "band": [55, 118]},
+      "kyc_completed": {"median": 74, "band": [55, 94]},
+      "deposit_success": {"median": 92, "band": [20, 164]},
+      "investment_completed": {"median": 574, "band": [0, 1171], "note": "offering-driven spikes are expected shape"},
+      "sessions_singular": {"median": 3517, "band": [1140, 6066]},
+      "app_install": {"note": "baseline only from 2026-11-03 (see an-001)"}
     },
-    "known_causes_applied": [
-      "offering launch ~Oct 22",
-      "salary days Oct 25-28"
-    ],
-    "sources_skipped": [
-      "spend (no google-ads export)",
-      "GA4 daily-by-channel (export lacks the breakdown)"
-    ]
+    "known_causes_applied": ["offering launch ~Oct 22", "salary days Oct 25-28"],
+    "sources_skipped": ["spend (no google-ads export)", "GA4 daily-by-channel (export lacks the breakdown)"]
   },
-  "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them).",
+  "rebaselined": "Re-baselined 2026-11-16 on production BigQuery (manafa_financing). CSV-era values moved to csv_era (history only; never compare against them). Backend bands refreshed 2026-11-18 with points through 2026-11-15 (computed in BigQuery).",
   "bands": {
-    "method": "same weekday, median ± max(3×1.4826×MAD, 30% of median) — floor applied because 5-6 points/weekday make MAD unstable; PROVISIONAL until 8 points",
+    "method": "same weekday, median ± max(3×1.4826×MAD, 30% of median) — floor applied because 5-7 points/weekday make MAD unstable; PROVISIONAL until 8 points; history from 2026-10-02",
     "backend": {
       "registration_completed": {
-        "Mon": {
-          "median": 116.5,
-          "band": [
-            82,
-            151
-          ],
-          "n": 6
-        },
-        "Tue": {
-          "median": 102.0,
-          "band": [
-            40,
-            164
-          ],
-          "n": 6
-        },
-        "Wed": {
-          "median": 102.5,
-          "band": [
-            29,
-            176
-          ],
-          "n": 6
-        },
-        "Thu": {
-          "median": 98,
-          "band": [
-            69,
-            127
-          ],
-          "n": 5
-        },
-        "Fri": {
-          "median": 96.5,
-          "band": [
-            61,
-            132
-          ],
-          "n": 6
-        },
-        "Sat": {
-          "median": 96.5,
-          "band": [
-            68,
-            125
-          ],
-          "n": 6
-        },
-        "Sun": {
-          "median": 105.0,
-          "band": [
-            25,
-            185
-          ],
-          "n": 6
-        }
+        "Mon": {"median": 116.5, "band": [82, 151], "n": 6},
+        "Tue": {"median": 102.0, "band": [40, 164], "n": 6},
+        "Wed": {"median": 102.5, "band": [29, 176], "n": 6},
+        "Thu": {"median": 96.0, "band": [67, 125], "n": 6},
+        "Fri": {"median": 95.0, "band": [51, 139], "n": 7},
+        "Sat": {"median": 92.0, "band": [52, 132], "n": 7},
+        "Sun": {"median": 96.0, "band": [16, 176], "n": 7}
       },
       "kyc_completed": {
-        "Mon": {
-          "median": 168.5,
-          "band": [
-            60,
-            277
-          ],
-          "n": 6
-        },
-        "Tue": {
-          "median": 156.0,
-          "band": [
-            80,
-            232
-          ],
-          "n": 6
-        },
-        "Wed": {
-          "median": 168.5,
-          "band": [
-            31,
-            306
-          ],
-          "n": 6
-        },
-        "Thu": {
-          "median": 141,
-          "band": [
-            99,
-            183
-          ],
-          "n": 5
-        },
-        "Fri": {
-          "median": 144.5,
-          "band": [
-            100,
-            189
-          ],
-          "n": 6
-        },
-        "Sat": {
-          "median": 145.5,
-          "band": [
-            48,
-            243
-          ],
-          "n": 6
-        },
-        "Sun": {
-          "median": 160.0,
-          "band": [
-            98,
-            222
-          ],
-          "n": 6
-        }
+        "Mon": {"median": 168.5, "band": [60, 277], "n": 6},
+        "Tue": {"median": 156.0, "band": [80, 232], "n": 6},
+        "Wed": {"median": 168.5, "band": [31, 306], "n": 6},
+        "Thu": {"median": 138.0, "band": [91, 185], "n": 6},
+        "Fri": {"median": 138.0, "band": [58, 218], "n": 7},
+        "Sat": {"median": 140.0, "band": [0, 282], "n": 7},
+        "Sun": {"median": 156.0, "band": [67, 245], "n": 7}
       },
       "deposit_success": {
-        "Mon": {
-          "median": 119.0,
-          "band": [
-            14,
-            224
-          ],
-          "n": 6
-        },
-        "Tue": {
-          "median": 107.5,
-          "band": [
-            3,
-            212
-          ],
-          "n": 6
-        },
-        "Wed": {
-          "median": 86.0,
-          "band": [
-            13,
-            159
-          ],
-          "n": 6
-        },
-        "Thu": {
-          "median": 98,
-          "band": [
-            31,
-            165
-          ],
-          "n": 5
-        },
-        "Fri": {
-          "median": 63.5,
-          "band": [
-            23,
-            104
-          ],
-          "n": 6
-        },
-        "Sat": {
-          "median": 56.0,
-          "band": [
-            0,
-            129
-          ],
-          "n": 6
-        },
-        "Sun": {
-          "median": 100.5,
-          "band": [
-            70,
-            131
-          ],
-          "n": 6
-        }
+        "Mon": {"median": 119.0, "band": [14, 224], "n": 6},
+        "Tue": {"median": 107.5, "band": [3, 212], "n": 6},
+        "Wed": {"median": 86.0, "band": [13, 159], "n": 6},
+        "Thu": {"median": 93.0, "band": [6, 180], "n": 6},
+        "Fri": {"median": 57.0, "band": [0, 115], "n": 7},
+        "Sat": {"median": 56.0, "band": [0, 132], "n": 7},
+        "Sun": {"median": 98.0, "band": [69, 127], "n": 7}
       },
       "investment_completed": {
-        "Mon": {
-          "median": 862.5,
-          "band": [
-            0,
-            2844
-          ],
-          "n": 6
-        },
-        "Tue": {
-          "median": 1025.5,
-          "band": [
-            0,
-            2831
-          ],
-          "n": 6
-        },
-        "Wed": {
-          "median": 844.0,
-          "band": [
-            0,
-            1787
-          ],
-          "n": 6
-        },
-        "Thu": {
-          "median": 1387,
-          "band": [
-            0,
-            4656
-          ],
-          "n": 5
-        },
-        "Fri": {
-          "median": 333.5,
-          "band": [
-            0,
-            818
-          ],
-          "n": 6
-        },
-        "Sat": {
-          "median": 141.5,
-          "band": [
-            0,
-            319
-          ],
-          "n": 6
-        },
-        "Sun": {
-          "median": 855.5,
-          "band": [
-            457,
-            1254
-          ],
-          "n": 6
-        }
+        "Mon": {"median": 862.5, "band": [0, 2844], "n": 6},
+        "Tue": {"median": 1025.5, "band": [0, 2831], "n": 6},
+        "Wed": {"median": 844.0, "band": [0, 1787], "n": 6},
+        "Thu": {"median": 1019.5, "band": [0, 3375], "n": 6},
+        "Fri": {"median": 328.0, "band": [0, 915], "n": 7},
+        "Sat": {"median": 126.0, "band": [0, 268], "n": 7},
+        "Sun": {"median": 900.0, "band": [504, 1296], "n": 7}
+      },
+      "last_judged": {
+        "2026-11-12": "Thu: all in band",
+        "2026-11-13": "Fri: registration 54 LOW [61,132], kyc 85 LOW [100,189], deposits 24 in, investments 68 in (an-002)",
+        "2026-11-14": "Sat: all in band",
+        "2026-11-15": "Sun: investments 1,631 HIGH [457,1254] (offering-shaped, expected); others in band"
       }
     },
     "ga4_sessions_daily": {
       "values": {
-        "2026-11-04": 3880,
-        "2026-11-05": 3563,
-        "2026-11-06": 2871,
-        "2026-11-07": 2503,
-        "2026-11-08": 4568,
-        "2026-11-09": 3925,
-        "2026-11-10": 3969,
-        "2026-11-11": 3686,
-        "2026-11-12": 3836,
-        "2026-11-13": 2136,
-        "2026-11-14": 2331,
-        "2026-11-15": 4732,
-        "2026-11-16": 4112,
-        "2026-11-17": 3976
+        "2026-11-04": 3912, "2026-11-05": 3566, "2026-11-06": 2872, "2026-11-07": 2503, "2026-11-08": 4568,
+        "2026-11-09": 3925, "2026-11-10": 3969, "2026-11-11": 3686, "2026-11-12": 3836, "2026-11-13": 2136,
+        "2026-11-14": 2331, "2026-11-15": 4732, "2026-11-16": 4112, "2026-11-17": 3976
       },
-      "note": "raw GA4 export (google_analytics), sessions by start date; re-baselined 2026-11-18 from the retired transfer. Data starts 4 Nov, so bands need more weeks.",
+      "note": "raw GA4 export (google_analytics), sessions by start date (ga4_traffic_daily.sql); re-baselined 2026-11-18 from the retired transfer. 2026-11-18 run: 11-04 restated 3,880->3,912, 11-05 3,563->3,566, 11-06 2,871->2,872 (late events). Data starts 4 Nov, so bands need more weeks.",
       "rebaselined": "2026-11-18"
+    },
+    "ga4_conversions_daily": {
+      "method": "server-sent events, one per event_uuid (ga4_conversions_daily.sql): registration / deposit / investment",
+      "values": {
+        "2026-11-04": [85, 100, 737], "2026-11-05": [50, 87, 561], "2026-11-06": [55, 51, 127], "2026-11-07": [82, 37, 105],
+        "2026-11-08": [82, 92, 535], "2026-11-09": [57, 75, 1024], "2026-11-10": [80, 75, 1456], "2026-11-11": [66, 65, 1000],
+        "2026-11-12": [56, 66, 396], "2026-11-13": [40, 29, 68], "2026-11-14": [67, 23, 95], "2026-11-15": [71, 81, 1364],
+        "2026-11-16": [70, 69, 635], "2026-11-17": [67, 60, 198]
+      },
+      "note": "kept for band building (needs 8 same-weekday points); 16-17 Nov unjudged"
     },
     "gads_spend_sar_daily": {
       "values": {
-        "2026-11-07": 1209.95,
-        "2026-11-08": 1084.89,
-        "2026-11-09": 1114.17,
-        "2026-11-10": 1102.05,
-        "2026-11-11": 1112.33,
-        "2026-11-12": 1115.82,
-        "2026-11-13": 816.45,
-        "2026-11-14": 982.41,
-        "2026-11-15": 1320.26,
-        "2026-11-16": 1192.38
+        "2026-11-07": 1209.95, "2026-11-08": 1084.89, "2026-11-09": 1114.17, "2026-11-10": 1102.05, "2026-11-11": 1112.33,
+        "2026-11-12": 1115.82, "2026-11-13": 816.45, "2026-11-14": 982.41, "2026-11-15": 1319.10, "2026-11-16": 1192.38, "2026-11-17": 1154.71
       },
-      "note": "9 days only; pacing ~1.1k SAR/day weekdays",
-      "restatement_note": "2026-11-17 11:11Z: Ads restated 11-14 982.62->982.41 and 11-15 1319.74->1320.26 (trailing 72h, not judged)"
+      "note": "11 days; pacing ~1.1k SAR/day weekdays; Fri 13 Nov 816.45 is the low",
+      "restatement_note": "2026-11-17 11:11Z: Ads restated 11-14 982.62->982.41 and 11-15 1319.74->1320.26; 2026-11-18 20:25Z: 11-15 1320.26->1319.10 (trailing 72h, not judged)"
     }
   },
   "watch_items": [
     {
+      "metric": "deposit_success amount (SAR), backend",
+      "day": "2026-11-17 (Tue, unjudged: inside the 72-hour window)",
+      "value": "52.1M SAR from 52 deposits; one deposit >=10M SAR = 51.8M; largest single SAR deposit since 2 Oct before this: 6.47M (13 Oct)",
+      "ga4": "delivery degraded (no_ga_client_id) so GA4 shows 297k SAR that day; Singular delivery succeeded",
+      "read": "unknown: genuine large deposit or amount-unit error",
+      "status": "watch; re-judge on the 2026-11-20 run. If it stands: bi-tracking-health verifies the amount unit; a named finance owner confirms the deposit",
+      "review_on": "2026-11-20"
+    },
+    {
+      "metric": "GA4 Paid Social / Organic Social sessions",
+      "day": "2026-11-16/17 (unjudged)",
+      "value": "Paid Social 1 on 16 Nov (channel runs 1-12/day); Organic Social 114 on 16 Nov, 90 on 17 Nov (typically 7-38)",
+      "status": "note only; re-check when judgeable",
+      "review_on": "2026-11-20"
+    },
+    {
       "metric": "registration_completed",
       "day": "2026-11-09 (Mon)",
       "value": 74,
-      "band": [
-        82,
-        151
-      ],
-      "status": "watch, not alerted: provisional bands (6 points); a Monday at 64 occurred 2026-10-12",
-      "review_on": "next run"
+      "band": [82, 151],
+      "status": "closed 2026-11-18: Mon 16 Nov 83 (inside); single low Monday, no repeat"
     }
   ],
-  "last_run": "run-20261117-1109",
-  "stale_sources": [
+  "last_run": "run-20261118-2023",
+  "stale_sources": [],
+  "stale_sources_history": [
     {
       "source": "backend replica (manafa_financing.mi_analytics_events)",
       "latest_day": "2026-11-12 (partial, 445 events)",
       "latest_complete_day": "2026-11-11",
       "noted": "2026-11-17",
-      "note": "stale data - no new day since 12 Nov; backend bands not re-checked; owner: data engineering (tracked by bi-tracking-health)"
+      "cleared": "2026-11-18 (replica reaches 17 Nov partial; 16 Nov complete)",
+      "note": "stale data - no new day since 12 Nov; owner: data engineering (tracked by bi-tracking-health, tqa-023)"
     }
   ]
 }
