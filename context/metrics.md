@@ -28,9 +28,12 @@ Source: `investor_funnel_cohorts_prod.sql`. Cohort = registration week (first `r
 - Always split by `reg_platform` (web vs iOS vs Android). The platforms differ ~3× at KYC.
 
 ## GA4 (product analytics), own section only
-Source: `GA4` transfer (property 413046941): `ga4_events_daily.sql`, `ga4_traffic_daily.sql`, `ga4_user_acquisition_daily.sql`.
-- Sessions, engaged sessions, event counts, channel/source/medium (last touch = session; first touch = first user).
-- Caveats: all streams (QA streams can't be excluded until the raw export lands); 7 events doubled (tqa-007), so never report GA4 counts of registration/KYC/login/withdrawal_completed/passcode_enabled/bank_account_added as conversions.
+Source (since 2026-11-18): raw GA4 BigQuery export `google_analytics.events_YYYYMMDD` (production copy; streams iOS 6313772845, Android 6314084012, Web 6314227817) via `ga4_events_daily.sql`, `ga4_traffic_daily.sql`, `ga4_user_acquisition_daily.sql`, `users_ga4_*.sql`. Daily tables only (`REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\d{8}$')`), always with a `_TABLE_SUFFIX` date filter. The `GA4.p_ga4_*` transfer is retired. Data starts 2026-11-01, so GA4 baselines before that date don't exist.
+- **Session** = distinct `user_pseudo_id` + `ga_session_id`; **engaged session** = `session_engaged = '1'`; **active users** = distinct `user_pseudo_id` with `is_active_user`; **new users** = distinct users with `first_open` (apps) / `first_visit` (web); **engagement time** = SUM(`engagement_time_msec`).
+- **Session channel (last touch)** = `session_traffic_source_last_click.cross_channel_campaign.default_channel_group` (NULL → Unassigned); **first-user channel (first touch)** = `traffic_source.*`.
+- App screen = `firebase_screen` param; web page = `page_location` path with long IDs masked.
+- Never read `user_properties`, `user_id`, `user_pseudo_id`, device/advertising IDs, `gclid` or transaction IDs; they stay inside COUNT(DISTINCT) or are not used (tqa-024).
+- Caveats: 7 events doubled (tqa-007), so never report GA4 counts of registration/KYC/login/withdrawal_completed/passcode_enabled/bank_account_added as conversions.
 - Only Event Standard v2.1 names in any funnel or exploration; no legacy or `QA_` names.
 
 ## Google Ads (claims and spend), own section only
@@ -53,7 +56,7 @@ Backend (`sql/readonly/users_backend_*.sql`, last 28 complete days to the replic
 - Registrations, KYC, depositors, investors (manual vs auto via `is_auto_invested`; a user can be both), first-time investors, average ticket in SAR only.
 - Device, app version, OS: each signed-in app user counted once by their latest sign-in (`context.app_version`, `context.vendor_keys.singular_device.*`; never device IDs).
 - Not used: `context.lifecycle.*` (tqa-020). Backend demographics (age, nationality, city) live in customer tables and are off-limits.
-GA4 (`sql/readonly/users_ga4_*.sql`, last 7 days in the transfer): daily active users are summed per day (user-days), so show averages per day or shares, never "unique users"; demographics are Google estimates, thresholded, all platforms; app screen names are missing (tqa-021).
+GA4 (`sql/readonly/users_ga4_*.sql`, raw export, last 7 complete days): weekly tiles use true unique users (`users_ga4_week.sql`); the daily chart shows daily actives. Demographics are country/region/city/language only (age, gender and interests are not in the export). App screens come from `firebase_screen`; ~80% of app screen views are named (tqa-021 corrected).
 
 ## Not available (named, never estimated)
 Singular conversion events (registration/deposit/investment by network — not in the sheet), Meta/TikTok/Snapchat spend, GA4 platform/stream split, channel attribution of backend conversions (tqa-014), anything from `gold` (tqa-012).

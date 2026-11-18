@@ -109,6 +109,27 @@
           null,
           null
         ]
+      },
+      "ga4_note": "ga4_sessions 40,753 / ga4_ft_new_users 5,514 came from the retired transfer; use ga4_raw_w46_full"
+    },
+    "ga4_raw_w46_full": {
+      "source": "google_analytics.events_* raw export (retires ga4_w46_monsat / W46_full GA4 transfer figures)",
+      "sessions": 24615,
+      "new_users_unique": 8174,
+      "session_channel_share": {
+        "Direct": 0.721,
+        "Organic Search": 0.11,
+        "Unassigned": 0.054,
+        "Cross-network": 0.053,
+        "Paid Search": 0.034
+      },
+      "ft_new_user_share": {
+        "Direct": 0.505,
+        "Organic Search": 0.163,
+        "Unassigned": 0.119,
+        "Cross-network": 0.074,
+        "Paid Search": 0.067,
+        "Referral": 0.033
       }
     }
   },

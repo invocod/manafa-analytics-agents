@@ -303,20 +303,23 @@
     },
     "ga4_sessions_daily": {
       "values": {
-        "2026-11-06": 5022,
-        "2026-11-07": 4187,
-        "2026-11-08": 7484,
-        "2026-11-09": 6573,
-        "2026-11-10": 6588,
-        "2026-11-11": 6008,
-        "2026-11-12": 6312,
-        "2026-11-13": 3597,
-        "2026-11-14": 3849,
-        "2026-11-15": 7848,
-        "2026-11-16": 7705
+        "2026-11-04": 3880,
+        "2026-11-05": 3563,
+        "2026-11-06": 2871,
+        "2026-11-07": 2503,
+        "2026-11-08": 4568,
+        "2026-11-09": 3925,
+        "2026-11-10": 3969,
+        "2026-11-11": 3686,
+        "2026-11-12": 3836,
+        "2026-11-13": 2136,
+        "2026-11-14": 2331,
+        "2026-11-15": 4732,
+        "2026-11-16": 4112,
+        "2026-11-17": 3976
       },
-      "note": "10 days only; bands need backfill (Phase 2)",
-      "restatement_note": "2026-11-17: GA4 transfer restated 11-15 from 8,813 to 7,848 (-11%) and 11-13 from 3,603 to 3,597; never judge the trailing 72h"
+      "note": "raw GA4 export (google_analytics), sessions by start date; re-baselined 2026-11-18 from the retired transfer. Data starts 4 Nov, so bands need more weeks.",
+      "rebaselined": "2026-11-18"
     },
     "gads_spend_sar_daily": {
       "values": {

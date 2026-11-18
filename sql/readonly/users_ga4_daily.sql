@@ -1,7 +1,20 @@
--- users_ga4_daily: GA4 activity per day and platform (transfer TechDetails), last 14 days in the transfer. Daily active users are summed per day; a week figure is an average per day, not unique users.
-SELECT DATE(_PARTITIONTIME) AS d, platform,
-  SUM(activeUsers) AS active_users, SUM(newUsers) AS new_users, SUM(engagedSessions) AS engaged_sessions,
-  SUM(eventCount) AS events, SUM(userEngagementDuration) AS engagement_sec
-FROM `databases-472111.GA4.p_ga4_TechDetails_413046941`
-WHERE DATE(_PARTITIONTIME) >= DATE_SUB((SELECT MAX(DATE(_PARTITIONTIME)) FROM `databases-472111.GA4.p_ga4_TechDetails_413046941`), INTERVAL 13 DAY)
+-- users_ga4_daily: GA4 users, new users, sessions, engaged sessions, events and engagement per day and platform (last 14 days of data).
+-- Source: GA4 raw BigQuery export, dataset google_analytics (me-central2), daily tables events_YYYYMMDD only
+--   (events_intraday_* excluded). Production streams: iOS 6313772845, Android 6314084012, Web 6314227817.
+-- READ-ONLY, aggregated, no PII: user_pseudo_id / ga_session_id are used only inside COUNT(DISTINCT ...);
+--   never select user_id, user_pseudo_id, user_properties, device ids, gclid or transaction ids.
+-- Filter on _TABLE_SUFFIX (e.g. BETWEEN '20261109' AND '20261115') when you use it, so only the needed days are scanned.
+WITH e AS (
+  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, CASE platform WHEN 'IOS' THEN 'iOS' WHEN 'ANDROID' THEN 'Android' ELSE 'web' END AS platform, user_pseudo_id AS u, is_active_user, event_name,
+    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='ga_session_id') AS sid, (SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING)) FROM UNNEST(event_params) WHERE key='session_engaged') AS eng, (SELECT value.int_value FROM UNNEST(event_params) WHERE key='engagement_time_msec') AS etm
+  FROM `databases-472111.google_analytics.events_*`
+  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 45 DAY))),
+de AS (SELECT MAX(d) AS d_end FROM e)
+SELECT d, platform,
+  COUNT(DISTINCT IF(is_active_user, u, NULL)) AS active_users,
+  COUNT(DISTINCT IF(event_name IN ('first_open','first_visit'), u, NULL)) AS new_users,
+  COUNT(DISTINCT IF(sid IS NOT NULL, CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS sessions,
+  COUNT(DISTINCT IF(sid IS NOT NULL AND eng = '1', CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS engaged_sessions,
+  COUNT(*) AS events, ROUND(SUM(IFNULL(etm, 0)) / 1000) AS engagement_sec
+FROM e, de WHERE d > DATE_SUB(de.d_end, INTERVAL 14 DAY)
 GROUP BY 1, 2 ORDER BY 1, 2
