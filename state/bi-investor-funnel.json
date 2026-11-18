@@ -1,6 +1,6 @@
 {
   "loop": "bi-investor-funnel",
-  "cursor": "2026-W43",
+  "cursor": "2026-W44",
   "cursor_note": "Last cohort closed on the 14d window = registration week of 2026-10-19 (data_end 2026-11-11). W44 closes when data reaches 2026-11-15.",
   "proposed_fixes": [
     {
@@ -151,7 +151,7 @@
     },
     "kyc_note": "kyc_completed is a cohort step only; event counts include ~63% existing profiles"
   },
-  "last_run": "run-20261117-1214",
+  "last_run": "run-20261118-1008",
   "early_read_7d": {
     "cohort": "2026-10-26",
     "web": {
@@ -180,7 +180,60 @@
       "metric": "iOS deposit/investment 7d",
       "note": "W44 iOS dep 14.6% vs 9.0-9.8%, inv 7.4% vs 3.6-5.9%; driver Apple Pay first deposits (42 vs ~23/wk). Confirm on 14d when data reaches 2026-11-15; ask product/marketing what changed for iOS Apple Pay deposits in late Oct",
       "review_on": "next run with data_end >= 2026-11-15",
-      "correction_2026_11_16": "payment_method change is a backend change on all platforms (tqa-017), not an iOS release; iOS Apple Pay deposit uplift stands, cause unknown"
+      "correction_2026_11_16": "payment_method change is a backend change on all platforms (tqa-017), not an iOS release; iOS Apple Pay deposit uplift stands, cause unknown",
+      "status": "closed-confirmed",
+      "closed": "2026-11-18",
+      "result": "W44 iOS 14d: deposit 15.2% (53/349) vs band 7.1-13.2%; invest 7.7% (27/349) vs band 3.4-6.7%. Driver: Apple Pay first deposits 42 vs 23-27 (W41-W43); card+bank flat 10-12. Cause of the Apple Pay uplift unknown."
+    },
+    {
+      "id": "wf-02",
+      "added": "2026-11-18",
+      "metric": "iOS deposit/investment 14d (W45)",
+      "note": "W45 iOS 7d deposit 12.5% (36/288) above band 6.6-12.2%, invest 7.3% in band. Confirm on 14d when data reaches 2026-11-22. Ask product/marketing what changed for iOS Apple Pay deposits in late Oct.",
+      "review_on": "next run with data_end >= 2026-11-22"
     }
-  ]
+  ],
+  "cohort_reads_2026_11_18": {
+    "W44_14d": {
+      "ios": {
+        "regs": 349,
+        "kyc": 0.897,
+        "dep": 0.152,
+        "inv": 0.077
+      },
+      "android": {
+        "regs": 102,
+        "kyc": 0.853,
+        "dep": 0.049,
+        "inv": 0.039
+      },
+      "web": {
+        "regs": 277,
+        "kyc": 0.3,
+        "dep": 0.022,
+        "inv": 0.011
+      }
+    },
+    "W45_7d": {
+      "ios": {
+        "regs": 288,
+        "kyc": 0.875,
+        "dep": 0.125,
+        "inv": 0.073
+      },
+      "android": {
+        "regs": 88,
+        "kyc": 0.83,
+        "dep": 0.057,
+        "inv": 0.034
+      },
+      "web": {
+        "regs": 258,
+        "kyc": 0.345,
+        "dep": 0.019,
+        "inv": 0.012
+      }
+    },
+    "data_end": "2026-11-16"
+  }
 }

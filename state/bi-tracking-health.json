@@ -245,6 +245,24 @@
       "owner_suggestion": "mobile",
       "what": "GA4 app screen views carry no screen names: FlutterViewController (iOS) and MainActivity (Android) = ~99% of app screen views (10-16 Nov: 143,347 and 56,552). App screen-level behaviour can't be analysed. Fix: log screen_view with screen_name/screen_class on each Flutter route (e.g. a NavigatorObserver), names from the event standard.",
       "confirming_check": "GA4 PagesAndScreens app rows show named screens; generic classes < 20% of app views"
+    },
+    {
+      "status": "open",
+      "severity": "high",
+      "owner": "BI agent (query change needs Amir OK)",
+      "found": "2026-11-18",
+      "what": "gads_campaign_daily.sql reads p_ads_CampaignStats (split by click type) and misses non-click app-campaign spend: W46 7,562.34 SAR vs CampaignBasicStats 9,154.68 = AccountBasicStats 9,154.68 (-17%); Android app installs 1,258 vs 2,741; conversions 465 vs 699",
+      "next_check": "switch to CampaignBasicStats for totals; re-issue W46 paid-media + digest",
+      "id": "tqa-022"
+    },
+    {
+      "status": "open",
+      "severity": "high",
+      "owner": "Data engineering",
+      "found": "2026-11-18",
+      "what": "backend replica (Datastream) not streaming: created 12 Nov 07:02 UTC, stopped 08:02 UTC, jumped 17 Nov 13:47 UTC (data to 17 Nov 19:46 Riyadh), idle since",
+      "next_check": "stream status / CDC config; target lag < 1 h; stale point 20 Nov",
+      "id": "tqa-023"
     }
   ],
   "baselines": {
@@ -318,14 +336,45 @@
         "remove_list_events": 2140,
         "not_in_standard": 0.0144
       }
+    },
+    "bigquery_2026_11_18_w46_full": {
+      "ga4_over_backend_succeeded": {
+        "auto_invest_disabled": 2.26,
+        "passcode_enabled": 1.99,
+        "withdrawal_completed": 1.9,
+        "login_completed": 1.89,
+        "kyc_completed": 1.86,
+        "bank_account_added": 1.82,
+        "registration_completed": 1.69,
+        "identity_verified": 1.4,
+        "investment_completed": 1.0,
+        "deposit_success": 0.98,
+        "deposit_failed": 1.01,
+        "withdrawal_settled": 0.99,
+        "auto_invest_enabled": 1.0
+      },
+      "web_no_ga_client_id": {
+        "auto_invest_enabled": 0.94,
+        "identity_verified": 0.89,
+        "kyc_completed": 0.88,
+        "deposit_failed": 0.92,
+        "deposit_success": 0.45,
+        "registration_completed": 0.42,
+        "login_completed": 0.04
+      },
+      "unassigned_share": 0.386,
+      "direct_share": 0.465,
+      "distinct_source_medium": 264,
+      "dev_sessions": 242,
+      "internal_utm_sessions": 67
     }
   },
   "source_status_last_run": {
-    "backend_prod": "complete through 2026-11-11 (12 Nov partial); not advanced since 16 Nov; stale on 2026-11-20 (re-checked 17 Nov 11:10 UTC)",
-    "gold": "SUSPENDED (tqa-012; rebuilt 17 Nov, still staging-like)",
-    "ga4_transfer": "2026-11-06..16",
-    "google_ads_transfer": "2026-11-07..16",
-    "singular_sheet": "2026-10-11..16, checks pass (re-pulled 17 Nov 10:43 UTC; cost total 119,516.51 SAR, installs 3,392 / 9,951 — small restatement of recent days)",
+    "backend_prod": "complete through 2026-11-16 (17 Nov partial); refreshed 17 Nov 13:47 UTC, idle 20 h (tqa-023); stale on 2026-11-20",
+    "gold": "SUSPENDED (tqa-012; rebuilt 18 Nov, still staging: W46 65 inv / 94,000 SAR vs prod 6,396 / 22.76M)",
+    "ga4_transfer": "2026-11-06..17",
+    "google_ads_transfer": "2026-11-07..17 (use CampaignBasicStats for totals, tqa-022)",
+    "singular_sheet": "2026-10-11..17, ETL 17 Nov 22:24 UTC, 690 rows, checks pass",
     "meta_tiktok_snapchat": "not configured"
   },
   "pending_checks": [
@@ -358,7 +407,7 @@
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261117-1214",
+  "last_run": "run-20261118-1008",
   "jira": {
     "epic": "ISQ-6052",
     "project": "ISQ",
