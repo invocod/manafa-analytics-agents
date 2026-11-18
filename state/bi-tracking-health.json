@@ -409,7 +409,7 @@
     "google_ads_transfer": "2026-11-07..17 (use CampaignBasicStats for totals, tqa-022)",
     "singular_sheet": "2026-10-11..17, ETL 17 Nov 22:24 UTC, 690 rows, checks pass",
     "meta_tiktok_snapchat": "not configured",
-    "ga4_raw_export": "2026-11-01..17 (daily tables; intraday excluded); created 2026-11-18 11:45 UTC, daily refresh unconfirmed"
+    "ga4_raw_export": "2026-11-01..17 (daily tables; intraday excluded); daily refresh confirmed by Amir 2026-11-18"
   },
   "pending_checks": [
     {
@@ -438,7 +438,7 @@
         "tqa-007 (completion > start)"
       ]
     },
-    "tqa-021: ISQ-6084 filed on the old transfer's screen data; correction comment drafted, awaiting Amir. tqa-024: Jira draft d-tqa-024 awaiting approval. Confirm google_analytics refreshes daily."
+    "tqa-021: correction posted on ISQ-6084 (comment 174594, Amir approved 2026-11-18); check the ticket is narrowed or closed. tqa-024: Jira draft d-tqa-024 awaiting approval."
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
