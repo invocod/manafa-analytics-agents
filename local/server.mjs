@@ -1,7 +1,7 @@
 // Manafa BI Command Center — local host (localhost only).
 // Serves the SAME page file as the claude.ai artifact (../ui/command-center/index.html) and stands in for the three
 // things claude.ai provides: the page database (db), the connectors (mcp: BigQuery, Google Sheets, Jira) and,
-// later, the chat (sample; off here until compliance confirms).
+// the chat (Claude API with the key in local/.env; compliance confirmation reported by Amir, 2026-11-18).
 // Rules kept from CLAUDE.md: read-only BigQuery, me-central2 only, google_analytics + google_ads datasets only,
 // no secrets in code, Jira tickets are created only for a draft the user just approved in the page.
 import http from "node:http";
@@ -9,8 +9,11 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { execFile } from "node:child_process";
+import { parseEnv } from "node:util";
+import Anthropic from "@anthropic-ai/sdk";
 import { fileURLToPath } from "node:url";
 import { loadDb, saveDb, seedIfMissing } from "./scripts/store.mjs";
+import { startRun, cancelRun, recordEvent, runnerStatus, closeOrphanRuns } from "./scripts/runner.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, "..");
@@ -24,29 +27,44 @@ const MAX_BYTES = String(process.env.BQ_MAX_BYTES || 3_000_000_000);
 const JIRA = { site: process.env.JIRA_SITE || "manafaco.atlassian.net", email: process.env.JIRA_EMAIL || "", token: process.env.JIRA_API_TOKEN || "" };
 const SINGULAR_SHEET = "1t885guR7b8CdkpxlQN-s0LDC_FOnvye8mmuh0d6mItg";
 const PAGE = path.join(REPO, "ui", "command-center", "index.html");
+// Chat: the key is read from local/.env itself (never from the shell), so a key exported for another tool can't be used by mistake.
+let envFile = {}; try { envFile = parseEnv(fs.readFileSync(path.join(HERE, ".env"), "utf8")); } catch { /* no .env */ }
+const CHAT = { key: envFile.ANTHROPIC_API_KEY || "", model: envFile.ANTHROPIC_MODEL || "claude-opus-5-5", maxTokens: 16000 };
 
 class ApiError extends Error { constructor(code, message, status = 200) { super(message); this.code = code; this.status = status; } }
 
 /* ------------------------------------------------------------------ Google sign-in (gcloud, no key files) */
-let tokenCache = { token: null, exp: 0 };
-function gcloudToken() {
-  if (tokenCache.token && Date.now() < tokenCache.exp) return Promise.resolve(tokenCache.token);
+// Two gcloud sign-ins, because Google blocks the Sheets scope on the application-default one:
+//   "adc"  = gcloud auth application-default login        -> BigQuery
+//   "user" = gcloud auth login --enable-gdrive-access     -> the Singular sheet
+const TOKEN_KINDS = {
+  adc: { args: ["auth", "application-default", "print-access-token"], hint: "Run: gcloud auth application-default login" },
+  user: { args: ["auth", "print-access-token"], hint: "Run: gcloud auth login --enable-gdrive-access" },
+};
+const tokenCache = {};
+function gcloudToken(kind = "adc") {
+  const c = tokenCache[kind];
+  if (c && Date.now() < c.exp) return Promise.resolve(c.token);
+  const k = TOKEN_KINDS[kind];
   return new Promise((resolve, reject) => {
-    execFile("gcloud", ["auth", "application-default", "print-access-token"], { timeout: 20000, shell: process.platform === "win32" }, (err, out, errOut) => {
+    execFile("gcloud", k.args, { timeout: 20000, shell: process.platform === "win32" }, (err, out, errOut) => {
       const t = String(out || "").trim();
-      if (err || !t) return reject(new ApiError("needs_reauth", "Google sign-in missing or expired. Run the gcloud sign-in command from local/README.md (step 2). " + String(errOut || err && err.message || "").split("\n")[0]));
-      tokenCache = { token: t, exp: Date.now() + 45 * 60 * 1000 };
+      if (err && err.code === "ENOENT") return reject(new ApiError("needs_reauth", "The gcloud tool is not installed on this computer. Install it (brew install --cask gcloud-cli), then sign in (local/README.md, step 2)."));
+      if (err || !t) return reject(new ApiError("needs_reauth", "Google sign-in missing or expired. " + k.hint + " (local/README.md, step 2). " + String(errOut || err && err.message || "").split("\n")[0]));
+      tokenCache[kind] = { token: t, exp: Date.now() + 45 * 60 * 1000 };
       resolve(t);
     });
   });
 }
-async function gfetch(url, init = {}) {
-  const token = await gcloudToken();
-  const r = await fetch(url, { ...init, headers: { authorization: "Bearer " + token, "x-goog-user-project": PROJECT, "content-type": "application/json", ...(init.headers || {}) } });
+async function gfetch(url, init = {}, kind = "adc") {
+  const token = await gcloudToken(kind);
+  // No x-goog-user-project header: BigQuery bills the project in the URL, and the header needs the extra
+  // serviceusage.services.use permission, which a BigQuery read-only account does not have.
+  const r = await fetch(url, { ...init, headers: { authorization: "Bearer " + token, "content-type": "application/json", ...(init.headers || {}) } });
   const text = await r.text(); let body; try { body = JSON.parse(text); } catch { body = { raw: text }; }
   if (!r.ok) {
     const msg = (body.error && body.error.message) || text.slice(0, 300);
-    if (r.status === 401) { tokenCache = { token: null, exp: 0 }; throw new ApiError("needs_reauth", "Google rejected the sign-in: " + msg); }
+    if (r.status === 401) { delete tokenCache[kind]; throw new ApiError("needs_reauth", "Google rejected the sign-in: " + msg + " " + TOKEN_KINDS[kind].hint); }
     if (r.status === 403) throw new ApiError("blocked_by_policy", "Google refused access: " + msg);
     throw new ApiError("upstream_error", msg);
   }
@@ -100,7 +118,7 @@ async function runBigQuery(input) {
 async function sheetValues(input) {
   if (input.spreadsheetId !== SINGULAR_SHEET) throw new ApiError("blocked_by_policy", "Only the Singular sheet can be read.");
   const range = String(input.range || ""); if (!/^[A-Za-z0-9_ ]+![A-Z]+\d*:[A-Z]+\d*$/.test(range)) throw new ApiError("bad_request", "Bad range.");
-  const r = await gfetch(`https://sheets.googleapis.com/v4/spreadsheets/${SINGULAR_SHEET}/values/${encodeURIComponent(range)}`);
+  const r = await gfetch(`https://sheets.googleapis.com/v4/spreadsheets/${SINGULAR_SHEET}/values/${encodeURIComponent(range)}`, {}, "user");
   return { payload: { values: r.values || [] }, cache: { storedAt: Date.now() } };
 }
 
@@ -176,6 +194,35 @@ async function jiraCreate(input) {
   return { payload: { data: { key: r.key, id: r.id } } };
 }
 
+/* ------------------------------------------------------------------ chat (one Claude API call per round; the page runs the tools) */
+// The page's own guards decide what data a tool may return (read-only, allow-listed tables, aggregates only, no identifiers).
+// This endpoint only relays the conversation: fixed model, capped output, no content written to disk or to the log.
+const chatOn = () => !!CHAT.key;
+const anthropic = chatOn() ? new Anthropic({ apiKey: CHAT.key, authToken: null, baseURL: "https://api.anthropic.com" }) : null;
+async function chatRound(input) {
+  if (!anthropic) throw new ApiError("sampling_disabled", "Chat isn't set up locally. Add ANTHROPIC_API_KEY to local/.env and restart.");
+  const messages = Array.isArray(input.messages) ? input.messages : null;
+  if (!messages || !messages.length || messages.length > 80) throw new ApiError("bad_request", "Bad chat request.");
+  const tools = (Array.isArray(input.tools) ? input.tools : []).slice(0, 12).map(t => ({ name: String(t.name), description: String(t.description || ""), input_schema: t.input_schema || { type: "object", properties: {} } }));
+  try {
+    const r = await anthropic.beta.messages.create({
+      model: CHAT.model, max_tokens: CHAT.maxTokens,
+      thinking: { type: "adaptive" },
+      cache_control: { type: "ephemeral" },
+      betas: ["server-side-fallback-2026-07-01"], fallbacks: "default", // a safety-classifier decline is retried on a fallback model
+      messages, ...(tools.length ? { tools } : {}),
+    });
+    return { content: r.content, stop_reason: r.stop_reason, model: r.model, usage: { input_tokens: r.usage.input_tokens, output_tokens: r.usage.output_tokens, cache_read_input_tokens: r.usage.cache_read_input_tokens } };
+  } catch (e) {
+    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) throw new ApiError("sampling_disabled", "Claude API refused the key in local/.env (" + e.status + ").");
+    if (e instanceof Anthropic.RateLimitError) throw new ApiError("rate_limited", "Claude API rate limit or usage limit reached.");
+    if (e instanceof Anthropic.BadRequestError && /credit balance/i.test(e.message)) throw new ApiError("rate_limited", "The Claude API account for the key in local/.env has no credit. Add credit under Plans & Billing in the Claude Console.");
+    if (e instanceof Anthropic.BadRequestError) throw new ApiError(/too long|too large|context/i.test(e.message) ? "prompt_too_large" : "upstream_error", "Claude API rejected the request: " + e.message);
+    if (e instanceof Anthropic.APIError) throw new ApiError("upstream_error", "Claude API error " + (e.status || "") + ": " + e.message);
+    throw new ApiError("upstream_error", "Couldn't reach the Claude API: " + String(e.message || e));
+  }
+}
+
 /* ------------------------------------------------------------------ connector router (same names the page uses) */
 async function callTool(server, tool, input) {
   if (server === "Google Cloud BigQuery" && tool === "execute_sql_readonly") return runBigQuery(input || {});
@@ -220,9 +267,10 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && p.startsWith("/vendor/")) { const f = VENDOR[p.slice(8)]; if (!f) return send(res, 404, { error: "not found" }); const fp = path.join(HERE, "node_modules", f); if (!fs.existsSync(fp)) return send(res, 500, "console.error('Run npm install in local/ first');", "text/javascript"); return send(res, 200, fs.readFileSync(fp), "text/javascript"); }
 
     if (req.method === "GET" && p === "/api/health") {
-      let google = "ok", gmsg = ""; try { await gcloudToken(); } catch (e) { google = "needs_sign_in"; gmsg = e.message; }
+      let google = "ok", gmsg = ""; try { await gcloudToken("adc"); } catch (e) { google = "needs_sign_in"; gmsg = e.message; }
+      let sheet = "ok"; try { await gcloudToken("user"); } catch (e) { sheet = "needs_sign_in"; gmsg = gmsg || e.message; }
       const db = loadDb();
-      return send(res, 200, { ok: true, google, google_message: gmsg, jira: jiraOn() ? "configured" : "off", chat: "off (awaiting compliance)", project: PROJECT, location: LOCATION, page: path.relative(REPO, PAGE), collections: Object.fromEntries(Object.entries(db).map(([k, v]) => [k, Object.keys(v).length])) });
+      return send(res, 200, { ok: true, google, sheet, google_message: gmsg, jira: jiraOn() ? "configured" : "off", chat: chatOn() ? "on" : "off", chat_model: chatOn() ? CHAT.model : null, project: PROJECT, location: LOCATION, page: path.relative(REPO, PAGE), collections: Object.fromEntries(Object.entries(db).map(([k, v]) => [k, Object.keys(v).length])) });
     }
 
     const m = p.match(/^\/api\/db\/([A-Za-z0-9_]+)(?:\/([^/]+))?$/);
@@ -245,11 +293,31 @@ const server = http.createServer(async (req, res) => {
       try { return send(res, 200, { result: await callTool(b.server, b.tool, b.input) }); }
       catch (e) { const code = e.code && typeof e.code === "string" ? e.code : "upstream_error"; console.error(`[${new Date().toISOString()}] ${b.server}/${b.tool}: ${code}: ${e.message}`); return send(res, 200, { error: { code, message: String(e.message || e) } }); }
     }
+    if (req.method === "POST" && p === "/api/chat") {
+      const b = await readBody(req);
+      try { return send(res, 200, { result: await chatRound(b) }); }
+      catch (e) { const code = e.code && typeof e.code === "string" ? e.code : "upstream_error"; console.error(`[${new Date().toISOString()}] chat: ${code}: ${e.message}`); return send(res, 200, { error: { code, message: String(e.message || e) } }); }
+    }
+    // Run agents from the page: one background Claude Code session at a time (scripts/runner.mjs).
+    if (p === "/api/run" || p === "/api/run/cancel" || p === "/api/run/event") {
+      try {
+        if (req.method === "GET" && p === "/api/run") return send(res, 200, { result: await runnerStatus() });
+        if (req.method !== "POST") return send(res, 405, { error: "method not allowed" });
+        const b = await readBody(req);
+        // Starting and stopping come only from the page itself (a browser always sends Origin on POST); events come from the agent's script.
+        if (p !== "/api/run/event" && !req.headers.origin) return send(res, 403, { error: { code: "blocked_by_policy", message: "Runs are started from the Command Center page." } });
+        if (p === "/api/run") return send(res, 200, { result: await startRun(b.agents) });
+        if (p === "/api/run/cancel") return send(res, 200, { result: cancelRun() });
+        return send(res, 200, recordEvent(b));
+      } catch (e) { const code = typeof e.code === "string" ? e.code : "server_error"; if (code === "server_error") console.error(`[${new Date().toISOString()}] run: ${e.message}`); return send(res, p === "/api/run/event" ? 400 : 200, { error: { code, message: String(e.message || e) } }); }
+    }
     return send(res, 404, { error: "not found" });
   } catch (e) { send(res, e.status && e.status >= 400 ? e.status : 500, { error: { code: e.code || "server_error", message: String(e.message || e) } }); }
 });
 
 seedIfMissing();
+closeOrphanRuns();
 server.listen(PORT, HOST, () => {
-  console.log(`\nManafa BI Command Center (local)  →  http://localhost:${PORT}\n  page file : ${path.relative(REPO, PAGE)} (same file as the claude.ai artifact)\n  BigQuery  : ${PROJECT} / ${LOCATION}, read-only, google_analytics + google_ads only\n  Jira      : ${jiraOn() ? "configured (" + JIRA.email + ")" : "off (add JIRA_EMAIL + JIRA_API_TOKEN to local/.env)"}\n  Chat      : off until compliance confirms\n  Status    : http://localhost:${PORT}/api/health\n`);
+  console.log(`\nManafa BI Command Center (local)  →  http://localhost:${PORT}\n  page file : ${path.relative(REPO, PAGE)} (same file as the claude.ai artifact)\n  BigQuery  : ${PROJECT} / ${LOCATION}, read-only, google_analytics + google_ads only\n  Jira      : ${jiraOn() ? "configured (" + JIRA.email + ")" : "off (add JIRA_EMAIL + JIRA_API_TOKEN to local/.env)"}\n  Chat      : ${chatOn() ? "on (" + CHAT.model + ")" : "off (add ANTHROPIC_API_KEY to local/.env)"}\n  Status    : http://localhost:${PORT}/api/health\n`);
+  runnerStatus().then(r => console.log(`  Run agents: ${r.available ? "on (" + r.cli + "), tools in run-permissions.json" : "off (claude command not found)"}\n`));
 });

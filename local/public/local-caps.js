@@ -1,5 +1,6 @@
 /* Local adapter: gives the Command Center page the same three objects claude.ai gives it (window.claude.use),
-   backed by the local server. The page file itself is not changed. Chat ("sample") is off locally. */
+   backed by the local server. The page file itself is not changed. Chat ("sample") goes through the local
+   server to the Claude API when ANTHROPIC_API_KEY is set in local/.env; the page's own tools and guards run here. */
 (function () {
   const J = async (url, init) => { const r = await fetch(url, init); let b = null; try { b = await r.json(); } catch (e) {} return { status: r.status, body: b }; };
   const POLL = 4000;
@@ -47,26 +48,81 @@
   }
   const mcp = { callTool, watchTool };
 
-  /* ---- small status pill: tells you this is the local copy and what still needs setting up ---- */
+  /* ---- sample: same call shape the page uses on claude.ai: sample(turns, {signal, tools, onText}) -> {text, truncated} ---- */
+  const MAX_ROUNDS = 12;
+  async function sample(turns, opts) {
+    opts = opts || {}; const tools = opts.tools || []; const signal = opts.signal;
+    const defs = tools.map(t => ({ name: t.name, description: t.description, input_schema: t.inputSchema || { type: "object", properties: {} } }));
+    const messages = turns.map(t => ({ role: t.role, content: t.content }));
+    let lastText = "", allText = "", truncated = false;
+    const cancelled = () => Object.assign(new Error("cancelled"), { code: "cancelled", text: lastText || allText });
+    for (let round = 0; round < MAX_ROUNDS; round++) {
+      if (signal && signal.aborted) throw cancelled();
+      let r;
+      try { r = await J("/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages, tools: defs }), signal }); }
+      catch (e) { if (signal && signal.aborted) throw cancelled(); throw Object.assign(new Error("The local server didn't answer."), { code: "upstream_error", text: lastText }); }
+      if (!r.body) throw Object.assign(new Error("The local server didn't answer."), { code: "upstream_error", text: lastText });
+      if (r.body.error) throw Object.assign(new Error(r.body.error.message), { code: r.body.error.code, text: lastText });
+      const res = r.body.result; const content = res.content || [];
+      if (res.stop_reason === "refusal") throw Object.assign(new Error("refused"), { code: "refused" });
+      const text = content.filter(b => b.type === "text").map(b => b.text).join("\n\n").trim();
+      if (text) { lastText = text; allText += (allText ? "\n\n" : "") + text; if (opts.onText) opts.onText({ text }); }
+      const calls = content.filter(b => b.type === "tool_use");
+      if (res.stop_reason === "max_tokens") { truncated = true; break; }
+      if (res.stop_reason !== "tool_use" || !calls.length) {
+        if (!text && !calls.length && res.stop_reason === "end_turn" && !allText) throw Object.assign(new Error("empty"), { code: "empty_completion" });
+        break;
+      }
+      messages.push({ role: "assistant", content }); // whole content goes back unchanged (thinking blocks included)
+      const results = await Promise.all(calls.map(async c => {
+        const tool = tools.find(t => t.name === c.name);
+        if (!tool) return { type: "tool_result", tool_use_id: c.id, content: "Unknown tool: " + c.name, is_error: true };
+        try { const out = await tool.execute(c.input || {}); return { type: "tool_result", tool_use_id: c.id, content: JSON.stringify(out == null ? null : out) }; }
+        catch (e) { return { type: "tool_result", tool_use_id: c.id, content: String((e && e.message) || e), is_error: true }; }
+      }));
+      if (signal && signal.aborted) throw cancelled();
+      messages.push({ role: "user", content: results });
+      if (round === MAX_ROUNDS - 1) truncated = true;
+    }
+    return { text: lastText || allText, truncated, modelTierApplied: "complex" };
+  }
+  let chatReady = null;
+  const chatAvailable = () => chatReady || (chatReady = J("/api/health").then(r => !!(r.body && r.body.chat === "on")).catch(() => false));
+
+  /* ---- status: tells you this is the local copy and what is connected. It sits in the page's sidebar slot
+     (#env-slot) when the page has one, otherwise as a small floating pill. ---- */
   function pill() {
     const el = document.createElement("div");
-    el.style.cssText = "position:fixed;left:12px;bottom:12px;z-index:9999;max-width:560px;font:12px/1.45 system-ui,sans-serif;background:#0d1326;color:#c9d1ea;border:1px solid #2a3558;border-radius:10px;padding:8px 12px;box-shadow:0 6px 24px rgba(0,0,0,.4)";
-    document.body.appendChild(el);
-    const dot = ok => '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 5px 0 10px;background:' + (ok === true ? "#22c38e" : ok === null ? "#8b93b0" : "#f2b136") + '"></span>';
+    const floating = "position:fixed;left:12px;bottom:12px;z-index:9999;max-width:560px;font:12px/1.45 system-ui,sans-serif;background:var(--surface,#11141d);color:var(--text-2,#b9bed0);border:1px solid var(--line,#222738);border-radius:10px;padding:8px 12px;box-shadow:0 6px 24px rgba(0,0,0,.4)";
+    const place = () => { const slot = document.getElementById("env-slot"); if (slot) { if (el.parentNode !== slot) { el.style.cssText = ""; slot.appendChild(el); } } else if (!el.parentNode) { el.style.cssText = floating; document.body.appendChild(el); } };
+    place(); new MutationObserver(place).observe(document.body, { childList: true, subtree: true });
+    const dot = ok => '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 5px 0 0;background:' + (ok === true ? "var(--ok,#2ebd8c)" : ok === null ? "var(--idle,#5d647c)" : "var(--warn,#f0b24a)") + '"></span>';
+    const item = (ok, label) => '<span style="display:inline-flex;align-items:center;white-space:nowrap">' + dot(ok) + label + "</span>";
     const tick = async () => {
       const r = await J("/api/health").catch(() => null); const h = r && r.body;
-      if (!h) { el.innerHTML = "<b>LOCAL</b> · server not answering. Run <code>npm start</code> in <code>local/</code>."; }
+      if (!h) { el.innerHTML = "<b>Local</b> · server not answering. Run <code>npm start</code> in <code>local/</code>."; }
       else {
-        el.innerHTML = "<b>LOCAL</b>" + dot(h.google === "ok") + "Google" + dot(h.jira === "configured" ? true : null) + "Jira" + dot(null) + "Chat off"
-          + (h.google !== "ok" ? '<div style="margin-top:6px;color:#f2b136">Google sign-in needed. In a terminal run:<br><code style="user-select:all">gcloud auth application-default login --scopes=https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/spreadsheets.readonly</code><br>then reload. (Messages on the page that mention claude.ai connectors mean this, locally.)</div>' : "")
-          + (h.jira !== "configured" ? '<div style="margin-top:4px;color:#8b93b0">Jira is off: add JIRA_EMAIL and JIRA_API_TOKEN to local/.env and restart.</div>' : "");
+        el.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center"><b style="font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:10.5px;color:var(--muted,#8289a1)">Local</b>'
+          + item(h.google === "ok", "Google") + item(h.sheet === "ok", "Sheet") + item(h.jira === "configured" ? true : null, "Jira") + item(h.chat === "on" ? true : null, h.chat === "on" ? "Chat" : "Chat off") + "</div>"
+          + (h.google !== "ok" ? '<div style="margin-top:6px;color:var(--warn,#f0b24a)">Google sign-in needed. In a terminal run <code style="user-select:all">gcloud auth application-default login</code>, then reload.</div>' : "")
+          + (h.google === "ok" && h.sheet !== "ok" ? '<div style="margin-top:6px;color:var(--warn,#f0b24a)">Singular sheet sign-in needed: <code style="user-select:all">gcloud auth login --enable-gdrive-access</code></div>' : "")
+          + (h.jira !== "configured" ? '<div style="margin-top:4px;color:var(--muted,#8289a1)">Jira is off: add JIRA_EMAIL and JIRA_API_TOKEN to local/.env and restart.</div>' : "");
       }
       setTimeout(tick, h && h.google === "ok" ? 300000 : 15000);
     };
     tick();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pill); else pill();
+  /* Local preview aid: ?theme=dark or ?theme=light forces a theme for this load. */
+  try { const t = new URLSearchParams(location.search).get("theme"); if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+
+  /* ---- runner: start / stop loop agents on this computer (local only; claude.ai has no such capability) ---- */
+  const runCall = async (url, body) => { const r = await J(url, body === undefined ? undefined : { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+    if (!r.body) throw Object.assign(new Error("The local server didn't answer. Is `npm start` still running?"), { code: "upstream_error" });
+    if (r.body.error) throw Object.assign(new Error(r.body.error.message || "failed"), { code: r.body.error.code });
+    return r.body.result; };
+  const runner = { status: () => runCall("/api/run"), start: agents => runCall("/api/run", { agents }), cancel: () => runCall("/api/run/cancel", {}) };
 
   window.__MBI_LOCAL__ = true;
-  window.claude = { use: async name => name === "db" ? db : name === "mcp" ? mcp : null };
+  window.claude = { use: async name => name === "db" ? db : name === "mcp" ? mcp : name === "sample" ? ((await chatAvailable()) ? sample : null) : name === "runner" ? runner : null };
 })();

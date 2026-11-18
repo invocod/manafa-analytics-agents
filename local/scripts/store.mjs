@@ -31,17 +31,18 @@ function seedDrafts() {
   return out;
 }
 const LOOPS = ["tracking-health", "investor-funnel", "channel-attribution", "paid-media-review", "weekly-exec-digest", "daily-kpi-watch", "campaign-health"];
+const OLD_LOOPS = { "tracking-qa": "tracking-health", "ga4-event-health": "tracking-health", "funnel-health": "investor-funnel", "attribution-readout": "channel-attribution", "analytics-anomaly": "daily-kpi-watch", "weekly-review": "weekly-exec-digest" };
+/** The Command Center "reports" document for one markdown report in the repo. */
+export function reportDoc(fp) {
+  const markdown = fs.readFileSync(fp, "utf8"); const rel = path.relative(REPO, fp).split(path.sep).join("/");
+  const name = path.basename(fp, ".md"); const wk = rel.match(/reports\/(\d{4})\/W(\d{2})\//); const date = (name.match(/\d{4}-\d{2}-\d{2}/) || [])[0];
+  const loop = LOOPS.find(l => name.startsWith(l)) || OLD_LOOPS[Object.keys(OLD_LOOPS).find(k => name.startsWith(k))]; const title = (markdown.match(/^#\s+(.+)$/m) || [null, name])[1].trim();
+  const verdict = (markdown.match(/\*\*Verdict:?\*\*:?\s*([^\n.]{3,60})/i) || markdown.match(/^Verdict:\s*([^\n.]{3,60})/im) || [])[1];
+  return { id: name.replace(/[^A-Za-z0-9_.-]/g, "-"), data: { title, week: wk ? `${wk[1]}-W${wk[2]}` : "", loop: loop ? "bi-" + loop : "", created: (date || new Date(fs.statSync(fp).mtimeMs).toISOString().slice(0, 10)) + "T00:00:00Z", verdict: verdict ? verdict.trim() : null, markdown, path: rel } };
+}
 function seedReports() {
   const out = {}; const root = path.join(REPO, "reports");
-  const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const fp = path.join(dir, e.name); if (e.isDirectory()) walk(fp); else if (e.name.endsWith(".md")) add(fp); } };
-  const add = fp => {
-    const markdown = fs.readFileSync(fp, "utf8"); const rel = path.relative(REPO, fp).split(path.sep).join("/");
-    const name = path.basename(fp, ".md"); const wk = rel.match(/reports\/(\d{4})\/W(\d{2})\//); const date = (name.match(/\d{4}-\d{2}-\d{2}/) || [])[0];
-    const OLD = { "tracking-qa": "tracking-health", "ga4-event-health": "tracking-health", "funnel-health": "investor-funnel", "attribution-readout": "channel-attribution", "analytics-anomaly": "daily-kpi-watch", "weekly-review": "weekly-exec-digest" };
-    const loop = LOOPS.find(l => name.startsWith(l)) || OLD[Object.keys(OLD).find(k => name.startsWith(k))]; const title = (markdown.match(/^#\s+(.+)$/m) || [null, name])[1].trim();
-    const verdict = (markdown.match(/\*\*Verdict:?\*\*:?\s*([^\n.]{3,60})/i) || markdown.match(/^Verdict:\s*([^\n.]{3,60})/im) || [])[1];
-    out[name.replace(/[^A-Za-z0-9_.-]/g, "-")] = { title, week: wk ? `${wk[1]}-W${wk[2]}` : "", loop: loop ? "bi-" + loop : "", created: (date || new Date(fs.statSync(fp).mtimeMs).toISOString().slice(0, 10)) + "T00:00:00Z", verdict: verdict ? verdict.trim() : null, markdown, path: rel };
-  };
+  const walk = dir => { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const fp = path.join(dir, e.name); if (e.isDirectory()) walk(fp); else if (e.name.endsWith(".md")) { const d = reportDoc(fp); out[d.id] = d.data; } } };
   try { walk(root); } catch { /* no reports folder */ }
   return out;
 }
