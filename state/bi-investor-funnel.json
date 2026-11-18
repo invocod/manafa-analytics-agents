@@ -151,7 +151,7 @@
     },
     "kyc_note": "kyc_completed is a cohort step only; event counts include ~63% existing profiles"
   },
-  "last_run": "run-20261118-1008",
+  "last_run": "run-20261118-2007",
   "early_read_7d": {
     "cohort": "2026-10-26",
     "web": {
@@ -235,5 +235,10 @@
       }
     },
     "data_end": "2026-11-16"
+  },
+  "last_check": {
+    "run": "run-20261118-2007",
+    "data_end": "2026-11-16",
+    "result": "no new data; W44 14d and W45 7d counts identical to run-20261118-1008; cursor unchanged"
   }
 }
