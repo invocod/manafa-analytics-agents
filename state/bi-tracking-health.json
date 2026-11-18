@@ -195,7 +195,8 @@
       "owner_suggestion": "paid media / analytics",
       "confirming_check": "Google Ads Conversions > Summary: Primary flags + intended bidding action",
       "update_2026_11_17": "bi-paid-media-review: ConversionStats action breakdown (323) is ~2x CampaignStats conversions (161) for Android 9-13 Nov, so Primary status of kyc_completed cannot be inferred from transfer data; needs Conversions > Summary",
-      "update_2026_11_17_run": "2026-11-17: unchanged 9-14 Nov (Android kyc_completed 120 claimed; no registration action). chk-06 export still needed."
+      "update_2026_11_17_run": "2026-11-17: unchanged 9-14 Nov (Android kyc_completed 120 claimed; no registration action). chk-06 export still needed.",
+      "update_2026_11_18_paid_media": "run-20261118-2037 (bi-paid-media-review): the 2x gap was CampaignStats undercounting (tqa-022). CampaignBasicStats Android conversions 9-13 Nov = 323 = First open 225 + kyc_completed 98 (same equality for iOS 153 and Above 5Mn 20), so kyc_completed is inside Conversions (Primary, inferred). Paid-media call FIX, staged pm-fix-001; UI check still confirms."
     },
     {
       "id": "tqa-017",

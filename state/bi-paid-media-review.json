@@ -41,6 +41,15 @@
             "claimed_conv_9_13": 161
           }
         }
+      },
+      "2026-W46_basic_stats": {
+        "note": "CampaignBasicStats (= AccountBasicStats); the CampaignStats snapshot above undercounts app-campaign spend (tqa-022). Compare future weeks against this one.",
+        "spend_sar": 9154.68,
+        "by_campaign": {
+          "ios_installs": {"spend": 2722.30, "spend_mon_fri": 1968.51, "clicks": 2429, "claimed_conv_9_13": 153, "claimed_cpa_mon_fri": 12.87, "ga4_lt_9_13": {"reg": 5, "dep": 1, "inv": 0}},
+          "above_5mn_b2b": {"spend": 3693.17, "spend_mon_fri": 2480.60, "clicks": 808, "impressions": 7002, "claimed_conv_9_13": 20, "claimed_cpa_mon_fri": 124.0, "ga4_lt_9_13": {"reg": 14, "dep": 3, "inv": 5}},
+          "android_installs": {"spend": 2739.21, "spend_mon_fri": 1958.87, "clicks": 1521, "claimed_conv_9_13": 323, "by_action_9_13": {"first_open": 225, "kyc_completed_ga4_import": 98}, "claimed_cpa_mon_fri": 6.06, "ga4_lt_9_13": {"reg": 52, "dep": 11, "inv": 24}}
+        }
       }
     },
     "singular_tiktok_ios": {
@@ -70,8 +79,9 @@
           "spend": 5392,
           "clicks": 2916,
           "net_inst": 128,
-          "sing_inst": 127,
-          "cpi_sing": 42.5
+          "sing_inst": 129,
+          "cpi_sing": 41.8,
+          "restated": "run-20261118-2037: sing_inst 127 -> 129, cpi 42.5 -> 41.8"
         }
       },
       "full_week_spend_installs": {
@@ -139,8 +149,10 @@
       "week": "2026-W46",
       "account": "google_ads",
       "campaign": "Android installs",
-      "call": "INVESTIGATE",
-      "check": "Conversions > Summary Primary flags (tqa-016)"
+      "call": "FIX",
+      "changed": "run-20261118-2037: INVESTIGATE -> FIX. Action sum 323 = CampaignBasicStats conversions 323 (9-13 Nov); the 2x gap was the CampaignStats undercount (tqa-022). GA4-imported kyc_completed (98) is inside Conversions, i.e. counted for bidding (inferred).",
+      "issue": "tqa-016",
+      "check": "Conversions > Summary Primary flags (tqa-016) is step 1 of the staged plan"
     },
     {
       "week": "2026-W46",
@@ -159,13 +171,37 @@
       "owner": "X account owner + Singular admin"
     }
   ],
-  "staged_fixes": [],
+  "staged_fixes": [
+    {
+      "id": "pm-fix-001",
+      "staged": "2026-11-18",
+      "run": "run-20261118-2037",
+      "issue": "tqa-016",
+      "account": "google_ads",
+      "campaign": "Minto | App installs - Android",
+      "owner": "paid-media owner (approval)",
+      "plan": "1) confirm kyc_completed (Android, GA4 import) is Primary in Conversions > Summary; 2) choose the bidding event (First open only, or a de-duplicated server-sent registration); 3) set the duplicated import to Secondary and note the change date; 4) after 14 days compare claimed conv per action and GA4 server-sent registrations per 1,000 SAR vs W46 (52 reg on 1,959 SAR Mon-Fri)",
+      "status": "staged"
+    },
+    {
+      "id": "pm-fix-002",
+      "staged": "2026-11-18",
+      "run": "run-20261118-2037",
+      "issue": "tqa-022",
+      "owner": "Amir (query change approval)",
+      "plan": "switch sql/readonly/gads_campaign_daily.sql totals to CampaignBasicStats; re-issue W46 spend (9,154.68 SAR, not 7,562) in the digest",
+      "status": "staged"
+    }
+  ],
   "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)",
-  "last_run": "run-20261117-1123",
+  "last_run": "run-20261118-2037",
   "last_checked": {
-    "at": "2026-11-17T11:10Z",
-    "ads_max_date": "2026-11-16",
-    "singular_max_etl_utc": "2026-11-17 10:43:00+00:00",
-    "result": "no new W46 data; calls stand"
+    "at": "2026-11-18T20:41Z",
+    "ads_max_date": "2026-11-17",
+    "ga4_max_date": "2026-11-17",
+    "backend_max_date": "2026-11-17",
+    "singular_max_date": "2026-11-17",
+    "singular_max_etl_utc": "2026-11-18 17:05:05+00:00",
+    "result": "no new closed week; W46 re-read on CampaignBasicStats (9,154.68 SAR) + GA4 per campaign; Android INVESTIGATE -> FIX"
   }
 }
