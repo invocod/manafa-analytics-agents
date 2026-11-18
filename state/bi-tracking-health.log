@@ -39,3 +39,4 @@
 2026-11-18T12:49Z  GA4 source switched to google_analytics raw export; re-baselined GA4 figures; tqa-001/002/004/005/007/015/021 updated; tqa-024 filed (draft d-tqa-024 staged)
 2026-11-18T12:59Z  ISQ-6084 correction comment posted (Amir approved); google_analytics daily refresh confirmed by Amir
 2026-11-18T13:27Z  Command Center switched to GA4-only (google_analytics + google_ads + Singular sheet); conversions = GA4 server-sent events per event_uuid; tqa-007/tqa-013 updated
+2026-11-18T13:42Z  loop source split agreed (CLAUDE.md rule 5); GA4-readiness check added (rule 6), W46 not ready (lowest identity_verified 27.3%)

@@ -28,6 +28,7 @@ One page management actually reads. Runs after bi-tracking-health, bi-investor-f
 1. **Backend KPIs** (`weekly_kpis.sql`): last closed week vs previous week and vs the trailing 4-week median: registrations, first investments, deposits (count + amount per currency), investments (count + amount per currency), auto-invest. If the backend replica doesn't cover the full week, report the covered days and compare like-for-like days only.
 2. **Funnel headline** from bi-investor-funnel (latest closed cohort, 14d, by platform).
 3. **GA4 section** (own numbers): sessions, engaged sessions, channel mix.
+3b. **Coverage line** (CLAUDE.md rule 5): one sentence saying the Command Center shows GA4 server-sent conversions and how much of the backend each covers this week (from bi-tracking-health), so readers know why the page shows lower numbers. Add "GA4 READY" here if bi-tracking-health reported it.
 4. **Google Ads section** (own numbers): spend, clicks, claimed conversions.
 5. **Fold in loop verdicts**: tracking-health verdict + top issues, attribution headline, paid-media calls.
 6. **Biggest mover per stage** (best and worst) outside normal weekly variance or part of a 3-week run; tie each to an owner or loop.
@@ -43,6 +44,7 @@ Measurement: ✅ clean / ⚠️ <headline> / 🚨 <escalation>
 Backend (truth) | Metric | This wk | Last wk | 4-wk median | Δ |
 Funnel (14d, closed cohort <wk>): KYC _% · deposit _% · invest _% (web / iOS / Android)
 GA4 (analytics) | sessions … | channel mix …
+Command Center (GA4) covers: reg _% · KYC _% · dep _% · inv _% of backend
 Google Ads | spend … | claimed conv …
 Movers: ⬆ … / ⬇ … (owner) | Paid calls: … | Experiments: … | Proposed learnings: …
 Not covered / stale: …

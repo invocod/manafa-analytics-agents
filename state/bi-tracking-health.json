@@ -587,5 +587,23 @@
       "tqa-009": "monitoring",
       "tqa-010": "monitoring"
     }
+  },
+  "ga4_readiness": {
+    "rule": "CLAUDE.md rule 6: all of registration, kyc, identity_verified, deposit, investment, auto_invest_enabled within 0.98-1.02 for 2 consecutive closed weeks (both sources complete) -> tell Amir; never switch automatically",
+    "query": "sql/readonly/ga4_backend_coverage.sql",
+    "status": "not_ready",
+    "consecutive_ready_weeks": 0,
+    "weeks": {
+      "2026-W46": {
+        "registration_completed": 0.795,
+        "kyc_completed": 0.475,
+        "identity_verified": 0.273,
+        "deposit_success": 0.906,
+        "investment_completed": 0.845,
+        "auto_invest_enabled": 0.401
+      }
+    },
+    "blocker": "tqa-013 / ISQ-6056 (events finished by callbacks or jobs reach GA4 without a client ID)",
+    "notified": null
   }
 }

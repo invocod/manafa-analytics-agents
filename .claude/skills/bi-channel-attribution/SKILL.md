@@ -1,6 +1,6 @@
 ---
 name: bi-channel-attribution
-description: "Weekly channel-attribution loop: production backend conversions as the ledger, GA4 first-touch vs last-touch channel mix and Google Ads claims each in their own section, honest allocation only where backend attribution exists. Never sums or blends sources."
+description: "Weekly channel-attribution loop: backend conversions as the ledger line, GA4 server-sent conversions by channel (first touch vs last touch) as the channel readout, Google Ads claims in their own section. Never sums or blends sources."
 ---
 
 # Channel-Attribution Loop
@@ -27,7 +27,8 @@ Answer "which channels drive registrations, deposits, investments?" without lett
 
 1. **Ledger** (`weekly_kpis.sql`): last closed week's registrations, deposits, investments (count; amounts per currency).
 2. **Backend attribution** (`backend_events_daily.sql`, `acquisition_*` and `last_*` fields): report coverage first (share of each event carrying a source). While coverage is low (tqa-014), report "attributed share = X%" and **do not** extrapolate the rest.
-3. **GA4 section** (own numbers only): sessions and engaged sessions by channel group; first-user (`ga4_user_acquisition_daily`) vs session (`ga4_traffic_daily`) side by side. GA4 conversion counts for doubled events (tqa-007) are not used.
+3. **GA4 section** (own numbers only): sessions and engaged sessions by channel group; first-user (`ga4_user_acquisition_daily`) vs session (`ga4_traffic_daily`) side by side.
+3b. **GA4 conversions by channel** (`ga4_conversions_by_channel.sql`, CLAUDE.md rule 5): registrations, deposits, investments per GA4 session channel (last touch) and first-user source/medium (first touch), one per `event_uuid`. This is the main channel readout because the backend carries attribution on ~5% of events (tqa-014). Label it "GA4 (server-sent, a floor: covers X% of backend <event> this week)" using the coverage from bi-tracking-health. Never scale it up to the backend total and never add it to backend or Google Ads numbers. Raw GA4 counts of doubled events (tqa-007) are not used.
 4. **Google Ads section** (own numbers only): spend, clicks, claimed conversions per action; "platform claims N" next to the ledger, never instead of it.
 5. **First-touch vs last-touch gap** per channel: the gap is the insight (demand creation vs closing).
 6. **Blind spots**: direct + unassigned share and trend; flag, don't guess.
@@ -38,7 +39,8 @@ Answer "which channels drive registrations, deposits, investments?" without lett
 🧭 Attribution — week <ww>
 Ledger (backend): reg X | dep Y | inv Z   (attributed coverage: reg a% / dep b% / inv c%)
 Backend-attributed by source: …   (only the attributed share)
-GA4: first-touch vs last-touch by channel …
+GA4 conversions by channel (floor, coverage reg a% / dep b% / inv c%): first-touch vs last-touch …
+GA4 sessions: channel mix …
 Google Ads: spend S, claimed conv by action …
 Disputed: … | Blind spots: direct+unassigned = __%
 Recommendation: <with confidence high/med/low> — for human decision

@@ -27,6 +27,7 @@ Keep the measurement layer trustworthy. State: `state/bi-tracking-health.json` +
 
 1. **Backend heartbeat** (`backend_events_daily.sql`): daily registration, kyc, deposit, investment for the last complete 14 days. Flag zero days and days outside the same-weekday band (method in `context/metrics.md`; bands in `state/bi-daily-kpi-watch.json`, history from 2026-10-02). Zero on a money event = escalate.
 2. **Receipt: backend vs GA4** (`backend_events_daily` + `event_delivery_health_daily` + `ga4_events_daily`), same closed days: GA4 count ÷ backend sends that succeeded, per event. Compare to `baselines.bigquery_*.ga4_over_backend_sent_ok`. A ratio moving > ±0.15 from baseline, a new event near 2.0, or a money event leaving 0.95–1.05 = issue.
+2b. **GA4 coverage and readiness** (`ga4_backend_coverage.sql`, CLAUDE.md rule 6): GA4 server-sent events (one per `event_uuid`) ÷ backend events per key event, closed weeks covered fully by both sources only. Store the week in `state.ga4_readiness.weeks`. If all six events are within 0.98–1.02 for 2 consecutive closed weeks: first output line "GA4 READY: agents can move to GA4 for conversions", file Command Center issue `ga4-ready`, and ask Amir. Never change a loop's source yourself. Also re-check the duplicate rule: copies without `event_uuid` (`ga4_duplicate_check.sql`) should stay on app streams only.
 3. **Delivery health** (`event_delivery_health_daily.sql`): degraded share per platform × vendor, weekly. A step change of > 10 points, or a new `degraded_reason`, = issue.
 4. **Ledger integrity**: production events vs any secondary layer someone reports from (currently `gold`, tqa-012). Re-check the tqa-012 signature weekly until resolved.
 5. **UTM audit** (`ga4_traffic_daily.sql`, full last week): values outside `context/utm-convention.md` (case, separators, mediums), Unassigned share vs baseline, deep-link names as source, localhost/preview/debug referrers, PII-shaped values (`@`, 9+ digits) = escalate.
@@ -45,6 +46,7 @@ Expected change (deploy, campaign end, intended rename)? Same days and timezone 
 ```
 🔍 Tracking health — week <ww>
 Verdict: CLEAN | ISSUES (n) | 🚨 ESCALATION
+GA4 readiness: not yet (lowest: <event> _%) | GA4 READY
 • [sev] finding — evidence (O/R/I) — suggested fix — owner
 Not covered: <sources>
 ```

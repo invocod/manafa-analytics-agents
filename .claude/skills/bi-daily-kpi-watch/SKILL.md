@@ -1,6 +1,6 @@
 ---
 name: bi-daily-kpi-watch
-description: "Daily KPI watch on production backend events, GA4 sessions and Google Ads spend: alerts only when a metric leaves its same-weekday band and the break isn't a known cause or tracking artifact. Silence means healthy."
+description: "Daily KPI watch on GA4 server-sent conversions (confirmed on backend events before escalating), GA4 sessions and Google Ads spend: alerts only when a metric leaves its same-weekday band and the break isn't a known cause or tracking artifact. Silence means healthy."
 ---
 
 # Daily KPI-Watch Loop
@@ -25,8 +25,9 @@ Catch breaks before they run for days. State: `state/bi-daily-kpi-watch.json` + 
 
 ## Loop body
 
-1. **Latest complete day** per source (freshness query). Backend: registration, deposit, investment (counts; deposit amount per currency). GA4: sessions total + top channel groups. Google Ads: spend.
-2. **Band check**: same weekday, trailing weeks from state (median ± 3×MAD; history from 2026-10-02 for backend, from first transfer day for GA4/Ads). Exact zero on a backend event = flag regardless.
+1. **Latest complete day** per source (freshness query). **Detect** on GA4 server-sent events (`ga4_conversions_daily.sql`, one per `event_uuid`; fresh daily): registration, deposit, investment (counts; deposit amount per currency). GA4: sessions total + top channel groups. Google Ads: spend.
+1b. **Confirm before escalating** (CLAUDE.md rule 5): if a GA4 conversion metric breaks its band, check the same day in the backend ledger when the replica covers it. Backend also broke = real; backend held = tracking (route to bi-tracking-health); backend not there yet (tqa-023) = report "GA4 only, unconfirmed" and re-check next run.
+2. **Band check**: same weekday, trailing weeks from state (median ± 3×MAD; history from 2026-11-04 for GA4 (raw export start), from 2026-10-02 for backend, from first transfer day for Ads; bands need ~8 weeks, expect noise until then). Exact zero on a backend event = flag regardless.
 3. **Classify**: real vs tracking artifact. One source moved while the backend held = tracking. A single channel at zero = tagging. Everything moved together = demand or outage.
 4. **Known causes**: offerings (investment spikes are expected), Ramadan/Eid/National Day/Founding Day, salary days (~25th–28th), campaign launches, deploys. Note "possibly offering-driven" without asserting it.
 5. **Route**: tracking → bi-tracking-health issue; funnel → bi-investor-funnel; spend → bi-paid-media-review; demand → weekly digest.

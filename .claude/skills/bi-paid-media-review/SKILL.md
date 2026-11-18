@@ -26,7 +26,7 @@ One decision per ad account per week. State: `state/bi-paid-media-review.json` +
 ## Loop body
 
 1. **Accounts in scope**: Google Ads (`gads_campaign_daily`, `gads_conversions_daily`). Meta/TikTok/Snapchat/X = not configured until their data is in BigQuery.
-2. Per account, **in this fixed order**: spend & pacing (vs trailing weeks) → traffic (clicks, CPC, CTR) → conversions (claimed per action; claimed CPA; backend CPA only where backend attribution exists, tqa-014) → creative fatigue (CTR vs its peak) → landing (campaign final URLs follow the UTM convention) → tracking (open bi-tracking-health issues on this account, e.g. tqa-016).
+2. Per account, **in this fixed order**: spend & pacing (vs trailing weeks) → traffic (clicks, CPC, CTR) → conversions (Google Ads claimed per action and claimed CPA; next to it, in its own column, GA4 server-sent conversions for the same campaigns from `ga4_conversions_by_channel.sql` (Paid Search / Cross-network channel, campaign name), labelled GA4 and a floor; CLAUDE.md rule 5; never a blended CPA) → creative fatigue (CTR vs its peak) → landing (campaign final URLs follow the UTM convention) → tracking (open bi-tracking-health issues on this account, e.g. tqa-016).
 3. Compare each metric to the weekly snapshots in state.
 4. Per mover: facts vs hypotheses vs missing data.
 5. **Exactly one call per account**: HOLD / FIX (named issue + staged plan) / TEST (brief) / INVESTIGATE (data can't be trusted; name the one settling check).

@@ -25,6 +25,18 @@ These events were deliberately moved server-side ("fire on confirmed success, no
 2. **Never sum across platforms.** If Google and Meta both claim a conversion, that is one conversion with two claimants. De-dupe against the backend total.
 3. **Report first-touch and last-touch side by side** for anything with a long consideration window (deposits, investments). The gap between them is the insight, not an error.
 4. **Read directional agreement, not absolute match.** If every source says paid search is up and Snapchat is down, trust the trend even when no two absolute numbers match.
+5. **Which source each loop uses for conversions (user decision, Amir, 2026-11-18).** GA4 receives only part of the backend's events (tqa-013), so the backend stays the count where completeness matters, and GA4 is used where it is better (daily freshness, channel data):
+   | Loop | Conversions from |
+   |---|---|
+   | bi-tracking-health | Backend (it compares backend with GA4; runs the GA4-readiness check below) |
+   | bi-investor-funnel | Backend (GA4 holds ~half of KYC; the funnel would break) |
+   | bi-weekly-exec-digest | Backend headline, plus one line on GA4 coverage so it reads alongside the GA4-only Command Center |
+   | bi-channel-attribution | GA4 server-sent conversions by channel (`ga4_conversions_by_channel.sql`), labelled GA4 and called a floor; backend total shown as the ledger line |
+   | bi-paid-media-review | Google Ads claims + GA4 server-sent conversions by channel/campaign, labelled GA4 |
+   | bi-daily-kpi-watch | Detect on GA4 server-sent events (fresh daily); before escalating, confirm on the backend when its replica covers the day |
+   | bi-campaign-health | Backend for results vs goals; GA4 for channel/campaign split |
+   "GA4 conversions" always means server-sent events counted once per `event_uuid` (`context/metrics.md`); never raw GA4 counts (tqa-007). The Command Center page is GA4-only (`docs/command-center.md`).
+6. **GA4-readiness check (tell Amir; never switch on our own).** Every bi-tracking-health run computes `sql/readonly/ga4_backend_coverage.sql` for closed weeks covered fully by both sources. When registration, KYC, identity_verified, deposit, investment and auto_invest_enabled all sit within **0.98–1.02 for 2 consecutive closed weeks**, the run's first line says "GA4 READY: agents can move to GA4 for conversions", the report shows the table, and a Command Center issue `ga4-ready` is filed. Amir decides; until then this table stays as is. Track progress in `state/bi-tracking-health.json` → `ga4_readiness`.
 
 ### Source separation (user preference, 2026-11-11 — applies to every loop and report)
 - **GA4 = product analytics** (sessions, users, engagement, events, on-site/in-app behaviour across web and apps). **Singular = attribution** (mobile app installs and conversions by network/campaign, plus web campaign tracking).
