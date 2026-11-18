@@ -113,17 +113,40 @@
       "auto_inv": 3360,
       "auto_invest_enabled": 791,
       "source": "prod backend"
+    },
+    "2026-W46": {
+      "reg": 550,
+      "idv": 1654,
+      "kyc": 831,
+      "dep": 457,
+      "dep_sar": 5754086.82,
+      "dep_usd": 0,
+      "inv": 6396,
+      "inv_sar": 22764000,
+      "first_inv": 60,
+      "auto_inv": 4966,
+      "auto_invest_enabled": 574,
+      "reg_by_platform": {"ios": 226, "web": 222, "android": 102},
+      "dep_by_platform": {"ios": 355, "android": 80, "web": 22},
+      "source": "prod backend, full week (run-20261118-2047)"
     }
   },
   "snapshots_ga4": {
     "2026-W46": {
       "sessions": 40775,
-      "note": "restated 2026-11-17 (was 41,746)"
+      "note": "restated 2026-11-17 (was 41,746) — retired GA4 transfer figure; superseded by raw export below",
+      "raw_export_sessions": 24755,
+      "raw_export_engaged": 20272,
+      "raw_note": "google_analytics raw export, any event in 9-15 Nov tables (24,615 on session-start-date basis)"
     }
   },
   "snapshots_gads": {
     "2026-W46": {
-      "spend_sar": 7564
+      "spend_sar": 7564,
+      "spend_sar_basicstats": 9154.68,
+      "clicks": 4758,
+      "claimed_conv": 702,
+      "note": "7,564 was CampaignStats (tqa-022, understated); use spend_sar_basicstats"
     }
   },
   "watch_items": [
@@ -136,10 +159,26 @@
       "metric": "deposits",
       "added": "2026-11-17",
       "note": "Mon-Wed 482 -> 356 -> 235 (W44-W46), below range in W46; confirm with full W46 / a third week before routing",
-      "review_on": "next digest"
+      "review_on": "next digest",
+      "status": "confirmed + routed 2026-11-18 (run-20261118-2047): full W46 457 (888 -> 646 -> 457), below range; iOS 710 -> 488 -> 355; routed to bi-investor-funnel + Finance"
+    },
+    {
+      "metric": "ios_registrations",
+      "added": "2026-11-18",
+      "note": "4 weekly falls 384 -> 349 -> 288 -> 226 (W43-W46); web 295 -> 222; Android flat. GA4 traffic flat; Google Ads iOS installs flat in Singular; TikTok iOS installs down",
+      "routed_to": "bi-paid-media-review (TikTok/X iOS INVESTIGATE) + growth",
+      "review_on": "next digest (W47 once replica refreshes)"
     }
   ],
-  "last_run": "run-20261117-1109",
+  "proposed_learnings_2026_11_18": [
+    {
+      "candidate": "iOS first-deposit uplift since late Oct is Apple Pay; card + bank transfer flat",
+      "windows_seen": 2,
+      "evidence": "W44 14d closed + W45 7d early read (bi-investor-funnel)",
+      "status": "proposed for approval; final when W45 closes on 14d (data to 22 Nov)"
+    }
+  ],
+  "last_run": "run-20261118-2047",
   "snapshots_mon_wed": {
     "2026-W41": {
       "reg": 342,
