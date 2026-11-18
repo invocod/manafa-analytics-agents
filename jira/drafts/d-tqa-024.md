@@ -4,7 +4,7 @@
 - Dev Assignee: Azib Muzammil
 - Labels: bi-agent, analytics, ga4, compliance, tqa-024
 - Tracking: tqa-024
-- Status: STAGED (awaiting approval)
+- Status: CREATED as ISQ-6093 (approved by Amir, Command Center button, 2026-11-18)
 
 ## Problem
 The iOS and Android apps set a GA4 user property called `name`. Its values look like people's first names.

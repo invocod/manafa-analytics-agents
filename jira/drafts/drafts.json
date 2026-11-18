@@ -259,8 +259,8 @@
   "area": "mobile",
   "issuetype": "Bug",
   "priority": "High",
-  "status": "staged",
-  "jira_key": null,
+  "status": "created",
+  "jira_key": "ISQ-6093",
   "summary": "[App] Stop sending the 'name' user property to GA4 (values look like users' first names)",
   "dev": {
    "name": "Azib Muzammil"
@@ -272,6 +272,8 @@
    "compliance",
    "tqa-024"
   ],
-  "description": "See Command Center jira_drafts/d-tqa-024 (same text). Raw GA4 export 11-17 Nov: 'name' user property set for 6,934 iOS / 2,496 Android users, 807 / 436 distinct values, letters only, avg 4.5-4.7 chars (inferred first names; values not read). Fix: remove the user property; ask compliance about deletion. Verify: weekly count of users with the property = 0."
+  "description": "See Command Center jira_drafts/d-tqa-024 (same text). Raw GA4 export 11-17 Nov: 'name' user property set for 6,934 iOS / 2,496 Android users, 807 / 436 distinct values, letters only, avg 4.5-4.7 chars (inferred first names; values not read). Fix: remove the user property; ask compliance about deletion. Verify: weekly count of users with the property = 0.",
+  "approved_by": "Amir (Command Center button)",
+  "approved_at": "2026-11-18T13:34:30.390Z"
  }
 ]

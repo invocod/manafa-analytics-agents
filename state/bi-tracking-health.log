@@ -40,3 +40,4 @@
 2026-11-18T12:59Z  ISQ-6084 correction comment posted (Amir approved); google_analytics daily refresh confirmed by Amir
 2026-11-18T13:27Z  Command Center switched to GA4-only (google_analytics + google_ads + Singular sheet); conversions = GA4 server-sent events per event_uuid; tqa-007/tqa-013 updated
 2026-11-18T13:42Z  loop source split agreed (CLAUDE.md rule 5); GA4-readiness check added (rule 6), W46 not ready (lowest identity_verified 27.3%)
+2026-11-18T14:54Z  checked=W46_full(backend to 16 Nov, unchanged)+GA4 raw+Ads+Singular gate+gold  acted=0  note="No new data since 10:08Z run; all checks repeat (tqa-007/012/013/016 unchanged). GA4 readiness not ready (lowest identity_verified 27.3%). Synced d-tqa-024 -> ISQ-6093 (button approval). Watch: Fri 13 Nov reg 54 / kyc 85 below provisional band, read as quiet day, routed to bi-daily-kpi-watch. Report reports/2026/W47/tracking-health-2026-11-18b.md"

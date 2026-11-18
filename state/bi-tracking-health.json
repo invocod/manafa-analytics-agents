@@ -44,7 +44,8 @@
       "jira": [
         "ISQ-6060"
       ],
-      "update_2026_11_17_run": "2026-11-17: persists (send_message_to_scf_borrower 22, download_app_modal 13, article 8, 9-14 Nov). Ticket ISQ-6060."
+      "update_2026_11_17_run": "2026-11-17: persists (send_message_to_scf_borrower 22, download_app_modal 13, article 8, 9-14 Nov). Ticket ISQ-6060.",
+      "update_2026_11_18b": "W46: 50 sessions with internal placement names as utm_source. ISQ-6060 is In Progress Dev in Jira; no fix visible in data yet."
     },
     {
       "id": "tqa-005",
@@ -86,7 +87,8 @@
       "jira": [
         "ISQ-6053"
       ],
-      "update_2026_11_17_run": "2026-11-17 (W46, 9-11 Nov): ratios unchanged (login 1.86, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.05, bank_account_added 1.91); auto_invest_disabled now also doubled 2.54 (28 sent / 71 GA4). Money events 0.98-1.00. Ticket ISQ-6053."
+      "update_2026_11_17_run": "2026-11-17 (W46, 9-11 Nov): ratios unchanged (login 1.86, withdrawal_completed 1.88, kyc 1.84, registration 1.71, passcode_enabled 2.05, bank_account_added 1.91); auto_invest_disabled now also doubled 2.54 (28 sent / 71 GA4). Money events 0.98-1.00. Ticket ISQ-6053.",
+      "update_2026_11_18b": "W46 full, raw export: ratios unchanged (login 1.89, withdrawal_completed 1.90, kyc 1.86, registration 1.69, passcode_enabled 1.99, bank_account_added 1.82, identity_verified 1.40, auto_invest_disabled 2.26); bank_account_removed also doubled (36 GA4 vs 17 sent OK, small volume). Extra copies: app streams only, web 0. Money events 0.98-1.01."
     },
     {
       "id": "tqa-008",
@@ -139,7 +141,8 @@
       "confirming_check": "source connection of gold build (etl_logs / pipeline config)",
       "impact": "loops must not use gold/reporting/dashboard_views/sama_mart; compliance review if SAMA reporting reads them",
       "update_2026_11_16b": "Re-checked after gold rebuild 2026-11-16 15:30 UTC: unchanged (W of Nov 2 gold 161/238,000 = staging; prod 4,717/17,448,000; gold max profile 610,975)",
-      "update_2026_11_17_run": "2026-11-17: gold rebuilt 17 Nov, still not production: W46 Mon-Wed gold 44 inv / 73,000 SAR vs prod 4,113 / 15.2M; W45 gold 161 / 238,000 (= staging). Escalation stands."
+      "update_2026_11_17_run": "2026-11-17: gold rebuilt 17 Nov, still not production: W46 Mon-Wed gold 44 inv / 73,000 SAR vs prod 4,113 / 15.2M; W45 gold 161 / 238,000 (= staging). Escalation stands.",
+      "update_2026_11_18b": "18 Nov: gold rebuilt 17:16, unchanged: W46 65 inv / 94,000 SAR vs prod 6,396 / 22,764,000 SAR; W45 161 / 238,000 (= staging). Escalation stands."
     },
     {
       "id": "tqa-013",
@@ -262,7 +265,8 @@
       "found": "2026-11-18",
       "what": "backend replica (Datastream) not streaming: created 12 Nov 07:02 UTC, stopped 08:02 UTC, jumped 17 Nov 13:47 UTC (data to 17 Nov 19:46 Riyadh), idle since",
       "next_check": "stream status / CDC config; target lag < 1 h; stale point 20 Nov",
-      "id": "tqa-023"
+      "id": "tqa-023",
+      "update_2026_11_18b": "18 Nov 14:50 UTC: still 324,198 events (to 17 Nov 19:46 Riyadh); idle ~25 h. Stale point 20 Nov."
     },
     {
       "id": "tqa-024",
@@ -270,7 +274,11 @@
       "severity": "high",
       "title": "GA4 user property 'name' appears to hold first names",
       "owner": "Mobile (compliance review)",
-      "jira_draft": "d-tqa-024 (staged)"
+      "status": "open",
+      "jira": [
+        "ISQ-6093"
+      ],
+      "update_2026_11_18b": "Draft d-tqa-024 approved by Amir with the Command Center button 2026-11-18T13:34Z; ticket ISQ-6093 (To Do)."
     }
   ],
   "baselines": {
@@ -403,11 +411,11 @@
     }
   },
   "source_status_last_run": {
-    "backend_prod": "complete through 2026-11-16 (17 Nov partial); refreshed 17 Nov 13:47 UTC, idle 20 h (tqa-023); stale on 2026-11-20",
-    "gold": "SUSPENDED (tqa-012; rebuilt 18 Nov, still staging: W46 65 inv / 94,000 SAR vs prod 6,396 / 22.76M)",
+    "backend_prod": "complete through 2026-11-16 (17 Nov partial); 324,198 events, unchanged since 17 Nov 13:47 UTC, idle ~25 h at 18 Nov 14:50 UTC (tqa-023); stale on 2026-11-20",
+    "gold": "SUSPENDED (tqa-012; rebuilt 18 Nov 17:16, still staging: W46 65 inv / 94,000 SAR vs prod 6,396 / 22.76M)",
     "ga4_transfer": "retired 2026-11-18 (do not query)",
     "google_ads_transfer": "2026-11-07..17 (use CampaignBasicStats for totals, tqa-022)",
-    "singular_sheet": "2026-10-11..17, ETL 17 Nov 22:24 UTC, 690 rows, checks pass",
+    "singular_sheet": "2026-10-11..17, ETL 18 Nov 10:47 UTC, 690 rows, checks pass",
     "meta_tiktok_snapchat": "not configured",
     "ga4_raw_export": "2026-11-01..17 (daily tables; intraday excluded); daily refresh confirmed by Amir 2026-11-18"
   },
@@ -438,11 +446,11 @@
         "tqa-007 (completion > start)"
       ]
     },
-    "tqa-021: correction posted on ISQ-6084 (comment 174594, Amir approved 2026-11-18); check the ticket is narrowed or closed. tqa-024: Jira draft d-tqa-024 awaiting approval."
+    "tqa-021: correction posted on ISQ-6084 (comment 174594, Amir approved 2026-11-18); ticket title not yet narrowed at 18 Nov 14:50 UTC, keep checking. tqa-024: ticket ISQ-6093 created (button, 18 Nov)."
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261118-1008",
+  "last_run": "run-20261118-1450",
   "jira": {
     "epic": "ISQ-6052",
     "project": "ISQ",
@@ -573,6 +581,16 @@
         "dev": "AzibMuzammil",
         "created": "2026-11-18T09:44Z",
         "approved_by": "Amir (Command Center button, 2026-11-18)"
+      },
+      "d-tqa-024": {
+        "key": "ISQ-6093",
+        "tqa": [
+          "tqa-024"
+        ],
+        "area": "mobile",
+        "dev": "AzibMuzammil",
+        "created": "2026-11-18T13:34Z",
+        "approved_by": "Amir (Command Center button, 2026-11-18)"
       }
     },
     "outside_squad": {
@@ -604,6 +622,16 @@
       }
     },
     "blocker": "tqa-013 / ISQ-6056 (events finished by callbacks or jobs reach GA4 without a client ID)",
-    "notified": null
-  }
+    "notified": null,
+    "last_checked": "2026-11-18T14:50Z (W46 unchanged; no new closed week)"
+  },
+  "watch_items": [
+    {
+      "day": "2026-11-13 (Fri)",
+      "what": "registration_completed 54 (band 61-132), kyc_completed 85 (band 100-189); deposits 24 and investments 68 in band",
+      "read": "quiet day, not a tracking break (Inferred): all backend events 2,186 vs 3,178 on Fri 6 Nov, GA4 sessions 2,136 vs 2,871; Sat/Sun back in band; bands provisional (6 points)",
+      "routed_to": "bi-daily-kpi-watch",
+      "noted": "2026-11-18"
+    }
+  ]
 }
