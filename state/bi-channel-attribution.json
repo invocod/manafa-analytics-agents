@@ -142,7 +142,15 @@
     "Google Ads spend must come from CampaignBasicStats (tqa-022); earlier W46 Ads figures understated by ~17%",
     "backend campaign names match 2% of Ads campaign names; backend click ids match 0 Ads gclids"
   ],
-  "last_run": "run-20261118-1008",
+  "last_run": "run-20261118-2047",
+  "ga4_conversions_w46": {
+    "source": "ga4_conversions_by_channel.sql, one per event_uuid; floor (coverage reg 0.795 / dep 0.906 / inv 0.845)",
+    "registration_completed": {"total": 437, "ft_google_cpc": 105, "lt_paid_google": 105, "ft_direct": 250, "lt_direct": 241},
+    "deposit_success": {"total": 414, "ft_google_cpc": 21, "lt_paid_google": 20, "lt_direct": 312},
+    "investment_completed": {"total": 5403, "lt_unassigned": 3410, "ft_google_cpc": 71},
+    "ga4_direct_unassigned_session_share": {"W45_4_8nov": 0.782, "W46": 0.775}
+  },
+  "trend_verdicts_w46": {"google_ads": "steady", "tiktok_ios": "down (installs 231->194 Singular-attributed, 208->166 network, cost flat)", "x_ios": "disputed (no installs)", "organic": "no trend (1 GA4 week)"},
   "input_fingerprints": {
     "2026-11-17T11:11Z": {
       "backend_max": "2026-11-12",
@@ -177,6 +185,17 @@
       "ads_max": "2026-11-17",
       "ads_spend_9_15nov_basic": 9154.68,
       "singular_max_etl_utc": "2026-11-17 22:24"
+    },
+    "2026-11-18T20:53Z": {
+      "backend_max": "2026-11-17",
+      "backend_complete_to": "2026-11-16",
+      "backend_total": 324198,
+      "ga4_max": "2026-11-17",
+      "ga4_sessions_9_15nov_any_event": 24755,
+      "ads_max": "2026-11-17",
+      "ads_spend_9_15nov_basic": 9154.68,
+      "singular_rows": 690,
+      "singular_max_etl_utc": "2026-11-18 17:05"
     }
   }
 }
