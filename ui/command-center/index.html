@@ -570,10 +570,17 @@ function useWatchEntry(e){
   return {...s, allow};
 }
 function useSheet(key, range){ const e=useMemo(()=>mcpWatch(key,{server:SHEETS_SERVER,tool:"get_values",input:{spreadsheetId:SINGULAR_SHEET,range},parse:parseSheet,label:"Google Sheets"}),[key]); return useWatchEntry(e); }
-function parseJira(payload){
+/* Find the issue array in any of the shapes the Atlassian connector returns. */
+function jiraIssues(payload){
   let p=payload; if(typeof p==="string"){ try{p=JSON.parse(p);}catch(e){return [];} }
-  if(p&&p.content&&!p.data&&!p.issues) p=p.content;
-  const iss=(p&&p.data&&p.data.issues)||(p&&p.issues)||[];
+  if(p&&Array.isArray(p.content)&&!p.data&&!p.issues){ const t=p.content.find(c=>c&&c.type==="text"&&c.text); if(t){ try{ p=JSON.parse(t.text); }catch(e){ return []; } } }
+  else if(p&&p.content&&!p.data&&!p.issues) p=p.content;
+  if(p&&p.structuredContent&&!p.data&&!p.issues) p=p.structuredContent;
+  const arr=v=>Array.isArray(v)?v:(v&&typeof v==="object"?(Array.isArray(v.nodes)?v.nodes:Array.isArray(v.values)?v.values:Array.isArray(v.items)?v.items:Array.isArray(v.issues)?v.issues:null):null);
+  return arr(p&&p.data&&p.data.issues)||arr(p&&p.issues)||arr(p&&p.data)||(Array.isArray(p)?p:[]);
+}
+function parseJira(payload){
+  const iss=jiraIssues(payload);
   return iss.map(x=>{ const f=x.fields||{}; let dev=f.customfield_10055;
     if(!dev&&f.customFields&&f.customFields["Dev Assignee"]) dev=f.customFields["Dev Assignee"].value;
     const devName=dev?(Array.isArray(dev)?dev.map(d=>d&&d.displayName).filter(Boolean).join(", "):dev.displayName):null;
@@ -1854,10 +1861,9 @@ async function approveDraft(d){
   await draftPatch(d.id,{status:"creating",approved_by:"Amir (Command Center button)",approved_at:now,last_error:null});
   try{
     // never duplicate: look for a ticket with the same summary under the epic first
-    const tq=(d.tqa||[])[0];
-    const jql=`parent = ${JIRA_EPIC}`+(tq?` AND labels = "${tq}"`:"")+" ORDER BY created DESC";
-    const found=await caps.mcp.callTool(JIRA_SERVER,"searchJiraIssuesUsingJql",{cloudId:JIRA_SITE,jql,fields:["summary"],maxResults:50,view:"full"});
-    const same=parseJira(found.payload).find(t=>jNorm(t.summary)===jNorm(d.summary));
+    // same query and fields as the ticket list on this tab, so the answer has the same shape
+    const found=await caps.mcp.callTool(JIRA_SERVER,"searchJiraIssuesUsingJql",{cloudId:JIRA_SITE,jql:`key = ${JIRA_EPIC} OR parent = ${JIRA_EPIC} ORDER BY created ASC`,fields:JIRA_FIELDS,maxResults:100,view:"full"});
+    const same=parseJira(found.payload).find(t=>t.key!==JIRA_EPIC&&jNorm(t.summary)===jNorm(d.summary));
     let key=same&&same.key, existed=!!key;
     if(!key){
       const fields={}; fields[JIRA_DEV_FIELD]={accountId:dev.accountId};
