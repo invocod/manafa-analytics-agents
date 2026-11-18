@@ -135,7 +135,13 @@
       "status": "closed 2026-11-18: Mon 16 Nov 83 (inside); single low Monday, no repeat"
     }
   ],
-  "last_run": "run-20261118-2023",
+  "last_run": "run-20261118-2037",
+  "last_checked": {
+    "at": "2026-11-18T20:43Z",
+    "run": "run-20261118-2037",
+    "result": "silent: no new judgeable day (cursor stays 15 Nov); 13-17 Nov GA4 server-sent conversions and Ads spend identical to state; backend replica unchanged at 324,198 events",
+    "note": "gads_spend_sar_daily uses vetted CampaignStats, which undercounts app-campaign spend (~17% in W46, tqa-022); re-baseline on CampaignBasicStats once Amir approves pm-fix-002"
+  },
   "stale_sources": [],
   "stale_sources_history": [
     {
