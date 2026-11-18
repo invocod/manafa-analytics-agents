@@ -1,0 +1,20 @@
+{
+  "name": "manafa-bi-command-center-local",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local (localhost) host for the Manafa BI Command Center page. Same page file as the claude.ai artifact.",
+  "engines": { "node": ">=20.12" },
+  "scripts": {
+    "start": "node server.mjs",
+    "seed": "node scripts/seed.mjs --force",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "chart.js": "4.4.1",
+    "htm": "3.1.1",
+    "lucide": "0.460.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

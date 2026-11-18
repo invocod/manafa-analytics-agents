@@ -4,6 +4,10 @@
 **Artifact slug (for db tools):** `58ba680f-6e6f-4aee-92fd-f7bbecec3ce8`
 **Page source:** `ui/command-center/index.html` (republish with the artifact tools after edits).
 
+## Local copy (localhost) — added 2026-11-18
+
+`local/` runs the same page file at http://localhost:4600 with a small Node server standing in for claude.ai (page data in `local/data/db.json`, Google via gcloud sign-in, Jira via API token, chat off until compliance confirms). Setup: `local/README.md`. The claude.ai artifact is unchanged and stays the primary Command Center; the two keep separate page data. Loops still write run events to the claude.ai artifact only.
+
 ## Data sources on the page (user decision, Amir, 2026-11-18)
 
 The dashboard reads **only** these: BigQuery `google_analytics` (raw GA4 export, `events_*` daily tables) and `google_ads` (`p_ads_*_3343082801`), plus the Singular Google Sheet. **No other BigQuery dataset** (no `manafa_financing` backend replica, no gold / silver / staging) is queried by the page or its chat.
