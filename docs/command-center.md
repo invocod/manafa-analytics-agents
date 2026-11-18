@@ -4,6 +4,15 @@
 **Artifact slug (for db tools):** `58ba680f-6e6f-4aee-92fd-f7bbecec3ce8`
 **Page source:** `ui/command-center/index.html` (republish with the artifact tools after edits).
 
+## Data sources on the page (user decision, Amir, 2026-11-18)
+
+The dashboard reads **only** these: BigQuery `google_analytics` (raw GA4 export, `events_*` daily tables) and `google_ads` (`p_ads_*_3343082801`), plus the Singular Google Sheet. **No other BigQuery dataset** (no `manafa_financing` backend replica, no gold / silver / staging) is queried by the page or its chat.
+
+- **Conversions on the page** = Manafa's server-sent events in GA4, counted once per `event_uuid` param (`sql/readonly/ga4_conversions_daily.sql`, `ga4_conversion_cohorts.sql`, `users_ga4_conv_*.sql`). Copies without `event_uuid` are app-stream duplicates (tqa-007), shown only in the Quality tab (`ga4_duplicate_check.sql`). People = internal `user_id` param inside COUNT(DISTINCT), never output.
+- GA4 data starts 2026-11-04. Comparisons whose previous period starts earlier show "no prior". Cohorts close 20 days after their week starts.
+- GA4 misses events the backend couldn't deliver (tqa-013). W46 coverage vs backend (tracking QA): deposits 91%, investments 85%, registrations 80%, KYC 48%, auto-invest 40%, identity 27%. The page's conversion counts are a floor by these margins.
+- The loops (repo skills, state, reports) still use the backend ledger as conversion truth per CLAUDE.md; only the dashboard is GA4-only.
+
 The page shows only what loops write here. **Never write a status, step, percentage or message that didn't happen.** Numbers in messages are aggregated only; never PII.
 
 ## Store layout
@@ -38,7 +47,7 @@ A chat view (`#ask`) where Amir asks questions in plain words. Claude answers on
 
 | Tool | Reads | Guard (enforced in the page, before the call) |
 |---|---|---|
-| `run_bigquery` | BigQuery `databases-472111` (me-central2) via `execute_sql_readonly` | SELECT only, one statement; tables limited to `manafa_financing.mi_analytics_events` / `mi_analytics_event_deliveries`, `google_analytics.events_*` / `events_YYYYMMDD` (raw GA4 export; aggregates only, `_TABLE_SUFFIX` filter required, no `user_properties` / user, device, click or transaction IDs; the retired `GA4.p_ga4_*` transfer is blocked), `google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801`, google_analytics/google_ads `INFORMATION_SCHEMA.COLUMNS`; gold/silver/curated/reporting/dashboard_views/sama_mart/stg/test/poc blocked; no whole payload/context/attribution JSON, no device or click identifiers; backend queries must aggregate; results with ID-like columns, event timestamps, >1,000 backend rows, or values shaped like mobiles / national IDs / IBANs / emails are withheld |
+| `run_bigquery` | BigQuery `databases-472111` (me-central2) via `execute_sql_readonly` | SELECT only, one statement; tables limited to `google_analytics.events_*` / `events_YYYYMMDD` (raw GA4 export; aggregates only, `_TABLE_SUFFIX` filter required, no `user_properties` / user, device, click or transaction IDs; the retired `GA4.p_ga4_*` transfer is blocked), `google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801`, google_analytics/google_ads `INFORMATION_SCHEMA.COLUMNS`; gold/silver/curated/reporting/dashboard_views/sama_mart/stg/test/poc blocked; no whole payload/context/attribution JSON, no device or click identifiers; backend queries must aggregate; results with ID-like columns, event timestamps, >1,000 backend rows, or values shaped like mobiles / national IDs / IBANs / emails are withheld |
 | `singular_summary` | Singular sheet (`mbi_summary`, or Sheet1 for campaigns, header-checked) | Aggregated in the page, always split by currency |
 | `search_jira` | Jira JQL, read-only, max 50 | — |
 | `read_command_center` | This page's issues / reports / runs | — |

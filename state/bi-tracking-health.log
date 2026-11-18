@@ -38,3 +38,4 @@
 2026-11-18T10:11Z  checked=W46_full(backend to 16 Nov)+GA4+Ads+Singular+gold  acted=1  note="NEW DATA (replica refreshed 17 Nov). New tqa-022 high (gads query undercounts 17%: 7,562 vs 9,155 SAR) and tqa-023 high (replica not streaming). tqa-018 cost explained. tqa-007/013 unchanged; tqa-012 escalation stands (gold W46 65 inv vs prod 6,396). Report reports/2026/W47/tracking-health-2026-11-18.md"
 2026-11-18T12:49Z  GA4 source switched to google_analytics raw export; re-baselined GA4 figures; tqa-001/002/004/005/007/015/021 updated; tqa-024 filed (draft d-tqa-024 staged)
 2026-11-18T12:59Z  ISQ-6084 correction comment posted (Amir approved); google_analytics daily refresh confirmed by Amir
+2026-11-18T13:27Z  Command Center switched to GA4-only (google_analytics + google_ads + Singular sheet); conversions = GA4 server-sent events per event_uuid; tqa-007/tqa-013 updated

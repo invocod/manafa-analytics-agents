@@ -595,52 +595,65 @@ function useBQ(key, sql){
 }
 
 const USERS_SQL = {
-"users_backend_profile": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\nt AS (\n  SELECT occurred_at AS ts, COALESCE(JSON_VALUE(context.platform),'unknown') AS platform, profile_id, event_name,\n    JSON_VALUE(context.app_version) AS app_version,\n    JSON_VALUE(context.vendor_keys.singular_device.os_version) AS os_version,\n    INITCAP(SPLIT(JSON_VALUE(context.vendor_keys.singular_device.make),' ')[SAFE_OFFSET(0)]) AS make,\n    JSON_VALUE(context.vendor_keys.singular_device.model) AS model,\n    LOWER(JSON_VALUE(context.language)) AS lang,\n    JSON_VALUE(context.entity_type) AS entity,\n    IF(event_name='login_completed', JSON_VALUE(payload.method), NULL) AS login_method\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(b.data_end, INTERVAL 27 DAY) AND b.data_end AND profile_id IS NOT NULL),\ndev AS (\n  SELECT platform, profile_id,\n    ARRAY_AGG(app_version IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS app_version,\n    ARRAY_AGG(os_version IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS os_version,\n    ARRAY_AGG(make IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS make,\n    ARRAY_AGG(model IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS model\n  FROM t WHERE platform IN ('ios','android') AND event_name='login_completed' GROUP BY 1, 2),\npref_p AS (SELECT platform, profile_id, ARRAY_AGG(lang IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS lang, ARRAY_AGG(entity IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS entity FROM t WHERE event_name='login_completed' GROUP BY 1, 2),\npref_a AS (SELECT 'all' AS platform, profile_id, ARRAY_AGG(lang IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS lang, ARRAY_AGG(entity IGNORE NULLS ORDER BY ts DESC LIMIT 1)[SAFE_OFFSET(0)] AS entity FROM t WHERE event_name='login_completed' GROUP BY 1, 2),\npref AS (SELECT * FROM pref_p UNION ALL SELECT * FROM pref_a),\nl AS (\n  SELECT 'app_version' AS dim, platform, app_version AS v, COUNT(*) AS users FROM dev WHERE app_version IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'os_version', platform, os_version, COUNT(*) FROM dev WHERE os_version IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'device_brand', platform, make, COUNT(*) FROM dev WHERE platform='android' AND make IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'device_model', platform, model, COUNT(*) FROM dev WHERE model IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'language', platform, lang, COUNT(*) FROM pref WHERE lang IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'account_type', platform, entity, COUNT(*) FROM pref WHERE entity IS NOT NULL GROUP BY 1,2,3\n  UNION ALL SELECT 'login_method', IF(GROUPING(tp)=1,'all',tp), login_method, COUNT(DISTINCT profile_id) FROM (SELECT platform AS tp, login_method, profile_id FROM t WHERE login_method IS NOT NULL) GROUP BY GROUPING SETS ((tp, login_method), (login_method)))\nSELECT dim, platform, v, users, (SELECT data_end FROM b) AS data_end FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim, platform ORDER BY users DESC) <= 12\nORDER BY dim, platform, users DESC",
-"users_backend_summary": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\ne AS (\n  SELECT event_name, COALESCE(JSON_VALUE(context.platform),'unknown') AS p, profile_id,\n    SAFE_CAST(JSON_VALUE(payload.is_auto_invested) AS BOOL) AS auto, SAFE_CAST(JSON_VALUE(payload.is_first_investment) AS BOOL) AS first_inv,\n    JSON_VALUE(payload.currency) AS cur, SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC) AS amt, b.data_end\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(b.data_end, INTERVAL 27 DAY) AND b.data_end AND profile_id IS NOT NULL)\nSELECT IF(GROUPING(p)=1,'all',p) AS platform, ANY_VALUE(data_end) AS data_end,\n  COUNT(DISTINCT profile_id) AS active_users,\n  COUNT(DISTINCT IF(event_name='registration_completed',profile_id,NULL)) AS registered,\n  COUNT(DISTINCT IF(event_name='login_completed',profile_id,NULL)) AS logged_in,\n  COUNTIF(event_name='login_completed') AS logins,\n  COUNT(DISTINCT IF(event_name='kyc_completed',profile_id,NULL)) AS kyc_done,\n  COUNT(DISTINCT IF(event_name='deposit_success',profile_id,NULL)) AS depositors,\n  COUNT(DISTINCT IF(event_name='investment_completed',profile_id,NULL)) AS investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND auto IS NOT TRUE,profile_id,NULL)) AS manual_investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND auto,profile_id,NULL)) AS auto_investors,\n  COUNT(DISTINCT IF(event_name='investment_completed' AND first_inv,profile_id,NULL)) AS first_time_investors,\n  COUNTIF(event_name='investment_completed') AS investments,\n  COUNTIF(event_name='investment_completed' AND auto) AS auto_investments,\n  SUM(IF(event_name='investment_completed' AND cur='SAR' AND auto IS NOT TRUE, amt, 0)) AS manual_inv_sar,\n  COUNTIF(event_name='investment_completed' AND cur='SAR' AND auto IS NOT TRUE) AS manual_inv_sar_n,\n  SUM(IF(event_name='investment_completed' AND cur='SAR' AND auto, amt, 0)) AS auto_inv_sar,\n  COUNTIF(event_name='investment_completed' AND cur='SAR' AND auto) AS auto_inv_sar_n,\n  COUNT(DISTINCT IF(event_name='auto_invest_enabled',profile_id,NULL)) AS auto_invest_enablers,\n  COUNT(DISTINCT IF(event_name='withdrawal_completed',profile_id,NULL)) AS withdrawers\nFROM e GROUP BY ROLLUP(p)",
-"users_backend_weekly": "WITH b AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) AS data_end FROM `databases-472111.manafa_financing.mi_analytics_events`),\ne AS (\n  SELECT DATE_TRUNC(DATE(occurred_at,'Asia/Riyadh'), ISOWEEK) AS wk, event_name, COALESCE(JSON_VALUE(context.platform),'unknown') AS p, profile_id, b.data_end\n  FROM `databases-472111.manafa_financing.mi_analytics_events`, b\n  WHERE DATE(occurred_at,'Asia/Riyadh') BETWEEN DATE_SUB(DATE_TRUNC(b.data_end, ISOWEEK), INTERVAL 7 WEEK) AND b.data_end AND profile_id IS NOT NULL)\nSELECT wk, IF(GROUPING(p)=1,'all',p) AS platform, ANY_VALUE(data_end) AS data_end,\n  COUNT(DISTINCT profile_id) AS active_users,\n  COUNT(DISTINCT IF(event_name='login_completed',profile_id,NULL)) AS logged_in,\n  COUNT(DISTINCT IF(event_name='investment_completed',profile_id,NULL)) AS investors\nFROM e GROUP BY GROUPING SETS ((wk, p), (wk))\nORDER BY wk, platform",
+"users_conv_summary": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, event_name,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') AS uuid,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='platform') AS p,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='user_id') AS uid,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency') AS cur,\n    (SELECT COALESCE(value.double_value, CAST(value.int_value AS FLOAT64)) FROM UNNEST(event_params) WHERE key='amount') AS amt,\n    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='is_first_investment') AS first_inv,\n    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='is_auto_invested') AS auto\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= '20261104' AND event_name IN ('login_completed','registration_completed','kyc_completed','deposit_success','withdrawal_completed','investment_completed','auto_invest_enabled')),\nu AS (SELECT * FROM e WHERE uuid IS NOT NULL QUALIFY ROW_NUMBER() OVER (PARTITION BY event_name, uuid ORDER BY d) = 1),\nb AS (SELECT DATE_SUB(MAX(d), INTERVAL 1 DAY) AS data_end FROM e),\nw AS (SELECT u.*, b.data_end FROM u, b WHERE u.d BETWEEN GREATEST(DATE_SUB(b.data_end, INTERVAL 27 DAY), DATE '2026-11-04') AND b.data_end)\nSELECT IF(GROUPING(p) = 1, 'all', p) AS platform, ANY_VALUE(data_end) AS data_end, MIN(d) AS from_d,\n COUNT(DISTINCT IF(event_name='login_completed', uid, NULL)) AS logged_in,\n COUNTIF(event_name='login_completed') AS logins,\n COUNTIF(event_name='registration_completed') AS registered,\n COUNTIF(event_name='kyc_completed') AS kyc_done,\n COUNT(DISTINCT IF(event_name='deposit_success', uid, NULL)) AS depositors,\n COUNT(DISTINCT IF(event_name='withdrawal_completed', uid, NULL)) AS withdrawers,\n COUNT(DISTINCT IF(event_name='investment_completed', uid, NULL)) AS investors,\n COUNT(DISTINCT IF(event_name='investment_completed' AND IFNULL(auto, 0) = 0, uid, NULL)) AS manual_investors,\n COUNT(DISTINCT IF(event_name='investment_completed' AND auto = 1, uid, NULL)) AS auto_investors,\n COUNTIF(event_name='investment_completed') AS investments,\n COUNTIF(event_name='investment_completed' AND auto = 1) AS auto_investments,\n COUNT(DISTINCT IF(event_name='investment_completed' AND first_inv = 1, uid, NULL)) AS first_time_investors,\n SUM(IF(event_name='investment_completed' AND IFNULL(auto, 0) = 0 AND cur='SAR', amt, 0)) AS manual_inv_sar,\n COUNTIF(event_name='investment_completed' AND IFNULL(auto, 0) = 0 AND cur='SAR') AS manual_inv_sar_n,\n SUM(IF(event_name='investment_completed' AND auto = 1 AND cur='SAR', amt, 0)) AS auto_inv_sar,\n COUNTIF(event_name='investment_completed' AND auto = 1 AND cur='SAR') AS auto_inv_sar_n,\n COUNT(DISTINCT IF(event_name='auto_invest_enabled', uid, NULL)) AS auto_invest_enablers\nFROM w GROUP BY ROLLUP(p)",
+"users_conv_weekly": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, event_name,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') AS uuid,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='platform') AS p,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='user_id') AS uid\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= '20261104' AND event_name IN ('login_completed')),\nu AS (SELECT * FROM e WHERE uuid IS NOT NULL QUALIFY ROW_NUMBER() OVER (PARTITION BY event_name, uuid ORDER BY d) = 1),\nb AS (SELECT DATE_SUB(MAX(d), INTERVAL 1 DAY) AS data_end FROM e)\nSELECT DATE_TRUNC(u.d, ISOWEEK) AS wk, u.p AS platform, COUNT(DISTINCT u.uid) AS logged_in, ANY_VALUE(b.data_end) AS data_end\nFROM u, b WHERE u.d <= b.data_end AND u.p IS NOT NULL\nGROUP BY 1, 2 ORDER BY 1",
 "users_ga4_daily": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, CASE platform WHEN 'IOS' THEN 'iOS' WHEN 'ANDROID' THEN 'Android' ELSE 'web' END AS platform, user_pseudo_id AS u, is_active_user, event_name,\n    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='ga_session_id') AS sid, (SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING)) FROM UNNEST(event_params) WHERE key='session_engaged') AS eng, (SELECT value.int_value FROM UNNEST(event_params) WHERE key='engagement_time_msec') AS etm\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 45 DAY))),\nde AS (SELECT MAX(d) AS d_end FROM e)\nSELECT d, platform,\n  COUNT(DISTINCT IF(is_active_user, u, NULL)) AS active_users,\n  COUNT(DISTINCT IF(event_name IN ('first_open','first_visit'), u, NULL)) AS new_users,\n  COUNT(DISTINCT IF(sid IS NOT NULL, CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS sessions,\n  COUNT(DISTINCT IF(sid IS NOT NULL AND eng = '1', CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS engaged_sessions,\n  COUNT(*) AS events, ROUND(SUM(IFNULL(etm, 0)) / 1000) AS engagement_sec\nFROM e, de WHERE d > DATE_SUB(de.d_end, INTERVAL 14 DAY)\nGROUP BY 1, 2 ORDER BY 1, 2",
 "users_ga4_demographics": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, user_pseudo_id AS u, geo.country AS country, geo.region AS region, geo.city AS city,\n    LOWER(SPLIT(device.language, '-')[SAFE_OFFSET(0)]) AS language\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 30 DAY)) AND is_active_user),\nde AS (SELECT MAX(d) AS d_end FROM e),\nr AS (SELECT e.* FROM e, de WHERE e.d > DATE_SUB(de.d_end, INTERVAL 7 DAY)),\nl AS (\n  SELECT 'country' AS dim, country AS v, COUNT(DISTINCT u) AS users FROM r GROUP BY 1, 2\n  UNION ALL SELECT 'region', region, COUNT(DISTINCT u) FROM r GROUP BY 1, 2\n  UNION ALL SELECT 'city', city, COUNT(DISTINCT u) FROM r GROUP BY 1, 2\n  UNION ALL SELECT 'language', language, COUNT(DISTINCT u) FROM r GROUP BY 1, 2)\nSELECT dim, IFNULL(NULLIF(v, ''), '(not set)') AS v, users, (SELECT MIN(d) FROM r) AS from_d, (SELECT MAX(d) FROM r) AS to_d FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim ORDER BY users DESC) <= 12\nORDER BY dim, users DESC",
 "users_ga4_pages": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, platform, user_pseudo_id AS u, event_name,\n    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='page_location') AS loc, (SELECT value.string_value FROM UNNEST(event_params) WHERE key='firebase_screen') AS scr, (SELECT value.string_value FROM UNNEST(event_params) WHERE key='firebase_screen_class') AS scls,\n    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='engagement_time_msec') AS etm\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 30 DAY)) AND event_name IN ('page_view', 'screen_view', 'user_engagement')),\nde AS (SELECT MAX(d) AS d_end FROM e),\nr AS (SELECT IF(platform = 'WEB', 'web', 'app') AS kind,\n    IF(platform = 'WEB',\n       REGEXP_REPLACE(IFNULL(REGEXP_EXTRACT(loc, r'^https?://[^/?#]+(/[^?#]*)'), '/'), r'[A-Za-z]{0,6}\\d{5,}', '<ID>'),\n       REGEXP_REPLACE(COALESCE(scr, scls, '(not set)'), r'\\d{5,}', '<ID>')) AS page,\n    event_name, u, etm, d\n  FROM e, de WHERE e.d > DATE_SUB(de.d_end, INTERVAL 7 DAY)),\nl AS (SELECT kind, page, COUNTIF(event_name IN ('page_view', 'screen_view')) AS views,\n    COUNT(DISTINCT IF(event_name IN ('page_view', 'screen_view'), u, NULL)) AS users,\n    ROUND(SUM(IFNULL(etm, 0)) / 1000) AS engagement_sec\n  FROM r GROUP BY 1, 2)\nSELECT kind, page, views, users, engagement_sec, (SELECT MIN(d) FROM r) AS from_d, (SELECT MAX(d) FROM r) AS to_d FROM l\nWHERE views > 0\nQUALIFY ROW_NUMBER() OVER (PARTITION BY kind ORDER BY views DESC) <= 20\nORDER BY kind, views DESC",
 "users_ga4_tech": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, CASE platform WHEN 'IOS' THEN 'iOS' WHEN 'ANDROID' THEN 'Android' ELSE 'web' END AS platform, user_pseudo_id AS u,\n    device.category AS device_category,\n    IF(STARTS_WITH(IFNULL(device.operating_system_version, ''), IFNULL(device.operating_system, '#')), device.operating_system_version, TRIM(CONCAT(IFNULL(device.operating_system, ''), ' ', IFNULL(device.operating_system_version, '')))) AS os_version,\n    app_info.version AS app_version, device.web_info.browser AS browser,\n    TRIM(CONCAT(IFNULL(device.mobile_brand_name, ''), ' ', IFNULL(device.mobile_marketing_name, device.mobile_model_name))) AS device_model\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 30 DAY)) AND is_active_user),\nde AS (SELECT MAX(d) AS d_end FROM e),\nr AS (SELECT e.* FROM e, de WHERE e.d > DATE_SUB(de.d_end, INTERVAL 7 DAY)),\nl AS (\n  SELECT 'device_category' AS dim, platform, device_category AS v, COUNT(DISTINCT u) AS users FROM r GROUP BY 1, 2, 3\n  UNION ALL SELECT 'os_version', platform, os_version, COUNT(DISTINCT u) FROM r GROUP BY 1, 2, 3\n  UNION ALL SELECT 'app_version', platform, app_version, COUNT(DISTINCT u) FROM r WHERE platform != 'web' GROUP BY 1, 2, 3\n  UNION ALL SELECT 'device_model', platform, device_model, COUNT(DISTINCT u) FROM r WHERE platform != 'web' GROUP BY 1, 2, 3\n  UNION ALL SELECT 'browser', platform, browser, COUNT(DISTINCT u) FROM r WHERE platform = 'web' GROUP BY 1, 2, 3)\nSELECT dim, platform, IFNULL(NULLIF(v, ''), '(not set)') AS v, users, (SELECT MIN(d) FROM r) AS from_d, (SELECT MAX(d) FROM r) AS to_d FROM l\nQUALIFY ROW_NUMBER() OVER (PARTITION BY dim, platform ORDER BY users DESC) <= 12\nORDER BY dim, platform, users DESC",
 "users_ga4_week": "WITH e AS (\n  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, CASE platform WHEN 'IOS' THEN 'iOS' WHEN 'ANDROID' THEN 'Android' ELSE 'web' END AS p, user_pseudo_id AS u, is_active_user, event_name,\n    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='ga_session_id') AS sid, (SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING)) FROM UNNEST(event_params) WHERE key='session_engaged') AS eng, (SELECT value.int_value FROM UNNEST(event_params) WHERE key='engagement_time_msec') AS etm\n  FROM `databases-472111.google_analytics.events_*`\n  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Riyadh'), INTERVAL 45 DAY))),\nde AS (SELECT MAX(d) AS d_end FROM e),\nw AS (SELECT e.* FROM e, de WHERE e.d > DATE_SUB(de.d_end, INTERVAL 7 DAY))\nSELECT IF(GROUPING(p) = 1, 'all', p) AS platform,\n  COUNT(DISTINCT IF(is_active_user, u, NULL)) AS active_users,\n  COUNT(DISTINCT IF(event_name IN ('first_open','first_visit'), u, NULL)) AS new_users,\n  COUNT(DISTINCT IF(sid IS NOT NULL, CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS sessions,\n  COUNT(DISTINCT IF(sid IS NOT NULL AND eng = '1', CONCAT(u, '-', CAST(sid AS STRING)), NULL)) AS engaged_sessions,\n  COUNT(*) AS events, ROUND(SUM(IFNULL(etm, 0)) / 1000) AS engagement_sec,\n  MIN(d) AS from_d, MAX(d) AS to_d\nFROM w GROUP BY ROLLUP(p) ORDER BY platform"
 };
-/* vetted, aggregated SQL (same logic as sql/readonly/ in the repo) */
+const GA4_START="2026-11-04"; // first full day of the GA4 raw export; comparisons need a full previous period
+/* vetted, aggregated SQL (same logic as sql/readonly/ in the repo). BigQuery sources on this page: google_analytics (GA4 raw export)
+   and google_ads only; Singular comes from its Google Sheet. Conversions = GA4 server-sent events, one per event_uuid. */
 const SQL = {
-fresh:`SELECT 'Backend events (production)' AS source, MAX(DATE(occurred_at,'Asia/Riyadh')) AS latest_date FROM \`databases-472111.manafa_financing.mi_analytics_events\`
-UNION ALL SELECT 'GA4 (raw export)', MAX(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) FROM \`databases-472111.google_analytics.events_*\` WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$')
+fresh:`SELECT 'GA4 (raw export)' AS source, MAX(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS latest_date FROM \`databases-472111.google_analytics.events_*\` WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$')
 UNION ALL SELECT 'Google Ads (transfer)', MAX(segments_date) FROM \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\``,
-daily:`SELECT DATE(occurred_at,'Asia/Riyadh') AS d,
+daily:`WITH e AS (
+  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, event_name,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') AS uuid,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='platform') AS p,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency') AS cur,
+    (SELECT COALESCE(value.double_value, CAST(value.int_value AS FLOAT64)) FROM UNNEST(event_params) WHERE key='amount') AS amt,
+    (SELECT value.int_value FROM UNNEST(event_params) WHERE key='is_first_investment') AS first_inv
+  FROM \`databases-472111.google_analytics.events_*\`
+  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= '20261104' AND event_name IN ('registration_completed','kyc_completed','identity_verified','deposit_success','investment_completed','auto_invest_enabled')),
+u AS (SELECT * FROM e WHERE uuid IS NOT NULL QUALIFY ROW_NUMBER() OVER (PARTITION BY event_name, uuid ORDER BY d) = 1)
+SELECT d,
  COUNTIF(event_name='registration_completed') AS reg,
- COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='web') AS reg_web,
- COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='ios') AS reg_ios,
- COUNTIF(event_name='registration_completed' AND JSON_VALUE(context.platform)='android') AS reg_android,
+ COUNTIF(event_name='registration_completed' AND p='web') AS reg_web,
+ COUNTIF(event_name='registration_completed' AND p='ios') AS reg_ios,
+ COUNTIF(event_name='registration_completed' AND p='android') AS reg_android,
  COUNTIF(event_name='kyc_completed') AS kyc,
  COUNTIF(event_name='identity_verified') AS idv,
  COUNTIF(event_name='deposit_success') AS dep,
- SUM(IF(event_name='deposit_success' AND JSON_VALUE(payload.currency)='SAR', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS dep_sar,
- SUM(IF(event_name='deposit_success' AND JSON_VALUE(payload.currency)='USD', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS dep_usd,
+ SUM(IF(event_name='deposit_success' AND cur='SAR', amt, 0)) AS dep_sar,
+ SUM(IF(event_name='deposit_success' AND cur='USD', amt, 0)) AS dep_usd,
  COUNTIF(event_name='investment_completed') AS inv,
- SUM(IF(event_name='investment_completed' AND JSON_VALUE(payload.currency)='SAR', SAFE_CAST(JSON_VALUE(payload.amount) AS NUMERIC),0)) AS inv_sar,
- COUNTIF(event_name='investment_completed' AND SAFE_CAST(JSON_VALUE(payload.is_first_investment) AS BOOL)) AS first_inv,
+ SUM(IF(event_name='investment_completed' AND cur='SAR', amt, 0)) AS inv_sar,
+ COUNTIF(event_name='investment_completed' AND first_inv=1) AS first_inv,
  COUNTIF(event_name='auto_invest_enabled') AS ai_on
-FROM \`databases-472111.manafa_financing.mi_analytics_events\`
-WHERE DATE(occurred_at,'Asia/Riyadh') >= '2026-10-02'
-GROUP BY 1 ORDER BY 1`,
-cohorts:`WITH ev AS (SELECT profile_id, event_name, DATE(occurred_at,'Asia/Riyadh') d, JSON_VALUE(context.platform) platform
-  FROM \`databases-472111.manafa_financing.mi_analytics_events\`
-  WHERE profile_id IS NOT NULL AND event_name IN ('registration_completed','kyc_completed','deposit_success','investment_completed')),
-de AS (SELECT DATE_SUB(MAX(DATE(occurred_at,'Asia/Riyadh')), INTERVAL 1 DAY) d_end FROM \`databases-472111.manafa_financing.mi_analytics_events\`),
-reg AS (SELECT profile_id, MIN(d) reg_date, ARRAY_AGG(platform ORDER BY d LIMIT 1)[OFFSET(0)] p FROM ev WHERE event_name='registration_completed' GROUP BY 1),
-f AS (SELECT profile_id, MIN(IF(event_name='kyc_completed',d,NULL)) kyc, MIN(IF(event_name='deposit_success',d,NULL)) dep, MIN(IF(event_name='investment_completed',d,NULL)) inv FROM ev GROUP BY 1)
+FROM u GROUP BY 1 ORDER BY 1`,
+cohorts:`WITH e AS (
+  SELECT PARSE_DATE('%Y%m%d', event_date) AS d, event_name,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') AS uuid,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='platform') AS p,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key='user_id') AS uid
+  FROM \`databases-472111.google_analytics.events_*\`
+  WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= '20261104' AND event_name IN ('registration_completed','kyc_completed','deposit_success','investment_completed')),
+u AS (SELECT * FROM e WHERE uuid IS NOT NULL QUALIFY ROW_NUMBER() OVER (PARTITION BY event_name, uuid ORDER BY d) = 1),
+de AS (SELECT DATE_SUB(MAX(d), INTERVAL 1 DAY) AS d_end FROM e),
+reg AS (SELECT uid, MIN(d) AS reg_date, ARRAY_AGG(p IGNORE NULLS ORDER BY d LIMIT 1)[SAFE_OFFSET(0)] AS p FROM u WHERE event_name='registration_completed' AND uid IS NOT NULL GROUP BY 1),
+f AS (SELECT uid, MIN(IF(event_name='kyc_completed',d,NULL)) AS kyc, MIN(IF(event_name='deposit_success',d,NULL)) AS dep, MIN(IF(event_name='investment_completed',d,NULL)) AS inv FROM u WHERE uid IS NOT NULL GROUP BY 1)
 SELECT DATE_TRUNC(r.reg_date, ISOWEEK) AS cohort_week, r.p AS platform,
  DATE_DIFF((SELECT d_end FROM de), DATE_TRUNC(r.reg_date, ISOWEEK), DAY) AS age,
  COUNT(*) AS n,
- COUNTIF(DATE_DIFF(f.kyc,r.reg_date,DAY) BETWEEN 0 AND 14) AS kyc14,
- COUNTIF(DATE_DIFF(f.dep,r.reg_date,DAY) BETWEEN 0 AND 14) AS dep14,
- COUNTIF(DATE_DIFF(f.inv,r.reg_date,DAY) BETWEEN 0 AND 14) AS inv14
-FROM reg r LEFT JOIN f USING(profile_id)
-WHERE r.reg_date >= '2026-10-02' AND r.reg_date <= (SELECT d_end FROM de)
-GROUP BY 1,2,3 ORDER BY 1`,
+ COUNTIF(DATE_DIFF(f.kyc, r.reg_date, DAY) BETWEEN 0 AND 14) AS kyc14,
+ COUNTIF(DATE_DIFF(f.dep, r.reg_date, DAY) BETWEEN 0 AND 14) AS dep14,
+ COUNTIF(DATE_DIFF(f.inv, r.reg_date, DAY) BETWEEN 0 AND 14) AS inv14
+FROM reg r LEFT JOIN f USING (uid)
+WHERE r.reg_date <= (SELECT d_end FROM de)
+GROUP BY 1, 2, 3 ORDER BY 1`,
 ga4:`WITH e AS (
   SELECT PARSE_DATE('%Y%m%d', event_date) AS d, user_pseudo_id AS u, (SELECT value.int_value FROM UNNEST(event_params) WHERE key='ga_session_id') AS sid, (SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING)) FROM UNNEST(event_params) WHERE key='session_engaged') AS eng,
     session_traffic_source_last_click.cross_channel_campaign.default_channel_group AS ch
@@ -652,12 +665,12 @@ s AS (SELECT CONCAT(u, '-', CAST(sid AS STRING)) AS k, MIN(d) AS d, LOGICAL_OR(e
 SELECT d, ch, COUNT(*) AS sessions, COUNTIF(engaged) AS engaged FROM s GROUP BY 1, 2 ORDER BY 1`,
 ads:`SELECT segments_date AS d, SUM(metrics_cost_micros)/1e6 AS spend, SUM(metrics_clicks) AS clicks, SUM(metrics_impressions) AS impr, SUM(metrics_conversions) AS conv
 FROM \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\` GROUP BY 1 ORDER BY 1`,
-delivery:`SELECT DATE_TRUNC(DATE(e.occurred_at,'Asia/Riyadh'),ISOWEEK) AS wk, JSON_VALUE(e.context.platform) AS platform, COUNT(*) AS n,
- COUNTIF(d.status='degraded') AS degraded
-FROM \`databases-472111.manafa_financing.mi_analytics_event_deliveries\` d
-JOIN \`databases-472111.manafa_financing.mi_analytics_events\` e ON e.id=d.analytics_event_id
-WHERE d.channel='ga4' AND DATE(e.occurred_at,'Asia/Riyadh') >= '2026-10-05'
-GROUP BY 1,2 HAVING n>200 ORDER BY 1`,
+dups:`SELECT DATE_TRUNC(PARSE_DATE('%Y%m%d', event_date), ISOWEEK) AS wk, event_name,
+ COUNTIF((SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') IS NOT NULL) AS server_sent,
+ COUNTIF((SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') IS NULL) AS extra_copies
+FROM \`databases-472111.google_analytics.events_*\`
+WHERE REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\\d{8}$') AND _TABLE_SUFFIX >= '20261104' AND event_name IN ('registration_completed','login_completed','kyc_completed','identity_verified','withdrawal_completed','passcode_enabled','bank_account_added','auto_invest_disabled','deposit_success','investment_completed')
+GROUP BY 1, 2 ORDER BY 1, 2`,
 };
 
 /* ---------------- small components ---------------- */
@@ -773,12 +786,10 @@ function useHash(){
    Claude answers on the viewer's own account through the `sample` capability.
    It can only reach data through the read-only page tools below; every query
    is checked here before it runs (allowed tables, no raw JSON/device keys,
-   aggregates only on the backend ledger, no identifiers in the result). */
+   aggregates only, no identifiers in the result; BigQuery limited to google_analytics + google_ads). */
 const ASK_STORE = "mbi.ask.v1";
 const ASK_DATASETS = ["GA4","google_analytics","batch_logs","bide2270_pc_test","bide2272_masking_poc","curated","curated_v1","dashboard_views","etl_logs","gold","gold_prod_snapshot","google_ads","manafa_financing","manafa_financing_tag_test","reporting","sama_mart","silver","stg_staging_financing"];
 const ASK_TABLES = [
-  /^databases-472111\.manafa_financing\.mi_analytics_events$/,
-  /^databases-472111\.manafa_financing\.mi_analytics_event_deliveries$/,
   /^databases-472111\.google_analytics\.events_(\*|\d{8})$/,
   /^databases-472111\.google_ads\.p_ads_(Campaign|CampaignStats|CampaignConversionStats)_3343082801$/,
   /^databases-472111\.(google_analytics|google_ads)\.INFORMATION_SCHEMA\.(COLUMNS|TABLES)$/i,
@@ -799,7 +810,7 @@ function askCheckSql(raw){
     throw new Error("Only read-only SELECT queries are allowed.");
   const tables = [];
   const outside = t.replace(/`([^`]*)`/g,(m,id)=>{ if(id.includes(".")) tables.push(id); return " _q_ "; });
-  for(const id of tables){ if(!ASK_TABLES.some(r=>r.test(id))) throw new Error("Table not allowed: "+id+". Allowed: manafa_financing.mi_analytics_events / mi_analytics_event_deliveries, google_analytics.events_* (GA4 raw export, daily tables), google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801, and google_analytics/google_ads INFORMATION_SCHEMA.COLUMNS."); }
+  for(const id of tables){ if(!ASK_TABLES.some(r=>r.test(id))) throw new Error("Table not allowed: "+id+". This dashboard reads only google_analytics.events_* (GA4 raw export, daily tables), google_ads.p_ads_{Campaign,CampaignStats,CampaignConversionStats}_3343082801, and google_analytics/google_ads INFORMATION_SCHEMA.COLUMNS."); }
   const dsRe = new RegExp("\\b("+ASK_DATASETS.join("|")+"|INFORMATION_SCHEMA|databases-472111|region-[\\w-]+)\\s*\\.","i");
   if(dsRe.test(outside)) throw new Error("Write every table as a full backticked path, e.g. `databases-472111.google_analytics.events_*`.");
   if(/\b(FROM|JOIN)\s+[A-Za-z_][\w-]*\s*\.\s*[A-Za-z_]/i.test(outside)) throw new Error("Write every table as a full backticked path.");
@@ -814,7 +825,9 @@ function askCheckSql(raw){
     // GA4 raw export: aggregates only; no user-level identifiers or personal user properties
     if(/\b(user_properties|advertising_id|vendor_id|gclid|dclid|srsltid|transaction_id)\b/i.test(outside)) throw new Error("That GA4 field is an identifier or personal user property and can't be queried here.");
     if(/\buser_id\b/i.test(outside.replace(/\buser_pseudo_id\b/gi,""))) throw new Error("GA4 user_id is a personal identifier; count people with COUNT(DISTINCT user_pseudo_id) instead.");
-    if(/'(transaction_id|investment_id|wallet_id|inviter_id|invitee_id|lead_id|entity_bank_id|user_id|analytics_user_id|anonymous_id|event_uuid|click_id|gclid|company_id|app_instance_id|user_ref|deviceid|name|file_name|search_term|unique_search_term|amount|investment_amount|remaining_wallet_amount)'/i.test(String(raw))) throw new Error("That event parameter holds an identifier, a personal value or an individual amount and can't be read here.");
+    if(/'(transaction_id|investment_id|wallet_id|inviter_id|invitee_id|lead_id|entity_bank_id|user_id|analytics_user_id|anonymous_id|click_id|gclid|company_id|app_instance_id|user_ref|deviceid|name|file_name|search_term|unique_search_term|investment_amount|remaining_wallet_amount)'/i.test(String(raw))) throw new Error("That event parameter holds an identifier, a personal value or an individual amount and can't be read here.");
+    if(/'amount'/i.test(String(raw)) && (!/\b(SUM|AVG)\s*\(/i.test(outside) || /GROUP\s+BY[^)]*\b(amt|amount)\b/i.test(outside))) throw new Error("Amounts can only be totalled or averaged (SUM / AVG), never listed or grouped by value.");
+    if(/\bevent_uuid\b/i.test(String(raw)) && /GROUP\s+BY[^)]*\buuid\b/i.test(outside.replace(/OVER\s*\([^)]*\)/gi,""))) throw new Error("event_uuid may only be used to count or de-duplicate events, not to group results.");
     if(!/\b(COUNT|COUNTIF|SUM|AVG|MIN|MAX|APPROX_COUNT_DISTINCT|APPROX_QUANTILES)\s*\(/i.test(outside)) throw new Error("GA4 raw-export queries must aggregate (COUNT, COUNT(DISTINCT user_pseudo_id), …); event-level rows can't be returned.");
     if(!/_TABLE_SUFFIX/i.test(outside)) throw new Error("Filter GA4 tables on _TABLE_SUFFIX (e.g. BETWEEN '20261109' AND '20261115') so only the needed days are read.");
   }
@@ -845,7 +858,7 @@ function askTools(ctx, log){
   const callMcp = async (server, tool, input)=>{ if(!caps.mcp) throw new Error("Connectors aren't available in this view."); try{ return await caps.mcp.callTool(server, tool, input); }catch(e){ throw new Error((e&&e.code?e.code+": ":"")+(e&&e.message||String(e))); } };
   return [
     { name:"run_bigquery",
-      description:"Run ONE read-only, aggregated GoogleSQL SELECT on BigQuery project databases-472111 (Saudi region me-central2). Returns {columns, rows (max 200), total_rows}. Use full backticked table paths. The page rejects disallowed tables, personal/device identifiers, and non-aggregated reads of the backend ledger, and tells you why.",
+      description:"Run ONE read-only, aggregated GoogleSQL SELECT on BigQuery project databases-472111 (Saudi region me-central2). Returns {columns, rows (max 200), total_rows}. Use full backticked table paths. Only google_analytics.events_* and google_ads tables are allowed. The page rejects other tables, personal/device identifiers and non-aggregated reads, and tells you why.",
       inputSchema:{type:"object",properties:{sql:{type:"string",description:"The SELECT statement"},purpose:{type:"string",description:"Short plain-English label for what this query measures (shown to the user)"}},required:["sql","purpose"]},
       async execute(inp){ const st=step({tool:"BigQuery",label:String(inp.purpose||"Query"),code:String(inp.sql||""),status:"running"}); const t0=Date.now();
         try{ const sql=askCheckSql(inp.sql);
@@ -917,26 +930,19 @@ function askRules(ctx){
 TOOLS: run_bigquery (read-only SQL), singular_summary (Singular sheet), search_jira, read_command_center. Fetch before you state any number; never estimate or recall figures. If a tool returns an error, fix the query and retry, or say plainly what you couldn't get. Use as few tool calls as you can (you have only a handful of rounds): combine metrics into one query with UNION ALL / conditional aggregates.
 
 DATA (BigQuery project databases-472111, region me-central2 — always use full backticked paths):
-1. Backend ledger = conversion truth: \`databases-472111.manafa_financing.mi_analytics_events\`
-   columns: event_name, subject_type, profile_id, user_id, analytics_user_id, payload JSON, context JSON, attribution JSON, occurred_at TIMESTAMP (UTC; convert with DATE(occurred_at,'Asia/Riyadh')).
-   events: registration_completed, login_completed, phone_verified, email_verified, kyc_completed, identity_verified, deposit_success, deposit_failed, investment_completed, investment_cancelled, withdrawal_completed, withdrawal_settled, withdrawal_failed, withdrawal_reversed, auto_invest_enabled, auto_invest_disabled, bank_account_added, bank_account_removed, passcode_enabled, passcode_changed, referral_reward_earned, profile_updated, notification_preference_updated.
-   payload keys: amount, currency, is_auto_invested, is_first_investment, method, payment_method, failure_reason, reason, status, flow, verification_provider, kyc_duration_seconds, strategy_name, package_id, opportunity_id, risk_profile, utm_source, utm_medium, utm_campaign, utm_content, channel, source_funnel.
-   context keys: platform (ios/android/web), language, app_version, entity_type, role_key, lifecycle.is_new_user, lifecycle.days_since_registration, vendor_keys.singular_device.make/model/os_version.
-   attribution keys: acquisition_source, acquisition_medium, acquisition_campaign, acquisition_content, first_platform, first_touch_at, last_source, last_medium, last_campaign, last_touch_at.
-   Read JSON with JSON_VALUE(payload.amount), SAFE_CAST(... AS NUMERIC/BOOL). Count people with COUNT(DISTINCT profile_id). Amounts: SUM only where currency='SAR' (never add currencies).
-   Delivery log: \`databases-472111.manafa_financing.mi_analytics_event_deliveries\` (analytics_event_id, channel ga4/singular, status, degraded_reason, attempts) — for "did events reach GA4/Singular".
-2. GA4 (product analytics) = the GA4 raw BigQuery export \`databases-472111.google_analytics.events_*\` (one table per day, events_YYYYMMDD, Riyadh dates; production streams only: iOS, Android, Web). ALWAYS filter _TABLE_SUFFIX BETWEEN 'YYYYMMDD' AND 'YYYYMMDD' (daily tables only; never events_intraday_*). Full data from 4 Nov 2026.
+1. GA4 = the GA4 raw BigQuery export (the ONLY source for users, funnel and conversions on this dashboard) \`databases-472111.google_analytics.events_*\` (one table per day, events_YYYYMMDD, Riyadh dates; production streams only: iOS, Android, Web). ALWAYS filter _TABLE_SUFFIX BETWEEN 'YYYYMMDD' AND 'YYYYMMDD' (daily tables only; never events_intraday_*). Full data from 4 Nov 2026.
    Columns: event_date (STRING YYYYMMDD → PARSE_DATE('%Y%m%d', event_date)), event_name, platform ('IOS','ANDROID','WEB'), user_pseudo_id (count people ONLY with COUNT(DISTINCT user_pseudo_id)), is_active_user, event_params (ARRAY<key, value.string_value/int_value>: read with (SELECT value.int_value FROM UNNEST(event_params) WHERE key='ga_session_id')), device.category/operating_system/operating_system_version/mobile_brand_name/mobile_marketing_name/language/web_info.browser/web_info.hostname, geo.country/region/city, app_info.version, traffic_source.source/medium/name (first-user acquisition), session_traffic_source_last_click.cross_channel_campaign.source/medium/campaign_name/default_channel_group (session acquisition), collected_traffic_source.manual_source/manual_medium/manual_campaign_name.
    Definitions: session = DISTINCT CONCAT(user_pseudo_id,'-',ga_session_id); engaged session = session_engaged='1'; active users = COUNT(DISTINCT IF(is_active_user,user_pseudo_id,NULL)); new users = users with event first_open (apps) or first_visit (web); session channel = default_channel_group of the session (NULL → 'Unassigned'); engagement time = SUM(engagement_time_msec)/1000. Useful params: page_location, page_title, firebase_screen (app screen name), session_engaged, engagement_time_msec, utm_* and the Manafa event params (method, payment_method, kyc_step, …).
-   Never read user_id, user_properties, device ids, gclid, transaction ids, or params holding IDs/amounts (the page blocks them). Mask long numbers in page paths.
-3. Google Ads (account 3343082801, SAR): \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\` (campaign_id, segments_date, segments_device, segments_ad_network_type, metrics_cost_micros/1e6 = SAR, metrics_clicks, metrics_impressions, metrics_conversions), \`...p_ads_CampaignConversionStats_3343082801\` (campaign_id, segments_date, segments_conversion_action_name, metrics_conversions), \`...p_ads_Campaign_3343082801\` (campaign_id, campaign_name, campaign_status — a daily snapshot: take the latest _PARTITIONTIME per campaign_id). Filter stats on segments_date and also DATE(_PARTITIONTIME) >= start date.
-4. Singular (attribution) = singular_summary tool only. Google Ads cost in Singular is unreliable (tqa-018): use BigQuery for Google Ads.
-5. Unknown columns: query \`databases-472111.google_analytics.INFORMATION_SCHEMA.COLUMNS\` WHERE table_name='events_20261117' (or google_ads).
-Never use gold, silver, curated, reporting, dashboard_views, sama_mart, stg_*, *_test or *_poc — the page blocks them. The old GA4 transfer tables (GA4.p_ga4_*) are retired and blocked: they didn't match GA4 (sessions and Unassigned were inflated).
+   CONVERSIONS: Manafa's backend sends its events to GA4 server-side; each carries an 'event_uuid' param. Count conversions ONLY on events WHERE (SELECT value.string_value FROM UNNEST(event_params) WHERE key='event_uuid') IS NOT NULL — copies without event_uuid are duplicates forwarded again on the app streams (tqa-007). Server-sent params: platform ('ios'/'android'/'web', use this for platform splits of these events), currency, amount (int or double: COALESCE(value.double_value, CAST(value.int_value AS FLOAT64))), is_first_investment and is_auto_invested (int 0/1), payment_method, strategy_name, kyc_duration_seconds, verification_provider. Amounts: only SUM/AVG where currency='SAR'. Data starts 4 Nov 2026 (1–3 Nov near-empty). Events the backend couldn't deliver to GA4 are missing (tqa-013: most KYC / identity / auto-invest from web), so say GA4 counts are a floor for those.
+   Never read user_id, user_properties, device ids, gclid, transaction ids, or params holding IDs (the page blocks them); count people with COUNT(DISTINCT user_pseudo_id). Mask long numbers in page paths.
+2. Google Ads (account 3343082801, SAR): \`databases-472111.google_ads.p_ads_CampaignStats_3343082801\` (campaign_id, segments_date, segments_device, segments_ad_network_type, metrics_cost_micros/1e6 = SAR, metrics_clicks, metrics_impressions, metrics_conversions), \`...p_ads_CampaignConversionStats_3343082801\` (campaign_id, segments_date, segments_conversion_action_name, metrics_conversions), \`...p_ads_Campaign_3343082801\` (campaign_id, campaign_name, campaign_status — a daily snapshot: take the latest _PARTITIONTIME per campaign_id). Filter stats on segments_date and also DATE(_PARTITIONTIME) >= start date.
+3. Singular (attribution) = singular_summary tool only. Google Ads cost in Singular is unreliable (tqa-018): use BigQuery for Google Ads.
+4. Unknown columns: query \`databases-472111.google_analytics.INFORMATION_SCHEMA.COLUMNS\` WHERE table_name='events_20261117' (or google_ads).
+This dashboard uses no other BigQuery dataset: manafa_financing (backend replica), gold, silver, curated, reporting, dashboard_views, sama_mart, stg_*, *_test and *_poc are all blocked. The old GA4 transfer tables (GA4.p_ga4_*) are retired and blocked: they didn't match GA4 (sessions and Unassigned were inflated).
 
 RULES:
-- Backend events count conversions; GA4, Google Ads and Singular only explain them. Never add, average or divide one source's number by another's; report each source in its own section, labelled. Cross-source comparison only as a data-quality note.
-- Before answering about recent days, check freshness (MAX date) of the source you use. The backend replica has lagged recently. Never judge the last 3 days (conversions lag up to 72 h): flag them as incomplete.
+- On this dashboard GA4 server-sent events (one per event_uuid) count conversions; Google Ads and Singular are platform claims. Never add, average or divide one source's number by another's; report each source in its own section, labelled. Cross-source comparison only as a data-quality note.
+- Before answering about recent days, check freshness (MAX date) of the source you use. The GA4 export refreshes daily; leave out the newest day. Never judge the last 3 days (conversions lag up to 72 h): flag them as incomplete.
 - Weeks are ISO weeks (Mon–Sun), Riyadh time. Name exact date ranges.
 - Compute with SQL; don't eyeball. For any headline number, sanity-check it (e.g. total vs sum of parts).
 - Privacy (SAMA/PDPL): aggregates only. Never output IDs, names, mobiles, emails, IBANs, national IDs or single transactions. If asked for those, decline and offer an aggregate.
@@ -1032,7 +1038,7 @@ function AskView({ctx}){
 
   return html`<div className="ask">
     <div className="page-h"><div className="grow"><h1>Ask the data</h1>
-      <p>Ask in plain words. Claude answers with live numbers from BigQuery (backend, GA4, Google Ads), the Singular sheet and Jira, through your own read-only connectors, and shows every query it ran. Aggregates only; no personal data. Decision-support, not a decision.</p></div>
+      <p>Ask in plain words. Claude answers with live numbers from BigQuery (GA4 raw export, Google Ads), the Singular sheet and Jira, through your own read-only connectors, and shows every query it ran. Aggregates only; no personal data. Decision-support, not a decision.</p></div>
       ${msgs.length?html`<button className="btn" onClick=${clear} disabled=${busy}><${Icon} name="Trash2" size=${14}/>Clear chat</button>`:null}</div>
     ${sample===null?html`<div className="note warn" style=${{marginBottom:14}}>Chat needs Claude enabled for this page in your view. Open the Command Center in claude.ai and allow Claude when asked.</div>`:null}
     <div className="ask-thread" role="log" aria-live="polite">
@@ -1257,7 +1263,7 @@ function Overview({ctx}){
   const daily = useBQ("daily",SQL.daily), coh = useBQ("cohorts",SQL.cohorts), ga4=useBQ("ga4",SQL.ga4);
   const rows = daily.rows||[];
   const R = useRange(rows);
-  const S=(k)=>R.from?sumRange(rows,k,R.from,R.to):null, P=(k)=>R.pFrom?sumRange(rows,k,R.pFrom,R.pTo):null;
+  const S=(k)=>R.from?sumRange(rows,k,R.from,R.to):null, P=(k)=>R.pFrom&&R.pFrom>=GA4_START?sumRange(rows,k,R.pFrom,R.pTo):null;
   const spk=(k)=>{ if(!R.from) return null; const a=R.len<7?addDays(R.to,-13):R.from; return series(rows,k,a,R.to); };
   const C=cohortAgg(coh.rows); const lastW=C.weeks[C.weeks.length-1], prevW=C.weeks[C.weeks.length-2];
   const conv = lastW? C.byW[lastW].inv14/C.byW[lastW].n : null, convPrev = prevW? C.byW[prevW].inv14/C.byW[prevW].n : null;
@@ -1265,21 +1271,21 @@ function Overview({ctx}){
   const loading = daily.status==="loading";
   return html`<div>
     <div className="page-h"><div className="grow"><h1>Executive overview</h1>
-      <p>Production backend events are the source of truth for every funnel number here. "Latest day" is the newest complete day in the backend copy${R.end?html` (<b>${R.end}</b>)`:""}; the replica runs about 3–4 days behind.</p></div>
+      <p>Every funnel number here comes from GA4 (raw BigQuery export): Manafa's server-sent events, each counted once by its event_uuid (app duplicates removed, tqa-007). "Latest day" is the newest day used${R.end?html` (<b>${R.end}</b>)`:""}; the newest export day is left out because GA4 can still add late events. Data starts 4 Nov 2026. Events the backend couldn't deliver to GA4 are missing here (tqa-013), so GA4 counts run below Manafa's own records, most for KYC and identity checks.</p></div>
       <${RangeBar} R=${R}/></div>
     ${!daily.rows?html`<div style=${{marginBottom:14}}><${BQState} q=${daily}/></div>`:null}
     <div className="grid g4" style=${{marginBottom:14}}>
       ${loading?[1,2,3,4,5,6,7,8].map(i=>html`<div className="panel" key=${i}><${Skel} h=${12} w="50%"/><div style=${{height:10}}></div><${Skel} h=${28} w="60%"/><div style=${{height:10}}></div><${Skel} h=${30}/></div>`):html`
-      <${KPI} icon="UserPlus" label="New registrations" value=${S("reg")} prev=${P("reg")} spark=${spk("reg")} src="backend · registration_completed"/>
-      <${KPI} icon="BadgeCheck" label="KYC completed" value=${S("kyc")} prev=${P("kyc")} spark=${spk("kyc")} color="#7f8cff" note="Includes existing users completing KYC (about 63%)." src="backend · kyc_completed"/>
-      <${KPI} icon="Wallet" label="Successful deposits" value=${S("dep")} prev=${P("dep")} spark=${spk("dep")} color="#22c38e" note=${S("dep_sar")!=null?`${fmtSAR(S("dep_sar"))} SAR · ${fmtSAR(S("dep_usd"))} USD (kept apart)`:""} src="backend · deposit_success"/>
-      <${KPI} icon="Sparkles" label="First investments" value=${S("first_inv")} prev=${P("first_inv")} spark=${spk("first_inv")} color="#f2b136" note="Watch item: flag jumped in W45, under review." src="backend · is_first_investment"/>
-      <${KPI} icon="Repeat" label="Auto-invest enabled" value=${S("ai_on")} prev=${P("ai_on")} spark=${spk("ai_on")} color="#c084fc" src="backend · auto_invest_enabled"/>
-      <${KPI} icon="Percent" label="Registration → first investment" value=${conv} prev=${convPrev} fmt=${v=>pct(v,1)} note=${lastW?`14-day window · closed cohort of ${lastW} vs ${prevW||"—"}`:"Waiting for a closed cohort"} src="backend cohorts"/>
-      <${KPI} icon="Banknote" label="Investment volume" value=${S("inv_sar")} prev=${P("inv_sar")} fmt=${fmtSAR} unit="SAR" spark=${spk("inv_sar")} color="#5ec8d8" src="backend · investment_completed"/>
+      <${KPI} icon="UserPlus" label="New registrations" value=${S("reg")} prev=${P("reg")} spark=${spk("reg")} src="GA4 · registration_completed"/>
+      <${KPI} icon="BadgeCheck" label="KYC completed" value=${S("kyc")} prev=${P("kyc")} spark=${spk("kyc")} color="#7f8cff" note="Includes existing users completing KYC. GA4 receives only part of KYC events (tqa-013)." src="GA4 · kyc_completed"/>
+      <${KPI} icon="Wallet" label="Successful deposits" value=${S("dep")} prev=${P("dep")} spark=${spk("dep")} color="#22c38e" note=${S("dep_sar")!=null?`${fmtSAR(S("dep_sar"))} SAR · ${fmtSAR(S("dep_usd"))} USD (kept apart)`:""} src="GA4 · deposit_success"/>
+      <${KPI} icon="Sparkles" label="First investments" value=${S("first_inv")} prev=${P("first_inv")} spark=${spk("first_inv")} color="#f2b136" note="is_first_investment param on investment_completed." src="GA4 · is_first_investment"/>
+      <${KPI} icon="Repeat" label="Auto-invest enabled" value=${S("ai_on")} prev=${P("ai_on")} spark=${spk("ai_on")} color="#c084fc" src="GA4 · auto_invest_enabled"/>
+      <${KPI} icon="Percent" label="Registration → first investment" value=${conv} prev=${convPrev} fmt=${v=>pct(v,1)} note=${lastW?`14-day window · closed cohort of ${lastW} vs ${prevW||"—"}`:"Waiting for a closed cohort"} src="GA4 cohorts (user_id)"/>
+      <${KPI} icon="Banknote" label="Investment volume" value=${S("inv_sar")} prev=${P("inv_sar")} fmt=${fmtSAR} unit="SAR" spark=${spk("inv_sar")} color="#5ec8d8" src="GA4 · investment_completed"/>
       <div className="panel kpi"><div className="row"><span className="ic"><${Icon} name="Users" size=${15}/></span><span className="small muted">Total users</span></div>
         <div className="val muted" style=${{fontSize:18}}>Not available</div>
-        <div className="small muted">The user total lives in the warehouse layer, which currently shows staging data (tqa-012). It returns once data engineering fixes the source.</div></div>`}
+        <div className="small muted">GA4 only sees users who were active since 4 Nov, not Manafa's full registered base, so there is no total-users figure on this page.</div></div>`}
     </div>
     <div className="grid g3">
       <${FunnelPanel} coh=${coh}/>
@@ -1300,21 +1306,21 @@ function FunnelPanel({coh}){
     ${coh.rows?(t.n?html`
       <${ChartC} config=${{type:"bar",data:{labels:["Registered","KYC (14d)","First deposit (14d)","First investment (14d)"],datasets:[{data:[t.n,t.k,t.d,t.i],backgroundColor:["#293AE0","#3A9AF4","#22c38e","#f2b136"],borderRadius:6,barThickness:22}]},
         options:{indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:c=>c.dataIndex?pct(c.raw/t.n)+" of registrations":""}}},scales:{x:gridY,y:{...gridX,ticks:{autoSkip:false}}}}}}/>
-      <div className="small muted" style=${{marginTop:8}}>Closed cohorts ${ws[0]} to ${ws[ws.length-1]} (${fmtN(t.n)} registrations). Open cohorts are left out, not counted as failures.</div>`
-      :html`<div className="empty">No closed cohort yet.</div>`):html`<${BQState} q=${coh}/>`}
-    <${Source}>backend cohorts · <b>investor_funnel_cohorts_prod</b><//></div>`;
+      <div className="small muted" style=${{marginTop:8}}>Closed cohorts ${ws[0]} to ${ws[ws.length-1]} (${fmtN(t.n)} registrations). Open cohorts are left out, not counted as failures. GA4 misses part of KYC events (tqa-013), so the KYC step reads low.</div>`
+      :html`<div className="empty">No closed cohort yet. GA4 data starts 4 Nov; the first registration week closes its 14-day window around 23 Nov.</div>`):html`<${BQState} q=${coh}/>`}
+    <${Source}>GA4 cohorts · registration_completed → kyc / deposit / investment by user_id<//></div>`;
 }
 function PlatformFunnelPanel({coh}){
   const plats=["web","ios","android"]; const ws=cohortAgg(coh.rows).weeks.slice(-3);
   const rate=(p,k)=>{ const C=cohortAgg(coh.rows,p); let n=0,v=0; ws.forEach(w=>{ if(C.byW[w]){n+=C.byW[w].n;v+=C.byW[w][k];} }); return n?+(v/n*100).toFixed(1):null; };
   return html`<div className="panel"><div className="panel-h"><h2>Conversion funnel by platform</h2><span className="grow"></span><span className="label-data">Data</span></div>
-    ${coh.rows?html`<${ChartC} config=${{type:"bar",data:{labels:["Web","iOS","Android"],datasets:[
+    ${coh.rows?(!ws.length?html`<div className="empty">No closed cohort yet (GA4 data starts 4 Nov).</div>`:null):null}${coh.rows&&ws.length?html`<${ChartC} config=${{type:"bar",data:{labels:["Web","iOS","Android"],datasets:[
       {label:"KYC %",data:plats.map(p=>rate(p,"kyc14")),backgroundColor:"#3A9AF4",borderRadius:5},
       {label:"Deposit %",data:plats.map(p=>rate(p,"dep14")),backgroundColor:"#22c38e",borderRadius:5},
       {label:"Investment %",data:plats.map(p=>rate(p,"inv14")),backgroundColor:"#f2b136",borderRadius:5}]},
       options:{scales:{y:{...gridY,ticks:{callback:v=>v+"%"}},x:gridX}}}}/>
-      <div className="small muted" style=${{marginTop:8}}>Within 14 days of registration, last 3 closed cohorts. Web KYC trails the apps (fx-01).</div>`:html`<${BQState} q=${coh}/>`}
-    <${Source}>backend cohorts<//></div>`;
+      <div className="small muted" style=${{marginTop:8}}>Within 14 days of registration, last 3 closed cohorts. Web KYC trails the apps (fx-01).</div>`:(coh.rows?null:html`<${BQState} q=${coh}/>`)}
+    <${Source}>GA4 cohorts<//></div>`;
 }
 function PlatformDistPanel({daily,R}){
   const rows=daily.rows||[]; const v=["reg_web","reg_ios","reg_android"].map(k=>R.from?sumRange(rows,k,R.from,R.to)||0:0);
@@ -1324,8 +1330,8 @@ function PlatformDistPanel({daily,R}){
       <div className="grid" style=${{gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:8,marginTop:10}}>
         ${labels.map((l,i)=>html`<div key=${l} style=${{borderLeft:"3px solid "+cols[i],paddingLeft:8}}><div className="small muted">${l}</div><div style=${{fontSize:18,fontWeight:600}}>${fmtN(v[i])}</div><div className="small muted">${pct(v[i]/total,0)}</div></div>`)}</div>
       <div className="small muted" style=${{marginTop:8}}>Registrations by platform, ${R.from} to ${R.to} (${fmtN(total)} total).</div>`
-      :html`<div className="empty">No registrations recorded for ${R.from} to ${R.to}. The backend copy ends ${R.end||"—"}; pick an earlier range.</div>`):html`<${BQState} q=${daily}/>`}
-    <${Source}>backend · context.platform<//></div>`;
+      :html`<div className="empty">No registrations recorded for ${R.from} to ${R.to}. GA4 data runs to ${R.end||"—"}; pick an earlier range.</div>`):html`<${BQState} q=${daily}/>`}
+    <${Source}>GA4 · registration_completed, platform param<//></div>`;
 }
 function InvestTrendPanel({daily,R}){
   const rows=(daily.rows||[]).filter(x=>R.end&&x.d<=R.end).slice(-45);
@@ -1335,8 +1341,8 @@ function InvestTrendPanel({daily,R}){
       {type:"line",label:"Volume (SAR)",data:rows.map(x=>x.inv_sar),borderColor:"#f2b136",backgroundColor:"#f2b136",pointRadius:0,tension:.3,yAxisID:"y1"},
       {type:"line",label:"Registrations",data:rows.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3,yAxisID:"y"}]},
       options:{scales:{x:gridX,y:{...gridY,position:"left"},y1:{...gridY,position:"right",grid:{display:false},ticks:{callback:v=>fmtSAR(v)}}}}}}/>
-      <div className="small muted" style=${{marginTop:8}}>Daily, last 45 complete days. Offering launches drive the investment spikes; that is the expected shape.</div>`:html`<${BQState} q=${daily}/>`}
-    <${Source}>backend · investment_completed, registration_completed<//></div>`;
+      <div className="small muted" style=${{marginTop:8}}>Daily, from 4 Nov (start of the GA4 export). Offering launches drive the investment spikes; that is the expected shape.</div>`:html`<${BQState} q=${daily}/>`}
+    <${Source}>GA4 · investment_completed, registration_completed<//></div>`;
 }
 function ga4Range(rows,R){ const days=[...new Set((rows||[]).map(r=>r.d))].sort(); const a=R&&R.from, b=R&&R.to; const inR=days.filter(d=>(!a||d>=a)&&(!b||d<=b)); return inR.length?inR:days.slice(-7); }
 function ChannelPanel({ga4,R}){
@@ -1598,20 +1604,20 @@ function AnalyticsView(){
   const weeks=[...new Set(all.map(r=>r.cohort_week))].sort();
   const ad=ads.rows||[];
   return html`<div>
-    <div className="page-h"><div className="grow"><h1>Analytics dashboard</h1><p>Each source keeps its own section and its own numbers. Backend events count conversions; Google Ads numbers are the platform's own claims.</p></div></div>
+    <div className="page-h"><div className="grow"><h1>Analytics dashboard</h1><p>Each source keeps its own section and its own numbers. Conversions are GA4 server-sent events (one per event_uuid); Google Ads numbers are the platform's own claims.</p></div></div>
     <div className="grid g2">
       <div className="panel span2"><div className="panel-h"><h2>Investor cohorts by platform (14-day window)</h2><span className="grow"></span><${Fresh} q=${coh}/><span className="label-data">Data</span></div>
         ${coh.rows?html`<div className="tablewrap"><table><thead><tr><th>Registration week</th>${plats.map(p=>html`<th key=${p} colSpan="4">${p==="ios"?"iOS":p==="android"?"Android":"Web"}</th>`)}</tr>
           <tr><th></th>${plats.map(p=>["Reg","KYC","Dep","Inv"].map(h=>html`<th key=${p+h} style=${{textAlign:"right"}}>${h}</th>`))}</tr></thead>
           <tbody>${weeks.map(w=>html`<tr key=${w}><td className="mono">${w}</td>${plats.map(p=>{ const r=all.find(x=>x.cohort_week===w&&x.platform===p); const closed=r&&r.age>=20;
             return r?[html`<td key=${p+"n"} style=${{textAlign:"right"}}>${fmtN(r.n)}</td>`,...["kyc14","dep14","inv14"].map(k=>html`<td key=${p+k} style=${{textAlign:"right"}} className=${closed?"":"muted"}>${closed?pct(r[k]/r.n,1):"pending"}</td>`)]:[1,2,3,4].map(i=>html`<td key=${p+i}>—</td>`); })}</tr>`)}</tbody></table></div>
-          <div className="small muted" style=${{marginTop:8}}>A cohort's rates show once its 14-day window has closed in the data.</div>`:html`<${BQState} q=${coh}/>`}
-        <${Source}>backend cohorts<//></div>
+          <div className="small muted" style=${{marginTop:8}}>A cohort's rates show once its 14-day window has closed in the data. GA4 data starts 4 Nov (the first week is partial).</div>`:html`<${BQState} q=${coh}/>`}
+        <${Source}>GA4 cohorts<//></div>
       <div className="panel"><div className="panel-h"><h2>Deposits by currency</h2><span className="grow"></span><span className="label-data">Data</span></div>
         ${daily.rows?html`<${ChartC} config=${{type:"bar",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"SAR",data:r45.map(x=>x.dep_sar),backgroundColor:"#22c38e",borderRadius:3},{label:"USD",data:r45.map(x=>x.dep_usd),backgroundColor:"#7f8cff",borderRadius:3}]},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>fmtSAR(v)}}}}}}/>
-          <div className="small muted" style=${{marginTop:8}}>Amounts in their own currency. They are never added together.</div>`:html`<${BQState} q=${daily}/>`}<${Source}>backend · deposit_success<//></div>
+          <div className="small muted" style=${{marginTop:8}}>Amounts in their own currency. They are never added together.</div>`:html`<${BQState} q=${daily}/>`}<${Source}>GA4 · deposit_success amount, currency<//></div>
       <div className="panel"><div className="panel-h"><h2>KYC and identity verification</h2><span className="grow"></span><span className="label-data">Data</span></div>
-        ${daily.rows?html`<${ChartC} config=${{type:"line",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"identity_verified",data:r45.map(x=>x.idv),borderColor:"#7f8cff",pointRadius:0,tension:.3},{label:"kyc_completed",data:r45.map(x=>x.kyc),borderColor:"#3A9AF4",pointRadius:0,tension:.3},{label:"registration_completed",data:r45.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3}]},options:{scales:{x:gridX,y:gridY}}}}/>`:html`<${BQState} q=${daily}/>`}<${Source}>backend events<//></div>
+        ${daily.rows?html`<${ChartC} config=${{type:"line",data:{labels:r45.map(x=>x.d.slice(5)),datasets:[{label:"identity_verified",data:r45.map(x=>x.idv),borderColor:"#7f8cff",pointRadius:0,tension:.3},{label:"kyc_completed",data:r45.map(x=>x.kyc),borderColor:"#3A9AF4",pointRadius:0,tension:.3},{label:"registration_completed",data:r45.map(x=>x.reg),borderColor:"#22c38e",pointRadius:0,tension:.3}]},options:{scales:{x:gridX,y:gridY}}}}/>`:html`<${BQState} q=${daily}/>`}<${Source}>GA4 · server-sent events<//></div>
       <div className="panel span2"><div className="panel-h"><h2>Google Ads</h2><span className="grow"></span><${Fresh} q=${ads}/><span className="label-data">Google Ads</span></div>
         ${ads.rows?html`<div className="grid g4" style=${{marginBottom:12}}>
             ${[["Spend","spend",v=>fmtSAR(v)+" SAR"],["Clicks","clicks",fmtN],["Impressions","impr",fmtN],["Claimed conversions","conv",fmtN]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}, last 7 days</div><div style=${{fontSize:20,fontWeight:600}}>${f(ad.slice(-7).reduce((s,x)=>s+(x[k]||0),0))}</div></div>`)}</div>
@@ -1690,7 +1696,7 @@ function SingularView(){
   </div>`;
 }
 /* ======================================================================
-   Users: backend (production ledger) and GA4 (product analytics), separate sections
+   Users: GA4 only — server-sent customer events, then GA4 product analytics
    ====================================================================== */
 const IPHONE = {"iPhone13,1":"iPhone 12 mini","iPhone13,2":"iPhone 12","iPhone13,3":"iPhone 12 Pro","iPhone13,4":"iPhone 12 Pro Max","iPhone14,2":"iPhone 13 Pro","iPhone14,3":"iPhone 13 Pro Max","iPhone14,4":"iPhone 13 mini","iPhone14,5":"iPhone 13","iPhone14,6":"iPhone SE (3rd gen)","iPhone14,7":"iPhone 14","iPhone14,8":"iPhone 14 Plus","iPhone15,2":"iPhone 14 Pro","iPhone15,3":"iPhone 14 Pro Max","iPhone15,4":"iPhone 15","iPhone15,5":"iPhone 15 Plus","iPhone16,1":"iPhone 15 Pro","iPhone16,2":"iPhone 15 Pro Max","iPhone17,1":"iPhone 16 Pro","iPhone17,2":"iPhone 16 Pro Max","iPhone17,3":"iPhone 16","iPhone17,4":"iPhone 16 Plus","iPhone17,5":"iPhone 16e"};
 const GALAXY = {"SM-S908E":"Galaxy S22 Ultra","SM-S908B":"Galaxy S22 Ultra","SM-S918B":"Galaxy S23 Ultra","SM-S928B":"Galaxy S24 Ultra","SM-S926B":"Galaxy S24+","SM-S921B":"Galaxy S24","SM-S938B":"Galaxy S25 Ultra","SM-S936B":"Galaxy S25+","SM-S931B":"Galaxy S25","SM-A556E":"Galaxy A55","SM-A556B":"Galaxy A55"};
@@ -1709,11 +1715,10 @@ const cap = s => { s=String(s==null?"":s).replace(/_/g," "); return s.charAt(0).
 function SecHead({title,sub,tag}){ return html`<div className="ux-sec"><h2>${title}</h2>${tag?html`<span className="label-data">${tag}</span>`:null}<span className="small muted">${sub||""}</span><span className="line"></span></div>`; }
 function UsersView(){
   const [plat,setPlat]=useState("all");
-  const sum=useBQSlow("u_sum",USERS_SQL.users_backend_summary), wk=useBQSlow("u_wk",USERS_SQL.users_backend_weekly), prof=useBQSlow("u_prof",USERS_SQL.users_backend_profile);
+  const sum=useBQSlow("u_csum",USERS_SQL.users_conv_summary), wk=useBQSlow("u_cwk",USERS_SQL.users_conv_weekly);
   const gd=useBQSlow("u_gd2",USERS_SQL.users_ga4_daily), gw=useBQSlow("u_gw2",USERS_SQL.users_ga4_week), gt=useBQSlow("u_gt2",USERS_SQL.users_ga4_tech), gdem=useBQSlow("u_gdem2",USERS_SQL.users_ga4_demographics), gp=useBQSlow("u_gp2",USERS_SQL.users_ga4_pages);
-  const S=(sum.rows||[]).find(r=>r.platform===plat)||null; const dataEnd=(sum.rows&&sum.rows[0]&&sum.rows[0].data_end)||(prof.rows&&prof.rows[0]&&prof.rows[0].data_end)||null;
-  const from28=dataEnd?addDays(dataEnd,-27):null;
-  const P=(dim,p)=>(prof.rows||[]).filter(r=>r.dim===dim&&r.platform===(p||plat));
+  const S=(sum.rows||[]).find(r=>r.platform===plat)||null; const dataEnd=(sum.rows&&sum.rows[0]&&sum.rows[0].data_end)||null;
+  const from28=(sum.rows&&sum.rows[0]&&sum.rows[0].from_d)||null;
   // weekly
   const wrows=wk.rows||[]; const weeks=[...new Set(wrows.map(r=>r.wk))].sort();
   const wEnd=wrows[0]&&wrows[0].data_end; const lastPartial=wEnd&&weeks.length&&addDays(weeks[weeks.length-1],6)>wEnd;
@@ -1731,26 +1736,24 @@ function UsersView(){
   const webPages=(gp.rows||[]).filter(r=>r.kind==="web"); const appScreens=(gp.rows||[]).filter(r=>r.kind==="app");
   const area=pg=>/^\/investor/.test(pg)?["Investor","#7f8cff"]:/^\/entrepreneur/.test(pg)?["Borrower","#f2b136"]:/^\/auth/.test(pg)?["Sign-in / sign-up","#5ec8d8"]:["Public site","#8b93b0"];
   const mobile=plat!=="web";
-  const LI=p=>{ const r=(sum.rows||[]).find(x=>x.platform===p); return r?r.logged_in:null; };
-  const preOct27 = from28 && from28 < "2026-10-27";
   return html`<div>
     <div className="page-h"><div className="grow"><h1>Users</h1>
-      <p>Who your users are, what they use and how they behave on web and mobile. The backend section is Manafa's own record. The GA4 section is Google Analytics' measurement. They are kept separate and never added together.</p></div>
+      <p>Who your users are, what they use and how they behave on web and mobile. Everything on this tab comes from GA4 (raw BigQuery export). The first section counts Manafa's server-sent events (one per event_uuid) by internal user ID; the second is GA4's own product analytics (active users, sessions, devices, screens).</p></div>
       <div className="seg" role="group" aria-label="Platform">${["all","ios","android","web"].map(k=>html`<button key=${k} className=${plat===k?"on":""} aria-pressed=${plat===k} onClick=${()=>setPlat(k)}>${PLAT[k]}</button>`)}</div></div>
 
-    <${SecHead} title="Backend users" tag="Data" sub=${dataEnd?`Production records · last 28 complete days, ${from28} to ${dataEnd}`:"Production records"}/>
+    <${SecHead} title="Customer activity" tag="GA4" sub=${dataEnd?`GA4 server-sent events · ${from28} to ${dataEnd} (up to 28 days; the export starts 4 Nov)`:"GA4 server-sent events"}/>
     ${sum.rows?html`<div className="grid g4" style=${{marginBottom:14}}>
-        <${KPI} icon="LogIn" label="Signed-in users" value=${S&&S.logged_in} note=${S?`${fmtN(S.logins)} sign-ins · ${(S.logins/Math.max(1,S.logged_in)).toFixed(1)} per user`:""} src="backend · login_completed"/>
-        <${KPI} icon="UserPlus" label="New registrations" value=${S&&S.registered} note=${S&&plat==="all"?`${fmtN(S.kyc_done)} completed KYC in the same 28 days`:S?`${fmtN(S.kyc_done)} completed KYC (platform as recorded)`:""} src="backend · registration_completed"/>
-        <${KPI} icon="Wallet" label="Depositors" value=${S&&S.depositors} note=${S?`${fmtN(S.withdrawers)} users withdrew`:""} src="backend · deposit_success"/>
-        <${KPI} icon="TrendingUp" label="Investors" value=${S&&S.investors} note=${S?`${fmtN(S.manual_investors)} invested themselves · ${fmtN(S.auto_investors)} via auto-invest (some did both)`:""} src="backend · investment_completed"/></div>
-      ${plat!=="all"?html`<div className="note" style=${{marginBottom:14}}>Sign-ins and registrations carry the platform the user was on. KYC, identity checks and auto-invest finish in a background process and are often recorded as "web" whatever device the user has (tqa-013), so read their platform split with care.${preOct27?" Before 27 Oct, every auto-invest investment was recorded as web (tqa-017).":""}</div>`:null}`
+        <${KPI} icon="LogIn" label="Signed-in users" value=${S&&S.logged_in} note=${S?`${fmtN(S.logins)} sign-ins · ${(S.logins/Math.max(1,S.logged_in)).toFixed(1)} per user`:""} src="GA4 · login_completed"/>
+        <${KPI} icon="UserPlus" label="New registrations" value=${S&&S.registered} note=${S&&plat==="all"?`${fmtN(S.kyc_done)} completed KYC in the same 28 days`:S?`${fmtN(S.kyc_done)} completed KYC (platform as recorded)`:""} src="GA4 · registration_completed"/>
+        <${KPI} icon="Wallet" label="Depositors" value=${S&&S.depositors} note=${S?`${fmtN(S.withdrawers)} users withdrew`:""} src="GA4 · deposit_success"/>
+        <${KPI} icon="TrendingUp" label="Investors" value=${S&&S.investors} note=${S?`${fmtN(S.manual_investors)} invested themselves · ${fmtN(S.auto_investors)} via auto-invest (some did both)`:""} src="GA4 · investment_completed"/></div>
+      ${plat!=="all"?html`<div className="note" style=${{marginBottom:14}}>Platform is the event's platform param. Sign-ins and registrations carry the platform the user was on. KYC, identity checks and auto-invest finish in a background process; many of those never reach GA4 and the rest are often labelled "web" (tqa-013), so read their platform split with care.</div>`:null}`
       :html`<div className="panel" style=${{marginBottom:14}}><${BQState} q=${sum}/></div>`}
     <div className="grid g2">
       <div className="panel span2"><div className="panel-h"><h2>Weekly signed-in users</h2><span className="grow"></span><${Fresh} q=${wk}/><span className="label-data">Data</span></div>
         ${wk.rows?html`<${ChartC} config=${{type:"bar",data:{labels:weeks.map((w,i)=>w.slice(5)+(i===weeks.length-1&&lastPartial?" (partial)":"")),datasets:wSeries.map(p=>({label:PLAT[p],data:weeks.map(w=>{const r=wrows.find(x=>x.wk===w&&x.platform===p);return r?r.logged_in:0;}),backgroundColor:PCOL[p],borderRadius:3,stack:"s"}))},options:{scales:{x:{...gridX,stacked:true},y:{...gridY,stacked:true}}}}}/>
-          <div className="small muted" style=${{marginTop:8}}>Unique users who signed in each ISO week (Mon–Sun, Riyadh time). ${lastPartial?`The last week is partial: the backend copy ends ${wEnd}.`:""} A user who signs in on two platforms counts once per platform.</div>`:html`<${BQState} q=${wk}/>`}
-        <${Source}>backend · login_completed<//></div>
+          <div className="small muted" style=${{marginTop:8}}>Unique users who signed in each ISO week (Mon–Sun, Riyadh time). ${lastPartial?`The last week is partial: GA4 data runs to ${wEnd}.`:""} A user who signs in on two platforms counts once per platform. Counted by the internal user ID on server-sent login_completed events.</div>`:html`<${BQState} q=${wk}/>`}
+        <${Source}>GA4 · login_completed (server-sent)<//></div>
       <div className="panel"><div className="panel-h"><h2>Investing behaviour</h2><span className="grow"></span><span className="label-data">Data</span></div>
         ${S?html`<div className="ux-mini">
             <div><div className="k">Investments</div><div className="v">${fmtN(S.investments)}</div><div className="small muted">${pct(S.auto_investments/Math.max(1,S.investments),0)} placed by auto-invest</div></div>
@@ -1760,24 +1763,7 @@ function UsersView(){
             <div><div className="k">Turned on auto-invest</div><div className="v">${fmtN(S.auto_invest_enablers)}</div><div className="small muted">users in the period</div></div>
             <div><div className="k">Signed-in users who invested themselves</div><div className="v">${pct(S.manual_investors/Math.max(1,S.logged_in),0)}</div><div className="small muted">${fmtN(S.manual_investors)} of ${fmtN(S.logged_in)}</div></div></div>
           <div className="small muted" style=${{marginTop:10}}>Amounts are SAR only; USD investments are excluded, never converted.</div>`:html`<${BQState} q=${sum}/>`}
-        <${Source}>backend · investment_completed, auto_invest_enabled<//></div>
-      <div className="panel"><div className="panel-h"><h2>Preferences and sign-in</h2><span className="grow"></span><${Fresh} q=${prof}/><span className="label-data">Data</span></div>
-        ${prof.rows?html`<h3 style=${{marginBottom:8}}>App language</h3><${BarList} rows=${P("language")} label=${r=>r.v==="ar"?"Arabic":r.v==="en"?"English":r.v} color="#7f8cff"/>
-          <h3 style=${{margin:"14px 0 8px"}}>Sign-in method</h3><${BarList} rows=${P("login_method")} label=${r=>r.v==="otp"?"One-time code (OTP)":r.v==="password"?"Password":r.v} color="#5ec8d8" total=${S&&S.logged_in}/>
-          <h3 style=${{margin:"14px 0 8px"}}>Account type</h3><${BarList} rows=${P("account_type")} label=${r=>cap(r.v)} color="#c084fc"/>
-          <div className="small muted" style=${{marginTop:8}}>Signed-in users, each counted once by their latest setting. A user can use both sign-in methods.</div>`:html`<${BQState} q=${prof}/>`}
-        <${Source}>backend · context.language, payload.method, context.entity_type<//></div>
-      ${mobile?html`<div className="panel"><div className="panel-h"><h2>App versions</h2><span className="grow"></span><span className="label-data">Data</span></div>
-        ${prof.rows?html`${(plat==="all"?["ios","android"]:[plat]).map(p=>{ const rs=P("app_version",p); const tot=rs.reduce((s,r)=>s+r.users,0); const latest=[...rs].sort((a,b)=>b.v.localeCompare(a.v,undefined,{numeric:true}))[0];
-            return html`<div key=${p} style=${{marginBottom:12}}><h3 style=${{marginBottom:8}}>${PLAT[p]} ${latest?html`<span className="small muted" style=${{textTransform:"none",letterSpacing:0,fontWeight:400}}>· ${pct((latest.users)/Math.max(1,tot),0)} on ${latest.v}</span>`:null}</h3><${BarList} rows=${rs} color=${PCOL[p]} max=${6}/></div>`; })}
-          <div className="small muted">Each signed-in app user counted once, by the version of their latest sign-in.</div>`:html`<${BQState} q=${prof}/>`}
-        <${Source}>backend · context.app_version<//></div>
-      <div className="panel"><div className="panel-h"><h2>Devices</h2><span className="grow"></span><span className="label-data">Data</span></div>
-        ${prof.rows?html`${plat!=="android"?html`<h3 style=${{marginBottom:8}}>iPhone models</h3><${BarList} rows=${P("device_model","ios")} label=${r=>modelName(r.v)} color=${PCOL.ios} max=${6} total=${LI("ios")}/>`:null}
-          ${plat!=="ios"?html`<h3 style=${{margin:"14px 0 8px"}}>Android brands</h3><${BarList} rows=${P("device_brand","android")} color=${PCOL.android} max=${6} total=${LI("android")}/>`:null}
-          <h3 style=${{margin:"14px 0 8px"}}>OS versions</h3><${BarList} rows=${(plat==="all"?[...P("os_version","ios").map(r=>({...r,v:"iOS "+r.v})),...P("os_version","android").map(r=>({...r,v:"Android "+r.v}))].sort((a,b)=>b.users-a.users):P("os_version",plat).map(r=>({...r,v:(plat==="ios"?"iOS ":"Android ")+r.v})))} color="#8b93b0" max=${6} total=${plat==="all"?((LI("ios")||0)+(LI("android")||0))||null:LI(plat)}/>
-          <div className="small muted" style=${{marginTop:8}}>Share of signed-in app users on each platform, by their latest device.</div>`:html`<${BQState} q=${prof}/>`}
-        <${Source}>backend · device info from the Singular SDK<//></div>`:null}
+        <${Source}>GA4 · investment_completed, auto_invest_enabled<//></div>
     </div>
 
     <${SecHead} title="GA4 product analytics" tag="GA4" sub=${GW?`Google Analytics raw export · ${GW.from_d} to ${GW.to_d} (last 7 days of data)`:"Google Analytics raw export"}/>
@@ -1817,7 +1803,7 @@ function UsersView(){
           <div className="small muted" style=${{marginTop:10}}>Unique users and engagement time over the last 7 days of data. Long numbers in paths (references, IDs) are masked as ${"<ID>"}.</div>`:html`<${BQState} q=${gp}/>`}
         <${Source}>GA4 raw export · page_view page_location<//></div>
     </div>
-    <div className="note" style=${{marginTop:14}}><b>Not shown on purpose:</b> backend "days since registration" and "new user" fields. They appear to count from when analytics tracking started, not from the real registration date (tqa-020), so they would mislead.</div>
+    <div className="note" style=${{marginTop:14}}><b>Not shown on purpose:</b> the "days_since_registration" and "is_new_user" event params. They count from when analytics tracking started, not from the real registration date (tqa-020), so they would mislead. Manafa's own customer records (age, nationality, registered-user total) aren't used on this page.</div>
   </div>`;
 }
 
@@ -2085,13 +2071,13 @@ function JiraView({ctx}){
    Event quality
    ====================================================================== */
 function QualityView({ctx}){
-  const del=useBQ("delivery",SQL.delivery);
+  const dup=useBQ("dups",SQL.dups);
   const issues=ctx.issuesQ.docs; const [show,setShow]=useState("open"); const [open,setOpen]=useState(null);
   const list=issues.filter(i=>show==="all"||(show==="open"?i.status!=="resolved":i.status==="resolved"));
   const sev=["high","med","low"];
-  const weeks=[...new Set((del.rows||[]).map(r=>r.wk))].sort();
+  const weeks=[...new Set((dup.rows||[]).map(r=>r.wk))].sort(); const DUP_EV=["registration_completed","kyc_completed","identity_verified","login_completed","withdrawal_completed","deposit_success","investment_completed"];
   return html`<div>
-    <div className="page-h"><div className="grow"><h1>Event quality & monitoring</h1><p>Issues come from the tracking-health agent. Delivery health is queried live from the backend's own delivery log.</p></div>
+    <div className="page-h"><div className="grow"><h1>Event quality & monitoring</h1><p>Issues come from the tracking-health agent. The duplicate check is queried live from GA4 (raw export).</p></div>
       <div className="seg">${[["open","Open"],["resolved","Resolved"],["all","All"]].map(([k,l])=>html`<button key=${k} className=${show===k?"on":""} onClick=${()=>setShow(k)}>${l}</button>`)}</div></div>
     <div className="grid g3" style=${{marginBottom:14}}>
       ${sev.map(s=>{ const L=list.filter(i=>(i.severity||"low")===s); return html`<div className="panel" key=${s}><div className="panel-h"><h2>${s==="high"?"High":s==="med"?"Medium":"Low"}</h2><span className="badge">${L.length}</span></div>
@@ -2102,10 +2088,10 @@ function QualityView({ctx}){
         </div>`)}${!L.length&&html`<div className="muted small">None.</div>`}</div></div>`; })}
     </div>
     <div className="grid g2">
-      <div className="panel span2"><div className="panel-h"><h2>GA4 delivery health: events sent without a client ID</h2><span className="grow"></span><${Fresh} q=${del}/><span className="label-data">Data</span></div>
-        ${del.rows?html`<${ChartC} config=${{type:"line",data:{labels:weeks,datasets:["web","ios","android"].map((p,i)=>({label:p,data:weeks.map(w=>{const r=(del.rows||[]).find(x=>x.wk===w&&x.platform===p); return r?+(r.degraded/r.n*100).toFixed(1):null;}),borderColor:ACCENTS[i],backgroundColor:ACCENTS[i],tension:.25,pointRadius:3}))},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>v+"%"}}}}}}/>
-          <div className="small muted" style=${{marginTop:8}}>Share of backend events delivered to GA4 as "degraded" each week. Web stepped up in the week of 26 Oct (tqa-013). The latest week may be partial.</div>`:html`<${BQState} q=${del}/>`}
-        <${Source}>backend · mi_analytics_event_deliveries<//></div>
+      <div className="panel span2"><div className="panel-h"><h2>GA4 duplicates: extra copies per server-sent event</h2><span className="grow"></span><${Fresh} q=${dup}/><span className="label-data">GA4</span></div>
+        ${dup.rows?html`<${ChartC} config=${{type:"line",data:{labels:weeks,datasets:DUP_EV.map((ev,i)=>({label:ev,data:weeks.map(w=>{const r=(dup.rows||[]).find(x=>x.wk===w&&x.event_name===ev); return r&&r.server_sent?+(r.extra_copies/r.server_sent*100).toFixed(1):null;}),borderColor:ACCENTS[i%ACCENTS.length],backgroundColor:ACCENTS[i%ACCENTS.length],tension:.25,pointRadius:3}))},options:{scales:{x:gridX,y:{...gridY,ticks:{callback:v=>v+"%"}}}}}}/>
+          <div className="small muted" style=${{marginTop:8}}>For each event, GA4 copies without an event_uuid as a share of the server-sent ones (with event_uuid). The copies arrive only on the app streams (forwarded again by Singular / the SDK, tqa-007). This page counts only the server-sent copy. Money events have no duplicates. Data from 4 Nov; the latest week is partial.</div>`:html`<${BQState} q=${dup}/>`}
+        <${Source}>GA4 raw export · event_uuid present vs missing<//></div>
     </div></div>`;
 }
 
@@ -2117,12 +2103,12 @@ function ReportsView({ctx}){
   useEffect(()=>{ window.__openReport=null; },[]);
   const r=reps.find(x=>x.id===sel)||reps[0];
   const daily=useBQ("daily",SQL.daily); const rows=daily.rows||[]; const end=rows.length?addDays(rows[rows.length-1].d,-1):null;
-  const wk=k=>end?sumRange(rows,k,addDays(end,-6),end):null, pwk=k=>end?sumRange(rows,k,addDays(end,-13),addDays(end,-7)):null;
+  const wk=k=>end?sumRange(rows,k,addDays(end,-6),end):null, pwk=k=>end&&addDays(end,-13)>=GA4_START?sumRange(rows,k,addDays(end,-13),addDays(end,-7)):null;
   return html`<div>
     <div className="page-h"><div className="grow"><h1>Reports & business insights</h1><p><span className="label-data">Data</span> marks numbers queried from a source. <span className="label-ai">AI-generated</span> marks an agent's interpretation or recommendation, which a named person reviews before acting on it.</p></div></div>
     <div className="panel" style=${{marginBottom:14}}><div className="panel-h"><h2>Key business metrics, last 7 complete days</h2><span className="grow"></span><span className="label-data">Data</span></div>
       ${daily.rows?html`<div className="grid g4">${[["Registrations","reg"],["KYC completed","kyc"],["Deposits","dep"],["First investments","first_inv"],["Investments","inv"],["Auto-invest enabled","ai_on"],["Deposit volume (SAR)","dep_sar",fmtSAR],["Investment volume (SAR)","inv_sar",fmtSAR]].map(([l,k,f])=>html`<div key=${k}><div className="small muted">${l}</div><div style=${{display:"flex",gap:8,alignItems:"baseline"}}><b style=${{fontSize:20}}>${(f||fmtN)(wk(k))}</b><${Delta} cur=${wk(k)} prev=${pwk(k)}/></div></div>`)}</div>
-      <div className="small muted" style=${{marginTop:8}}>${end?`${addDays(end,-6)} to ${end}, against the 7 days before.`:""}</div>`:html`<${BQState} q=${daily}/>`}</div>
+      <div className="small muted" style=${{marginTop:8}}>${end?`${addDays(end,-6)} to ${end}, against the 7 days before. GA4 server-sent events, one per event_uuid.`:""}</div>`:html`<${BQState} q=${daily}/>`}</div>
     <div className="grid" style=${{gridTemplateColumns:"minmax(220px,300px) 1fr",gap:14}}>
       <div className="panel"><div className="panel-h"><h2>Reports</h2></div><div className="grid" style=${{gap:6}}>
         ${reps.map(x=>html`<button key=${x.id} className="btn" style=${{justifyContent:"flex-start",textAlign:"left",whiteSpace:"normal",borderColor:r&&r.id===x.id?"var(--brand-2)":null}} onClick=${()=>setSel(x.id)}>
@@ -2165,18 +2151,17 @@ function SystemView({ctx}){
       <div className="panel"><div className="panel-h"><h2>Data freshness</h2><span className="grow"></span><${Fresh} q=${f}/></div>
         ${f.rows?html`<table><thead><tr><th>Source</th><th>Latest day</th><th>Age</th></tr></thead><tbody>
           ${(f.rows||[]).map(r=>{ const age=r.latest_date?Math.round((Date.parse(today)-Date.parse(r.latest_date))/864e5):null; return html`<tr key=${r.source}><td>${r.source}</td><td className="mono">${r.latest_date||"—"}</td><td><span className=${"st "+(age==null?"st-idle":age>8?"st-failed":age>3?"st-waiting":"st-completed")}>${age==null?"—":age+" d"}</span></td></tr>`; })}
-          <tr><td>Singular</td><td colSpan="2"><span className="st st-idle">Not configured (not in BigQuery)</span></td></tr>
-          <tr><td>Meta · TikTok · Snapchat · X</td><td colSpan="2"><span className="st st-idle">Not configured</span></td></tr>
-          <tr><td>Warehouse layer (gold)</td><td colSpan="2"><span className="st st-failed">Suspended: shows staging data (tqa-012)</span></td></tr></tbody></table>`:html`<${BQState} q=${f}/>`}</div>
+          <tr><td>Singular</td><td colSpan="2"><span className="st st-completed">Google Sheet (Singular tab)</span></td></tr>
+          <tr><td>Meta · TikTok · Snapchat · X</td><td colSpan="2"><span className="st st-idle">Not configured</span></td></tr></tbody></table>`:html`<${BQState} q=${f}/>`}</div>
       <div className="panel"><div className="panel-h"><h2>Environment</h2></div><dl className="kv">
         <dt>Mode</dt><dd>Local, on demand. Agents run in the Claude project chat.</dd><dt>BigQuery</dt><dd className="mono">databases-472111</dd>
         <dt>Region</dt><dd>me-central2 (Dammam, Saudi Arabia) only</dd><dt>Access</dt><dd>Read-only queries; aggregated results only</dd>
-        <dt>Conversion truth</dt><dd className="mono">manafa_financing.mi_analytics_events</dd><dt>Timezone</dt><dd>Asia/Riyadh, ISO weeks</dd></dl></div>
+        <dt>BigQuery datasets used</dt><dd className="mono">google_analytics (GA4 raw export) · google_ads</dd><dt>Conversions</dt><dd>GA4 server-sent events, one per event_uuid</dd><dt>Timezone</dt><dd>Asia/Riyadh, ISO weeks</dd></dl></div>
       <div className="panel"><div className="panel-h"><h2>Compliance (SAMA / PDPL)</h2></div><ul className="small" style=${{margin:0,paddingLeft:18}}>
         <li>No personal data in queries, state, logs, reports or this page.</li><li>Customer tables (silver, curated, staging) are never queried.</li>
         <li>Everything here is decision support; spend, customer-facing and regulatory actions need a named person's approval.</li><li>Agents never change budgets, bids, campaigns, tracking or live ads.</li></ul></div>
       <div className="panel"><div className="panel-h"><h2>Deploy phase (not active yet)</h2></div><ul className="small" style=${{margin:0,paddingLeft:18}}>
-        <li>marketing_mart dataset + read-only service account</li><li>GitHub remote and scheduled runs</li><li>#marketing-loops Slack channel</li><li>Raw GA4 export, backfills, Singular and social spend in BigQuery</li></ul></div>
+        <li>marketing_mart dataset + read-only service account</li><li>GitHub remote and scheduled runs</li><li>#marketing-loops Slack channel</li><li>Backfills, Singular and social spend in BigQuery</li></ul></div>
     </div></div>`;
 }
 
