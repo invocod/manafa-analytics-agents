@@ -1830,7 +1830,8 @@ function mdToHtml(md){
     if(/^\|/.test(l)){ const rows=[]; while(i<lines.length&&/^\|/.test(lines[i])){ rows.push(lines[i]); i++; }
       const cells=r=>r.replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
       const body=rows.filter(r=>!/^\|\s*-/.test(r)); out.push("<div class='tablewrap'><table><thead><tr>"+cells(body[0]).map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"+body.slice(1).map(r=>"<tr>"+cells(r).map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"); continue; }
-    if(/^\s*-\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\s*-\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\s*-\s+/,""))+"</li>"); i++; } out.push("<ul>"+it.join("")+"</ul>"); continue; }
+    if(/^\s*[-*]\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\s*[-*]\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\s*[-*]\s+/,""))+"</li>"); i++; } out.push("<ul>"+it.join("")+"</ul>"); continue; }
+    if(/^\s*\d+[.)]\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\s*\d+[.)]\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\s*\d+[.)]\s+/,""))+"</li>"); i++; } out.push("<ol>"+it.join("")+"</ol>"); continue; }
     if(/^\d+\.\s+/.test(l)){ const it=[]; while(i<lines.length&&/^\d+\.\s+/.test(lines[i])){ it.push("<li>"+inline(lines[i].replace(/^\d+\.\s+/,""))+"</li>"); i++; } out.push("<ol>"+it.join("")+"</ol>"); continue; }
     if(/^_.*_$/.test(l.trim())){ out.push("<p class='small muted'><i>"+inline(l.trim().slice(1,-1))+"</i></p>"); i++; continue; }
     if(l.trim()===""){ i++; continue; }
@@ -1909,6 +1910,34 @@ function DraftActions({d,mode,setMode,onDone}){
     :html`<div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
         <button className="btn primary" onClick=${()=>setMode("approve")}><${Icon} name="Check" size=${14}/>Approve & create in Jira</button>
         <button className="btn" onClick=${()=>setMode("reject")}><${Icon} name="X" size=${14}/>Reject</button></div>`}
+  </div>`;
+}
+
+/* Live ticket body: fetched from Jira when the drawer opens (the list query leaves descriptions out to stay light). */
+const jDescCache=new Map();
+function TicketBody({t,draft}){
+  const [st,setSt]=useState(()=>jDescCache.get(t.key)||{status:"loading"});
+  useEffect(()=>{ let alive=true; const c=jDescCache.get(t.key); if(c&&c.status==="ok") { setSt(c); }
+    (async()=>{ try{
+        if(!caps.mcp) throw new Error("Connectors aren't available in this view.");
+        const r=await caps.mcp.callTool(JIRA_SERVER,"searchJiraIssuesUsingJql",{cloudId:JIRA_SITE,jql:`key = ${t.key}`,fields:["description","updated","labels","issuetype","reporter"],maxResults:1,view:"full",responseContentFormat:"markdown"});
+        const x=jiraIssues(r.payload)[0]; if(!x) throw new Error("Jira returned no data for "+t.key+".");
+        const f=x.fields||{}; const v={status:"ok",desc:typeof f.description==="string"?f.description:null,rich:f.description&&typeof f.description!=="string",updated:f.updated,labels:f.labels||[],type:f.issuetype&&f.issuetype.name,reporter:f.reporter&&f.reporter.displayName};
+        jDescCache.set(t.key,v); if(alive) setSt(v);
+      }catch(e){ if(alive) setSt(s=>s.status==="ok"?s:{status:"err",error:jErr(e)}); } })();
+    return ()=>{alive=false;}; },[t.key]);
+  const body = st.status==="ok"&&st.desc ? st.desc : (draft&&draft.description) || null;
+  return html`<div>
+    ${st.status==="ok"&&(st.type||st.updated||st.labels.length)?html`<div className="jr-prop" style=${{marginTop:-6,marginBottom:14}}>
+        ${st.type?html`<span className="k">Type</span><span>${st.type}</span>`:null}
+        ${st.updated?html`<span className="k">Updated</span><span>${jDate(st.updated)}</span>`:null}
+        ${st.labels.length?html`<span className="k">Labels</span><span className="mono small">${st.labels.join(", ")}</span>`:null}</div>`:null}
+    <h3 style=${{margin:"4px 0 8px"}}>Description</h3>
+    ${st.status==="loading"&&!body?html`<div style=${{display:"grid",gap:8}}><${Skel} h=${14}/><${Skel} h=${14} w="80%"/><${Skel} h=${14} w="90%"/><${Skel} h=${14} w="60%"/></div>`:null}
+    ${st.status==="loading"&&body?html`<div className="small muted" style=${{marginBottom:6}}>Showing the approved draft while the live text loads from Jira…</div>`:null}
+    ${st.status==="err"?html`<div className="note warn" style=${{marginBottom:10}}>Couldn't load the live description (${st.error}).${body?" Showing the approved draft text instead.":""}</div>`:null}
+    ${st.status==="ok"&&st.rich&&!st.desc?html`<div className="note" style=${{marginBottom:10}}>This description uses Jira formatting the page can't show. Open it in Jira to read it.</div>`:null}
+    ${body?html`<div className="jr-md" dangerouslySetInnerHTML=${{__html:mdToHtml(body)}}></div>`:(st.status==="ok"&&!st.rich?html`<div className="small muted">No description in Jira.</div>`:null)}
   </div>`;
 }
 function JiraView({ctx}){
@@ -2019,7 +2048,8 @@ function JiraView({ctx}){
             <span className="k">Tracking</span><span className="mono">${open.t.tqa.join(", ")||"—"}</span>
             <span className="k">Created</span><span>${jDate(open.t.created)}</span>
             <span className="k">Resolved</span><span>${jDate(open.t.resolved)}</span></div>
-          <a className="btn primary" href=${"https://"+JIRA_SITE+"/browse/"+open.t.key} target="_blank" rel="noopener"><${Icon} name="ExternalLink" size=${14}/>Open ${open.t.key} in Jira</a>`
+          <a className="btn primary" href=${"https://"+JIRA_SITE+"/browse/"+open.t.key} target="_blank" rel="noopener" style=${{marginBottom:16}}><${Icon} name="ExternalLink" size=${14}/>Open ${open.t.key} in Jira</a>
+          <${TicketBody} key=${open.t.key} t=${open.t} draft=${draftsQ.docs.find(x=>x.jira_key===open.t.key)}/>`
         :html`<div className="jr-prop" style=${{marginBottom:14}}>
             <span className="k">Owner</span><span>${OUTSIDE_SQUAD[open.i.id]}</span>
             <span className="k">Severity</span><span>${open.i.severity||"—"}</span>

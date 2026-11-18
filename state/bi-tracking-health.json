@@ -469,6 +469,26 @@
         "dev": "Khalid Shabbir",
         "created": "2026-11-17T08:40Z",
         "approved_by": "Amir (chat, 2026-11-17)"
+      },
+      "d-tqa-020": {
+        "key": "ISQ-6083",
+        "tqa": [
+          "tqa-020"
+        ],
+        "area": "backend",
+        "dev": "Mohammad Khubaib",
+        "created": "2026-11-18T09:43Z",
+        "approved_by": "Amir (Command Center button, 2026-11-18)"
+      },
+      "d-tqa-021": {
+        "key": "ISQ-6084",
+        "tqa": [
+          "tqa-021"
+        ],
+        "area": "mobile",
+        "dev": "AzibMuzammil",
+        "created": "2026-11-18T09:44Z",
+        "approved_by": "Amir (Command Center button, 2026-11-18)"
       }
     },
     "outside_squad": {

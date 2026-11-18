@@ -214,8 +214,8 @@
   "area": "mobile",
   "issuetype": "Bug",
   "priority": "Medium",
-  "status": "staged",
-  "jira_key": null,
+  "status": "created",
+  "jira_key": "ISQ-6084",
   "summary": "[App] GA4 receives no screen names from the Flutter app (99% of screen views are FlutterViewController / MainActivity)",
   "dev": {
    "name": "AzibMuzammil",
@@ -237,8 +237,8 @@
   "area": "backend",
   "issuetype": "Bug",
   "priority": "Low",
-  "status": "staged",
-  "jira_key": null,
+  "status": "created",
+  "jira_key": "ISQ-6083",
   "summary": "[BE] context.lifecycle (days_since_registration, is_new_user) counts from tracking start, not registration",
   "dev": {
    "name": "Mohammad Khubaib",
