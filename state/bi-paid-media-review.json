@@ -194,14 +194,20 @@
     }
   ],
   "note": "history starts 2026-11-07; ranges provisional until 4+ weeks (or backfill)",
-  "last_run": "run-20261118-2037",
+  "last_run": "run-20261119-0853",
   "last_checked": {
-    "at": "2026-11-18T20:41Z",
-    "ads_max_date": "2026-11-17",
+    "at": "2026-11-19T09:03Z",
+    "ads_max_date": "2026-11-18",
     "ga4_max_date": "2026-11-17",
     "backend_max_date": "2026-11-17",
-    "singular_max_date": "2026-11-17",
-    "singular_max_etl_utc": "2026-11-18 17:05:05+00:00",
-    "result": "no new closed week; W46 re-read on CampaignBasicStats (9,154.68 SAR) + GA4 per campaign; Android INVESTIGATE -> FIX"
+    "singular_max_date": "2026-11-18",
+    "singular_max_etl_utc": "2026-11-18 22:25:37+00:00",
+    "result": "W46 claims read full week (outside 72h): iOS 210, Above 5Mn 30, Android 462 (319 first open + 143 kyc_completed); GA4 W46 per campaign added (LT/FT). Landing URLs re-read (Above 5Mn utm_campaign Minto_Manafa_B2B, tqa-003). Calls unchanged: Google Ads FIX, TikTok iOS INVESTIGATE, X iOS INVESTIGATE."
+  },
+  "w46_full_week_2026_11_19": {
+    "ios_installs": {"claimed": 210, "claimed_cpa": 12.96, "ga4_lt": {"reg": 7, "dep": 1, "inv": 0}, "ga4_ft": {"reg": 6, "dep": 1, "inv": 0}},
+    "above_5mn_b2b": {"claimed": 30, "claimed_cpa": 123.1, "ga4_lt": {"reg": 17, "dep": 5, "inv": 12}, "ga4_ft": {"reg": 19, "dep": 4, "inv": 21}},
+    "android_installs": {"claimed": 462, "by_action": {"first_open": 319, "kyc_completed_ga4_import": 143}, "claimed_cpa": 5.93, "ga4_lt": {"reg": 79, "dep": 14, "inv": 27}, "ga4_ft": {"reg": 78, "dep": 16, "inv": 33}},
+    "pacing_16_18nov_per_day": {"above_5mn": 596, "android": 396, "ios": 388}
   }
 }
