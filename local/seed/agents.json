@@ -1,9 +1,257 @@
 [
-{"id":"bi-tracking-health","order":1,"label":"Tracking health","short":"Tracking","icon":"ShieldCheck","cadence":"Weekly, Monday, first","acts_when":"An event is zero or out of band, a receipt ratio leaves its band, delivery degradation steps up, UTMs break the convention, or naming drifts","depends_on":[],"description":"Keeps the measurement layer trustworthy: event heartbeat, backend-vs-GA4 receipt, delivery health, UTMs, Google Ads conversion actions, naming vs Event Standard v2.1.","inputs":["sql/readonly/source_freshness.sql","sql/readonly/backend_events_daily.sql","sql/readonly/event_delivery_health_daily.sql","sql/readonly/ga4_events_daily.sql","sql/readonly/ga4_backend_coverage.sql","sql/readonly/ga4_duplicate_check.sql","sql/readonly/ga4_traffic_daily.sql","sql/readonly/gads_conversions_daily.sql","context/ga4-event-standard-v2.1.csv"],"outputs":["reports/<yyyy>/W<ww>/tracking-health-<date>.md","state/bi-tracking-health.json (issues, baselines)"],"skill_path":".claude/skills/bi-tracking-health/SKILL.md","state_file":"state/bi-tracking-health.json","steps":["Freshness gate","Backend heartbeat","Receipt: backend vs GA4","GA4 coverage & readiness","Delivery health","Ledger integrity (tqa-012)","UTM audit","Channel groups","Google Ads conversion actions","GA4 naming vs standard","Diff against open issues","Write report, state, log"]},
-{"id":"bi-investor-funnel","order":2,"label":"Investor funnel","short":"Funnel","icon":"Filter","cadence":"Weekly, Tuesday","acts_when":"A closed cohort's step rate leaves its baseline band, or a platform gap widens","depends_on":["bi-tracking-health"],"description":"Registration → KYC → first deposit → first investment on production cohorts by platform; finds the worst leak and proposes one fix.","inputs":["sql/readonly/investor_funnel_cohorts_prod.sql","context/metrics.md"],"outputs":["reports/<yyyy>/W<ww>/investor-funnel.md","state/bi-investor-funnel.json (baselines, proposed fixes)"],"skill_path":".claude/skills/bi-investor-funnel/SKILL.md","state_file":"state/bi-investor-funnel.json","steps":["Freshness gate","Pull cohorts (14-day window)","Step rates by platform","Compare to baseline","Rule out tracking","Diagnose worst leak","Propose one fix","Write report, state, log"]},
-{"id":"bi-channel-attribution","order":3,"label":"Channel attribution","short":"Attribution","icon":"GitBranch","cadence":"Weekly, Monday, after tracking health","acts_when":"Always produces the readout; flags channels where sources disagree in direction","depends_on":["bi-tracking-health"],"description":"Backend conversions as the ledger line; GA4 server-sent conversions by channel (first vs last touch, a floor) as the channel readout; Google Ads claims in their own section. Never sums or blends sources.","inputs":["sql/readonly/weekly_kpis.sql","sql/readonly/backend_events_daily.sql","sql/readonly/ga4_conversions_by_channel.sql","sql/readonly/ga4_traffic_daily.sql","sql/readonly/ga4_user_acquisition_daily.sql","sql/readonly/gads_campaign_daily.sql"],"outputs":["reports/<yyyy>/W<ww>/channel-attribution.md","state/bi-channel-attribution.json"],"skill_path":".claude/skills/bi-channel-attribution/SKILL.md","state_file":"state/bi-channel-attribution.json","steps":["Freshness gate","Ledger (backend)","Backend attribution coverage","GA4 section","GA4 conversions by channel","Google Ads section","First- vs last-touch gap","Blind spots","Trend verdicts","Write report, state, log"]},
-{"id":"bi-paid-media-review","order":4,"label":"Paid media review","short":"Paid media","icon":"Megaphone","cadence":"Weekly, Monday","acts_when":"A metric leaves its trailing range, moves 3+ weeks one way, or pacing/tracking breaks","depends_on":["bi-tracking-health"],"description":"One HOLD / FIX / TEST / INVESTIGATE call per ad account after a fixed-order check of spend, traffic, conversions, creative, landing and tracking. Never touches live accounts.","inputs":["sql/readonly/gads_campaign_daily.sql","sql/readonly/gads_conversions_daily.sql","sql/readonly/ga4_conversions_by_channel.sql"],"outputs":["reports/<yyyy>/W<ww>/paid-media-review.md","state/bi-paid-media-review.json (weekly snapshots, calls)"],"skill_path":".claude/skills/bi-paid-media-review/SKILL.md","state_file":"state/bi-paid-media-review.json","steps":["Freshness gate","Accounts in scope","Spend & pacing","Traffic","Conversions (Ads claims + GA4 server-sent)","Creative fatigue","Landing pages","Tracking","One call per account","Write report, state, log"]},
-{"id":"bi-daily-kpi-watch","order":5,"label":"Daily KPI watch","short":"KPI watch","icon":"Activity","cadence":"Daily (on demand while local)","acts_when":"A metric leaves its same-weekday band, or a backend event reads zero","depends_on":[],"description":"Detects on GA4 server-sent conversions (fresh daily) and confirms on backend events before escalating. Alerts only when a KPI leaves its same-weekday band and the break isn't a known cause or a tracking artifact. Silence means healthy.","inputs":["sql/readonly/ga4_conversions_daily.sql","sql/readonly/backend_events_daily.sql","sql/readonly/ga4_traffic_daily.sql","sql/readonly/gads_campaign_daily.sql"],"outputs":["state/bi-daily-kpi-watch.json (bands, anomalies)","alert, only when out of band"],"skill_path":".claude/skills/bi-daily-kpi-watch/SKILL.md","state_file":"state/bi-daily-kpi-watch.json","steps":["Freshness gate","Latest complete day per source","Band check (GA4)","Confirm on backend","Classify real vs artifact","Known-cause check","Route","Write state, log"]},
-{"id":"bi-weekly-exec-digest","order":6,"label":"Weekly executive digest","short":"Digest","icon":"Newspaper","cadence":"Weekly, Monday, last","acts_when":"Always runs","depends_on":["bi-tracking-health","bi-investor-funnel","bi-channel-attribution","bi-paid-media-review"],"description":"The Monday one-pager: backend KPIs vs last week and trailing weeks, GA4 and Google Ads in their own sections, movers tied to owners, every loop's verdict.","inputs":["sql/readonly/weekly_kpis.sql","state of the other loops","this week's reports"],"outputs":["reports/<yyyy>/W<ww>/weekly-exec-digest.md","state/bi-weekly-exec-digest.json (snapshots)"],"skill_path":".claude/skills/bi-weekly-exec-digest/SKILL.md","state_file":"state/bi-weekly-exec-digest.json","steps":["Freshness gate","Backend KPIs","Funnel headline","GA4 section","GA4 coverage line","Google Ads section","Fold in loop verdicts","Biggest movers","Experiment ideas","Write digest, state, log"]},
-{"id":"bi-campaign-health","order":7,"label":"Campaign health","short":"Campaigns","icon":"Target","cadence":"On demand / on campaign end","acts_when":"A concluded campaign has no postmortem in state","depends_on":["bi-tracking-health"],"description":"When a campaign ends, measures results vs goals on backend data, captures lessons and reusable assets.","inputs":["sql/readonly/gads_campaign_daily.sql","sql/readonly/ga4_traffic_daily.sql","sql/readonly/backend_events_daily.sql"],"outputs":["reports/postmortems/<campaign>.md","state/bi-campaign-health.json"],"skill_path":".claude/skills/bi-campaign-health/SKILL.md","state_file":"state/bi-campaign-health.json","steps":["Freshness gate","Window and goals","Results + 14-day lag","Matched-window efficiency","Worked / didn't / why","Reusable assets and learnings","Write postmortem, state, log"]}
+  {
+    "id": "bi-tracking-health",
+    "order": 1,
+    "label": "Tracking health",
+    "short": "Tracking",
+    "icon": "ShieldCheck",
+    "cadence": "Weekly, Monday, first",
+    "acts_when": "An event is zero or out of band, a receipt ratio leaves its band, delivery degradation steps up, UTMs break the convention, or naming drifts",
+    "depends_on": [],
+    "description": "Checks every week that our tracking and data can be trusted, and raises a ticket when something breaks.",
+    "inputs": [
+      "sql/readonly/source_freshness.sql",
+      "sql/readonly/backend_events_daily.sql",
+      "sql/readonly/event_delivery_health_daily.sql",
+      "sql/readonly/ga4_events_daily.sql",
+      "sql/readonly/ga4_backend_coverage.sql",
+      "sql/readonly/ga4_duplicate_check.sql",
+      "sql/readonly/ga4_traffic_daily.sql",
+      "sql/readonly/gads_conversions_daily.sql",
+      "context/ga4-event-standard-v2.1.csv"
+    ],
+    "outputs": [
+      "reports/<yyyy>/W<ww>/tracking-health-<date>.md",
+      "state/bi-tracking-health.json (issues, baselines)"
+    ],
+    "skill_path": ".claude/skills/bi-tracking-health/SKILL.md",
+    "state_file": "state/bi-tracking-health.json",
+    "steps": [
+      "Freshness gate",
+      "Backend heartbeat",
+      "Receipt: backend vs GA4",
+      "GA4 coverage & readiness",
+      "Delivery health",
+      "Ledger integrity (tqa-012)",
+      "UTM audit",
+      "Channel groups",
+      "Google Ads conversion actions",
+      "GA4 naming vs standard",
+      "Diff against open issues",
+      "Write report, state, log"
+    ]
+  },
+  {
+    "id": "bi-investor-funnel",
+    "order": 2,
+    "label": "Investor funnel",
+    "short": "Funnel",
+    "icon": "Filter",
+    "cadence": "Weekly, Tuesday",
+    "acts_when": "A closed cohort's step rate leaves its baseline band, or a platform gap widens",
+    "depends_on": [
+      "bi-tracking-health"
+    ],
+    "description": "Follows each week's sign-ups through identity check, first deposit and first investment, and finds where most people drop off.",
+    "inputs": [
+      "sql/readonly/investor_funnel_cohorts_prod.sql",
+      "context/metrics.md"
+    ],
+    "outputs": [
+      "reports/<yyyy>/W<ww>/investor-funnel.md",
+      "state/bi-investor-funnel.json (baselines, proposed fixes)"
+    ],
+    "skill_path": ".claude/skills/bi-investor-funnel/SKILL.md",
+    "state_file": "state/bi-investor-funnel.json",
+    "steps": [
+      "Freshness gate",
+      "Pull cohorts (14-day window)",
+      "Step rates by platform",
+      "Compare to baseline",
+      "Rule out tracking",
+      "Diagnose worst leak",
+      "Propose one fix",
+      "Write report, state, log"
+    ]
+  },
+  {
+    "id": "bi-channel-attribution",
+    "order": 3,
+    "label": "Channel attribution",
+    "short": "Attribution",
+    "icon": "GitBranch",
+    "cadence": "Weekly, Monday, after tracking health",
+    "acts_when": "Always produces the readout; flags channels where sources disagree in direction",
+    "depends_on": [
+      "bi-tracking-health"
+    ],
+    "description": "Shows which marketing channels brought sign-ups, deposits and investments, without counting anything twice.",
+    "inputs": [
+      "sql/readonly/weekly_kpis.sql",
+      "sql/readonly/backend_events_daily.sql",
+      "sql/readonly/ga4_conversions_by_channel.sql",
+      "sql/readonly/ga4_traffic_daily.sql",
+      "sql/readonly/ga4_user_acquisition_daily.sql",
+      "sql/readonly/gads_campaign_daily.sql"
+    ],
+    "outputs": [
+      "reports/<yyyy>/W<ww>/channel-attribution.md",
+      "state/bi-channel-attribution.json"
+    ],
+    "skill_path": ".claude/skills/bi-channel-attribution/SKILL.md",
+    "state_file": "state/bi-channel-attribution.json",
+    "steps": [
+      "Freshness gate",
+      "Ledger (backend)",
+      "Backend attribution coverage",
+      "GA4 section",
+      "GA4 conversions by channel",
+      "Google Ads section",
+      "First- vs last-touch gap",
+      "Blind spots",
+      "Trend verdicts",
+      "Write report, state, log"
+    ]
+  },
+  {
+    "id": "bi-paid-media-review",
+    "order": 4,
+    "label": "Paid media review",
+    "short": "Paid media",
+    "icon": "Megaphone",
+    "cadence": "Weekly, Monday",
+    "acts_when": "A metric leaves its trailing range, moves 3+ weeks one way, or pacing/tracking breaks",
+    "depends_on": [
+      "bi-tracking-health"
+    ],
+    "description": "Reviews Google Ads spend and results each week and gives one clear call per account: keep, fix, test or investigate.",
+    "inputs": [
+      "sql/readonly/gads_campaign_daily.sql",
+      "sql/readonly/gads_conversions_daily.sql",
+      "sql/readonly/ga4_conversions_by_channel.sql"
+    ],
+    "outputs": [
+      "reports/<yyyy>/W<ww>/paid-media-review.md",
+      "state/bi-paid-media-review.json (weekly snapshots, calls)"
+    ],
+    "skill_path": ".claude/skills/bi-paid-media-review/SKILL.md",
+    "state_file": "state/bi-paid-media-review.json",
+    "steps": [
+      "Freshness gate",
+      "Accounts in scope",
+      "Spend & pacing",
+      "Traffic",
+      "Conversions (Ads claims + GA4 server-sent)",
+      "Creative fatigue",
+      "Landing pages",
+      "Tracking",
+      "One call per account",
+      "Write report, state, log"
+    ]
+  },
+  {
+    "id": "bi-daily-kpi-watch",
+    "order": 5,
+    "label": "Daily KPI watch",
+    "short": "KPI watch",
+    "icon": "Activity",
+    "cadence": "Daily (on demand while local)",
+    "acts_when": "A metric leaves its same-weekday band, or a backend event reads zero",
+    "depends_on": [],
+    "description": "Watches the key numbers every day and only speaks up when one moves far outside its normal range.",
+    "inputs": [
+      "sql/readonly/ga4_conversions_daily.sql",
+      "sql/readonly/backend_events_daily.sql",
+      "sql/readonly/ga4_traffic_daily.sql",
+      "sql/readonly/gads_campaign_daily.sql"
+    ],
+    "outputs": [
+      "state/bi-daily-kpi-watch.json (bands, anomalies)",
+      "alert, only when out of band"
+    ],
+    "skill_path": ".claude/skills/bi-daily-kpi-watch/SKILL.md",
+    "state_file": "state/bi-daily-kpi-watch.json",
+    "steps": [
+      "Freshness gate",
+      "Latest complete day per source",
+      "Band check (GA4)",
+      "Confirm on backend",
+      "Classify real vs artifact",
+      "Known-cause check",
+      "Route",
+      "Write state, log"
+    ]
+  },
+  {
+    "id": "bi-weekly-exec-digest",
+    "order": 6,
+    "label": "Weekly executive digest",
+    "short": "Digest",
+    "icon": "Newspaper",
+    "cadence": "Weekly, Monday, last",
+    "acts_when": "Always runs",
+    "depends_on": [
+      "bi-tracking-health",
+      "bi-investor-funnel",
+      "bi-channel-attribution",
+      "bi-paid-media-review"
+    ],
+    "description": "The Monday one-page summary for leadership: what moved, why, and who owns it.",
+    "inputs": [
+      "sql/readonly/weekly_kpis.sql",
+      "state of the other loops",
+      "this week's reports"
+    ],
+    "outputs": [
+      "reports/<yyyy>/W<ww>/weekly-exec-digest.md",
+      "state/bi-weekly-exec-digest.json (snapshots)"
+    ],
+    "skill_path": ".claude/skills/bi-weekly-exec-digest/SKILL.md",
+    "state_file": "state/bi-weekly-exec-digest.json",
+    "steps": [
+      "Freshness gate",
+      "Backend KPIs",
+      "Funnel headline",
+      "GA4 section",
+      "GA4 coverage line",
+      "Google Ads section",
+      "Fold in loop verdicts",
+      "Biggest movers",
+      "Experiment ideas",
+      "Write digest, state, log"
+    ]
+  },
+  {
+    "id": "bi-campaign-health",
+    "order": 7,
+    "label": "Campaign health",
+    "short": "Campaigns",
+    "icon": "Target",
+    "cadence": "On demand / on campaign end",
+    "acts_when": "A concluded campaign has no postmortem in state",
+    "depends_on": [
+      "bi-tracking-health"
+    ],
+    "description": "After a campaign ends, compares its results with its goals and writes down the lessons.",
+    "inputs": [
+      "sql/readonly/gads_campaign_daily.sql",
+      "sql/readonly/ga4_traffic_daily.sql",
+      "sql/readonly/backend_events_daily.sql"
+    ],
+    "outputs": [
+      "reports/postmortems/<campaign>.md",
+      "state/bi-campaign-health.json"
+    ],
+    "skill_path": ".claude/skills/bi-campaign-health/SKILL.md",
+    "state_file": "state/bi-campaign-health.json",
+    "steps": [
+      "Freshness gate",
+      "Window and goals",
+      "Results + 14-day lag",
+      "Matched-window efficiency",
+      "Worked / didn't / why",
+      "Reusable assets and learnings",
+      "Write postmortem, state, log"
+    ]
+  }
 ]
