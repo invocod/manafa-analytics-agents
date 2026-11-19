@@ -143,7 +143,8 @@
       "update_2026_11_16b": "Re-checked after gold rebuild 2026-11-16 15:30 UTC: unchanged (W of Nov 2 gold 161/238,000 = staging; prod 4,717/17,448,000; gold max profile 610,975)",
       "update_2026_11_17_run": "2026-11-17: gold rebuilt 17 Nov, still not production: W46 Mon-Wed gold 44 inv / 73,000 SAR vs prod 4,113 / 15.2M; W45 gold 161 / 238,000 (= staging). Escalation stands.",
       "update_2026_11_18b": "18 Nov: gold rebuilt 17:16, unchanged: W46 65 inv / 94,000 SAR vs prod 6,396 / 22,764,000 SAR; W45 161 / 238,000 (= staging). Escalation stands.",
-      "update_2026_11_18c": "run-20261118-2047: gold (built 17:16) W45 161 / W46 65 investments vs prod 4,717 / 6,396. Unchanged."
+      "update_2026_11_18c": "run-20261118-2047: gold (built 17:16) W45 161 / W46 65 investments vs prod 4,717 / 6,396. Unchanged.",
+      "update_2026_11_19": "run-20261119-0853: gold rebuilt 19 Nov 10:15 (DWH clock), still W45 161 / 238,000 SAR and W46 65 / 94,000 SAR vs prod 4,717 / 17,448,000 and 6,396 / 22,764,000. Unchanged; not re-alerted."
     },
     {
       "id": "tqa-013",
@@ -269,7 +270,8 @@
       "next_check": "stream status / CDC config; target lag < 1 h; stale point 20 Nov",
       "id": "tqa-023",
       "update_2026_11_18b": "18 Nov 14:50 UTC: still 324,198 events (to 17 Nov 19:46 Riyadh); idle ~25 h. Stale point 20 Nov.",
-      "update_2026_11_18c": "18 Nov 20:48 UTC (run-20261118-2047): still 324,198 events; idle ~31 h. Stale point 20 Nov."
+      "update_2026_11_18c": "18 Nov 20:48 UTC (run-20261118-2047): still 324,198 events; idle ~31 h. Stale point 20 Nov.",
+      "update_2026_11_19": "19 Nov 08:53 UTC (run-20261119-0853): still 324,198 events (last event 17 Nov 16:46 UTC); idle ~43 h. Stale point 20 Nov."
     },
     {
       "id": "tqa-024",
@@ -414,10 +416,10 @@
     }
   },
   "source_status_last_run": {
-    "backend_prod": "complete through 2026-11-16 (17 Nov partial); 324,198 events, unchanged since 17 Nov 13:47 UTC, idle ~31 h at 18 Nov 20:48 UTC (tqa-023); stale on 2026-11-20",
-    "gold": "SUSPENDED (tqa-012; rebuilt 18 Nov 17:16, still staging: W46 65 inv / 94,000 SAR vs prod 6,396 / 22.76M)",
+    "backend_prod": "complete through 2026-11-16 (17 Nov partial); 324,198 events, unchanged since 17 Nov 13:47 UTC, idle ~43 h at 19 Nov 08:53 UTC (tqa-023); stale on 2026-11-20",
+    "gold": "SUSPENDED (tqa-012; rebuilt 19 Nov 10:15, still staging: W46 65 inv / 94,000 SAR vs prod 6,396 / 22.76M)",
     "ga4_transfer": "retired 2026-11-18 (do not query)",
-    "google_ads_transfer": "2026-11-07..17 (use CampaignBasicStats for totals, tqa-022)",
+    "google_ads_transfer": "2026-11-07..18 (use CampaignBasicStats for totals, tqa-022)",
     "singular_sheet": "2026-10-11..17, ETL 18 Nov 10:47 UTC, 690 rows, checks pass",
     "meta_tiktok_snapchat": "not configured",
     "ga4_raw_export": "2026-11-01..17 (daily tables; intraday excluded); daily refresh confirmed by Amir 2026-11-18"
@@ -453,7 +455,17 @@
   ],
   "renamed_from": "tracking-qa (2026-11-16)",
   "inbox": [],
-  "last_run": "run-20261118-2047",
+  "last_run": "run-20261119-0853",
+  "fix_checks_2026_11_19": {
+    "window": "GA4 raw export 15-17 Nov + sessions 16-17 Nov, aggregates only",
+    "tqa-024_users_with_name_property": {"2026-11-15": 2801, "2026-11-16": 2382, "2026-11-17": 2304},
+    "tqa-005_withdraw_id_page_views": {"2026-11-15": 20, "2026-11-16": 12, "2026-11-17": 2},
+    "tqa-021_app_named_screen_share": "0.808-0.832",
+    "tqa-004_internal_placement_sessions_16_17nov": 18,
+    "tqa-015_dev_preview_sessions_16_17nov": 56,
+    "verdict": "no ticket meets its fix criterion"
+  },
+  "heartbeat_note_2026_11_19": "Point-in-time bands (priors only) put registrations slightly low on 3, 9 and 13 Nov; stored kpi-watch bands contain them. W46 registrations 550 vs W45 634 (-13%). Read as mild softening, not a tracking break; routed to bi-daily-kpi-watch / bi-investor-funnel.",
   "fix_checks_2026_11_18c": {
     "window": "GA4 raw export 11-17 Nov, aggregates only",
     "tqa-024_users_with_name_property_17nov": 2304,
@@ -634,7 +646,7 @@
     },
     "blocker": "tqa-013 / ISQ-6056 (events finished by callbacks or jobs reach GA4 without a client ID)",
     "notified": null,
-    "last_checked": "2026-11-18T20:48Z run-20261118-2047 (W46 unchanged; W47 open: partial reads reg 0.878, deposit 1.049, not judged)"
+    "last_checked": "2026-11-19T08:55Z run-20261119-0853 (W46 unchanged; W47 open: partial reads reg 0.878, deposit 1.049, identity_verified 0.353, not judged)"
   },
   "watch_items": [
     {
