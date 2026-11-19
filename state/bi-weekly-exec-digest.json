@@ -178,7 +178,8 @@
       "status": "proposed for approval; final when W45 closes on 14d (data to 22 Nov)"
     }
   ],
-  "last_run": "run-20261118-2047",
+  "last_run": "run-20261119-0853",
+  "last_run_note": "run-20261119-0853: W46 re-queried, identical to snapshot; replica frozen so W47 unreadable; Google Ads W46 claims now full week (702). Report reports/2026/W47/weekly-exec-digest-2026-11-19.md",
   "snapshots_mon_wed": {
     "2026-W41": {
       "reg": 342,
