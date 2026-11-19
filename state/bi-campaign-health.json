@@ -75,6 +75,14 @@
     "ga4": "2026-11-17",
     "google_ads": "2026-11-17"
   },
-  "last_run": "run-20261118-2032",
-  "last_report": "reports/2026/W47/campaign-health-2026-11-18.md"
+  "last_run": "run-20261119-0853",
+  "last_report": "reports/2026/W47/campaign-health-2026-11-19.md",
+  "check_2026_11_19": {
+    "run": "run-20261119-0853",
+    "google_ads_spend_18nov_sar": {"Minto | Above 5Mn": 577.61, "Minto | App promotion - IOS | App installs": 389.05, "Minto | App installs - Android": 395.30},
+    "singular_spend_18nov_sar": {"TikTok Ads iOS": 1077.00, "Twitter iOS": 999.66},
+    "concluded": [],
+    "national_day_96_floor_to_16nov": {"registrations": 21, "deposits": 13, "deposit_users": 6, "investments": 98, "investment_users": 10},
+    "cq-001": "investments to 11 Nov reproduce as 96 again; 116 (16 Nov run) still unexplained"
+  }
 }
